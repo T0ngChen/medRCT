@@ -1,0 +1,20 @@
+Package: medRCT
+Title: Causal Mediation Analysis Estimating Interventional Effect Mapped to a Target Trial
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Tong", "Chen", email = "tong.chen@mcri.edu.au", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-2751-2412")),
+    person("Margarita", "Moreno-Betancur", email = "margarita.moreno@mcri.edu.au", role = "aut"),
+    person("Ghazaleh", "Dashti", email = "ghazaleh.dashti@mcri.edu.au", role = "ctb"))
+Description: This package estimates mediation interventional effects that emulate a target trial. It supports any number of multiple mediators, including those that are not of primary interest but serve as intermediate confounders.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.1
+Imports: 
+    stats,
+    boot,
+    zoo
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
