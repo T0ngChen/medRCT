@@ -2,7 +2,7 @@
 % Please edit documentation in R/medRCT.R
 \name{medRCT.fun}
 \alias{medRCT.fun}
-\title{Title}
+\title{Causal mediation analysis for estimating the interventional effect mapped to a target trial}
 \usage{
 medRCT.fun(
   dat,
@@ -34,5 +34,5 @@ Can be 'all', 'E_all', 'E_k', 'E_prime'. Default is 'all'.}
 \item{mcsim}{the number of Monte Carlo simulations to conduct}
 }
 \description{
-Title
+Causal mediation analysis for estimating the interventional effect mapped to a target trial
 }

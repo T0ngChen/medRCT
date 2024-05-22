@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{summary.medRCT}
 \alias{summary.medRCT}
-\title{Title}
+\title{Summarizing Output from Mediation Analysis}
 \usage{
 \method{summary}{medRCT}(object, ...)
 }
@@ -12,5 +12,5 @@
 \item{...}{other arguments}
 }
 \description{
-Title
+Summarizing Output from Mediation Analysis
 }

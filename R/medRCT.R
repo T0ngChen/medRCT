@@ -88,8 +88,6 @@ medRCT <- function(dat, exposure, outcome, mediators, int.confounders, confounde
 }
 
 
-
-
 #' Causal mediation analysis for estimating the interventional effect mapped to a target trial
 #'
 #' @param dat A data.frame with the data for analysis
