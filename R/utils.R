@@ -5,7 +5,7 @@
 #'
 #' @param object a \code{medRCT} object
 #' @param ... other arguments
-#'
+#' @method summary medRCT
 #' @export
 summary.medRCT <- function(object, ...){
   index <- grep("^p", names(object$est))[1]
