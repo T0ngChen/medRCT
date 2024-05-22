@@ -8,7 +8,7 @@
 license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 <!-- badges: end -->
 
-The `medRCT` R package provide facilities for the estimation of
+The `medRCT` R package provides facilities for the estimation of
 interventional effects that emulate a target trial.
 
 ## Installation

@@ -1,7 +1,7 @@
 
 
 
-#' Title
+#' Summarizing Output from Mediation Analysis
 #'
 #' @param object a \code{medRCT} object
 #' @param ... other arguments
