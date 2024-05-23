@@ -9,12 +9,12 @@ medRCT(
   exposure,
   outcome,
   mediators,
-  int.confounders,
+  intermediate_confs,
   confounders,
-  Xconfsint = paste(paste(rep("X", length(confounders)), confounders, sep = "*"),
-    collapse = "+"),
-  effect_type = c("all", "E_all", "E_k", "E_prime"),
+  Xconfsint = "all",
+  int_type = c("all", "shift_all", "shift_k", "shift_k_order"),
   mcsim,
+  boostrap = TRUE,
   boot_args = list(R = 100, stype = "i"),
   ...
 )
@@ -22,26 +22,28 @@ medRCT(
 \arguments{
 \item{dat}{a data.frame with the data for analysis}
 
-\item{exposure}{a character string with name of the exposure in the data. The exposure variable can only be binary.}
+\item{exposure}{a character string representing the name of the exposure variable in the data. The exposure variable must be binary, with \code{1} indicating exposed or treated, and \code{0} indicating unexposed or control.}
 
-\item{outcome}{a character string with name of the outcome in the data. The outcome variable con only be binary.}
+\item{outcome}{a character string representing the name of the outcome variable in the data. The outcome variable must be binary.}
 
-\item{mediators}{a character vector with the names of the mediators in data. The mediators can only be binary variables.}
+\item{mediators}{a character vector representing the names of the mediators in the data. The mediators must be binary variables.}
 
-\item{int.confounders}{a character vector with the names of the intermediate confounders in data. The intermediate
-confounders can only be binary variables.}
+\item{intermediate_confs}{a character vector representing the names of the intermediate confounders in the data. The intermediate
+confounders must be binary variables.}
 
-\item{confounders}{a character vector with names of the confounders in data, which must be of the required class
+\item{confounders}{a character vector representing the names of the confounders in the data, which must be of the required class
 (e.g. factor if appropriate)}
 
 \item{Xconfsint}{a character string specifying the exposure-confounder or confounder-confounder interaction terms
-to include in all regression models in the procedure. Defaults to include all two-way exposure-confounder interactions
-and no confounder-confounder interactions.}
+to include in all regression models in the procedure. Default is 'all', which includes all two-way exposure-confounder interactions
+and excludes confounder-confounder interactions.}
 
-\item{effect_type}{a character string indicating the type of the interventional effect to be estimated.
-Can be 'all', 'E_all', 'E_k', 'E_prime'. Default is 'all'.}
+\item{int_type}{a character string indicating the type of the interventional effect to be estimated.
+Can be 'all', 'shift_all', 'shift_k', 'shift_k_order'. Default is 'all'.}
 
 \item{mcsim}{the number of Monte Carlo simulations to conduct}
+
+\item{boostrap}{logical. If \code{TRUE}, bootstrap will be conducted.}
 
 \item{boot_args}{a \code{list} of bootstrapping arguments. \code{R} is the number of bootstrap replicates.
 \code{stype} indicates what the second argument of \code{statistics} in the \code{boot} function represents}

@@ -10,7 +10,7 @@ medRCT.fun(
   first = first,
   K = K,
   Xconfsint = Xconfsint,
-  effect_type = effect_type,
+  int_type = int_type,
   mcsim
 )
 }
@@ -28,8 +28,8 @@ This facilitates the use of this function within the boot() function from the bo
 to include in all regression models in the procedure. Defaults to include all two-way exposure-confounder interactions
 and no confounder-confounder interactions.}
 
-\item{effect_type}{a character string indicating the type of the interventional effect to be estimated.
-Can be 'all', 'E_all', 'E_k', 'E_prime'. Default is 'all'.}
+\item{int_type}{a character string indicating the type of the interventional effect to be estimated.
+Can be 'all', 'shift_all', 'shift_k', 'shift_k_order'. Default is 'all'.}
 
 \item{mcsim}{the number of Monte Carlo simulations to conduct}
 }
