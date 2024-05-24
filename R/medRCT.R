@@ -1,4 +1,4 @@
-
+utils::globalVariables(".SD")
 
 
 #' Causal mediation analysis for estimating the interventional effect
@@ -36,6 +36,7 @@ medRCT <- function(dat, exposure, outcome, mediators, intermediate_confs, confou
   mediators = c(intermediate_confs, mediators)
   first = length(intermediate_confs) + 1
   K <- length(mediators)
+  dat <- as.data.frame(dat)
   # Rename all variables & prepare dataset
   dat$X <- dat[, exposure]
   dat$Y <- dat[, outcome]
@@ -120,6 +121,7 @@ medRCT <- function(dat, exposure, outcome, mediators, intermediate_confs, confou
 #' @param mcsim the number of Monte Carlo simulations to conduct
 #'
 #' @importFrom stats as.formula binomial glm predict rbinom
+#' @importFrom data.table as.data.table ":="
 medRCT.fun <- function(dat,
                        ind = 1:nrow(dat),
                        first = first,
@@ -134,8 +136,9 @@ medRCT.fun <- function(dat,
   flag <- FALSE
 
   # Replicate dataset for simulations
-  dat2 <- data
-  dat2[, 1:(2 + K)] <- NA_integer_
+  dat2 <- data.table::as.data.table(data)
+  dat2[, 1:(2 + K) := lapply(.SD, function(x) NA_integer_), .SDcols = 1:(2 + K)]
+
   dat2 <- zoo::coredata(dat2)[rep(seq(nrow(dat2)), mcsim), ]
   n <- nrow(dat2)
 
@@ -159,15 +162,14 @@ medRCT.fun <- function(dat,
 
       if (k != 1) {
         for (l in 1:(k - 1))
-          dat2[, paste("M", l, sep = "")] <- get(
+          dat2[, paste("M", l, sep = "") := get(
             paste("m", l, "_", a, "_",
-                  paste(c(rep(paste(a), (l - 1)), rep("m", K - (l - 1))), collapse = ""), sep = ""))
+                  paste(c(rep(paste(a), (l - 1)), rep("m", K - (l - 1))), collapse = ""), sep = ""))]
       }
 
-      assign(paste("m", k, "_", a, "_",
+      dat2[, paste("m", k, "_", a, "_",
                    paste(c(rep(paste(a), (k - 1)), rep("m", K - (k - 1))), collapse = ""),
-                   sep = ""),
-             rbinom(n, 1, predict(fit, newdata = dat2, type = "response")))
+                   sep = "") := rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
     }
   }
 
@@ -181,9 +183,9 @@ medRCT.fun <- function(dat,
       flag <- TRUE
 
     a <- 0
-    dat2$X <- a
-    assign(paste("m", k, "_", a, "_", paste(rep("m", K), collapse = ""), sep = ""),
-           rbinom(n, 1, predict(fit, newdata = dat2, type = "response")))
+    dat2[, 'X' := a]
+    dat2[, paste("m", k, "_", a, "_", paste(rep("m", K), collapse = ""),
+                 sep = "") := rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
   }
 
 
@@ -201,18 +203,18 @@ medRCT.fun <- function(dat,
           flag <- TRUE
 
         a <- 1
-        dat2$X <- a
+        dat2[, 'X' := a]
 
         if (k != 1) {
           for (l in setdiff(1:(k - 1), MM))
-            dat2[, paste("M", l, sep = "")] <- get(
+            dat2[, paste("M", l, sep = "") := get(
               paste("m", l, "_", a, "_", paste(c(rep(paste(a), (l - 1)), rep("m", K - (l - 1))),
-                                               collapse = ""), sep = ""))
+                                               collapse = ""), sep = ""))]
         }
-        assign(paste("m", k, "_", a, "_",
+        dat2[, paste("m", k, "_", a, "_",
                      paste(c(rep(paste(a), min(k - 1, MM - 1)), "m", rep(paste(a), max(k - 1 - MM, 0)),
-                             rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))), collapse = ""), sep = ""),
-               rbinom(n, 1, predict(fit, newdata = dat2, type = "response")))
+                             rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))), collapse = ""),
+                     sep = "") := rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
       }
     }
   }
@@ -232,27 +234,27 @@ medRCT.fun <- function(dat,
           flag <- TRUE
 
         a <- 1
-        dat2$X <- a
+        dat2[, 'X' := a]
 
         if (MM != 1) {
           for (l in 1:(MM - 1))
-            dat2[, paste("M", l, sep = "")] <- get(
+            dat2[, paste("M", l, sep = "") := get(
               paste("m", l, "_", a, "_", paste(c(rep(paste(a), (l - 1)), rep("m", K - (l - 1))),
-                                               collapse = ""), sep = ""))
+                                               collapse = ""), sep = ""))]
         }
-        dat2[, paste("M", MM, sep = "")] <- get(paste("m", MM, "_", 0, "_",
-                                                      paste(rep("m", K), collapse = ""), sep = ""))
+        dat2[, paste("M", MM, sep = "") := get(paste("m", MM, "_", 0, "_",
+                                                      paste(rep("m", K), collapse = ""), sep = ""))]
         if (k > (MM + 1)) {
           for (l in (MM + 1):(k - 1))
-            dat2[, paste("M", l, sep = "")] <- get(
+            dat2[, paste("M", l, sep = "") := get(
               paste("m", l, "_", a, "_", paste(c(rep(paste(a), MM - 1), 0, rep(paste(a), max(l - 1 - MM, 0)),
                                                  rep("m", K - MM - max(l - 1 - MM, 0))), collapse = ""),
-                    sep = ""))
+                    sep = ""))]
         }
 
-        assign(paste("m", k, "_", a, "_", paste(c(rep(paste(a), MM - 1), 0, rep(paste(a), max(k - 1 - MM, 0)),
-                                                  rep("m", K - MM - max(k - 1 - MM, 0))), collapse = ""), sep = ""),
-               rbinom(n, 1, predict(fit, newdata = dat2, type = "response")))
+        dat2[, paste("m", k, "_", a, "_", paste(c(rep(paste(a), MM - 1), 0, rep(paste(a), max(k - 1 - MM, 0)),
+                                                  rep("m", K - MM - max(k - 1 - MM, 0))), collapse = ""),
+                      sep = "") := rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
       }
     }
   }
@@ -272,18 +274,17 @@ medRCT.fun <- function(dat,
         flag <- TRUE
 
       a <- 0
-      dat2$X <- a
+      dat2[, 'X' := a]
 
       for (l in first:(k - 1)) {
-        dat2[, paste("M", l, sep = "")] <- get(
+        dat2[, paste("M", l, sep = "") := get(
           paste("m", l, "_", a, "_", paste(c(rep("m", first - 1), rep(paste(a), (l - first)),
-                                             rep("m", K - l + 1)), collapse = ""), sep = ""))
+                                             rep("m", K - l + 1)), collapse = ""), sep = ""))]
       }
 
-      assign(paste("m", k, "_", a, "_",
+      dat2[, paste("m", k, "_", a, "_",
                    paste(c(rep("m", first - 1), rep(paste(a), k - first), rep("m", K + 1 - k)),
-                         collapse = ""), sep = ""),
-             rbinom(n, 1, predict(fit, newdata = dat2, type = "response")))
+                         collapse = ""), sep = "") := rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
     }
   }
 
@@ -302,11 +303,11 @@ medRCT.fun <- function(dat,
   # p_ctr
 
   a <- 0
-  dat2$X <- a
+  dat2[, 'X' := a]
   for (k in 1:K) {
-    dat2[, paste("M", k, sep = "")] <- get(
+    dat2[, paste("M", k, sep = "") := get(
       paste("m", k, "_", a, "_", paste(c(rep(paste(a), (k - 1)), rep("m", K - (k - 1))),
-                                       collapse = ""), sep = ""))
+                                       collapse = ""), sep = ""))]
   }
 
   y0 <- predict(fit, newdata = dat2, type = "response")
@@ -317,11 +318,11 @@ medRCT.fun <- function(dat,
   # p_trt
 
   a <- 1
-  dat2$X <- a
+  dat2[, 'X' := a]
   for (k in 1:K) {
-    dat2[, paste("M", k, sep = "")] <- get(
+    dat2[, paste("M", k, sep = "") := get(
       paste("m", k, "_", a, "_", paste(c(rep(paste(a), (k - 1)), rep("m", K - (k - 1))),
-                                       collapse = ""), sep = ""))
+                                       collapse = ""), sep = ""))]
   }
 
   y1 <- predict(fit, newdata = dat2, type = "response")
@@ -332,18 +333,18 @@ medRCT.fun <- function(dat,
   # p_all
   if (any(int_type %in% c("all", "shift_all"))) {
     a <- 1
-    dat2$X <- a
+    dat2[, 'X' := a]
     for (k in 1:(first - 1)) {
-      dat2[, paste("M", k, sep = "")] <- get(
+      dat2[, paste("M", k, sep = "") := get(
         paste("m", k, "_", a, "_", paste(c(rep(paste(a), (k - 1)), rep("m", K - (k - 1))),
-                                         collapse = ""), sep = ""))
+                                         collapse = ""), sep = ""))]
     }
 
     a <- 0
     for (k in first:K) {
-      dat2[, paste("M", k, sep = "")] <- get(
+      dat2[, paste("M", k, sep = "") := get(
         paste("m", k, "_", a, "_", paste(c(rep("m", first - 1), rep(paste(a), k - first), rep("m", K + 1 - k)),
-                                         collapse = ""), sep = ""))
+                                         collapse = ""), sep = ""))]
     }
 
     y1 <- predict(fit, newdata = dat2, type = "response")
@@ -357,22 +358,22 @@ medRCT.fun <- function(dat,
   # p_first....p_K
   if (any(int_type %in% c("all", "shift_k"))) {
     a <- 1
-    dat2$X <- a
+    dat2[, 'X' := a]
 
     for (k in 1:(first - 1)) {
-      dat2[, paste("M", k, sep = "")] <- get(
+      dat2[, paste("M", k, sep = "") :=  get(
         paste("m", k, "_", a, "_", paste(c(rep(paste(a), (k - 1)), rep("m", K - (k - 1))),
-                                         collapse = ""), sep = ""))
+                                         collapse = ""), sep = ""))]
     }
 
     for (MM in first:K) {
-      dat2[, paste("M", MM, sep = "")] <- get(
-        paste("m", MM, "_", 0, "_", paste(paste(rep("m", K), sep = ""), collapse = ""), sep = ""))
+      dat2[, paste("M", MM, sep = "") := get(
+        paste("m", MM, "_", 0, "_", paste(paste(rep("m", K), sep = ""), collapse = ""), sep = ""))]
 
       for (k in setdiff(first:K, MM)) {
-        dat2[, paste("M", k, sep = "")] <- get(
+        dat2[, paste("M", k, sep = "") := get(
           paste("m", k, "_", a, "_", paste(c(rep(paste(a), min(k - 1, MM - 1)), "m", rep(paste(a), max(k - 1 - MM, 0)),
-                                             rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))), collapse = ""), sep = ""))
+                                             rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))), collapse = ""), sep = ""))]
       }
 
       y0 <- predict(fit, newdata = dat2, type = "response")
@@ -393,20 +394,20 @@ medRCT.fun <- function(dat,
     for (MM in first:(K - 1)) {
       if (MM != 1) {
         for (k in 1:(MM - 1)) {
-          dat2[, paste("M", k, sep = "")] <- get(
+          dat2[, paste("M", k, sep = "") := get(
             paste("m", k, "_", a, "_", paste(c(rep(paste(a), (k - 1)), rep("m", K - (k - 1))),
-                                             collapse = ""), sep = ""))
+                                             collapse = ""), sep = ""))]
         }
       }
 
-      dat2[, paste("M", MM, sep = "")] <- get(
-        paste("m", MM, "_", 0, "_", paste(paste(rep("m", K), sep = ""), collapse = ""), sep = ""))
+      dat2[, paste("M", MM, sep = "") := get(
+        paste("m", MM, "_", 0, "_", paste(paste(rep("m", K), sep = ""), collapse = ""), sep = ""))]
 
       if ((MM + 1) <= K) {
         for (k in (MM + 1):K) {
-          dat2[, paste("M", k, sep = "")] <- get(
+          dat2[, paste("M", k, sep = "") := get(
             paste("m", k, "_", a, "_", paste(c(rep(paste(a), MM - 1), 0, rep(paste(a), max(k - 1 - MM, 0)),
-                                               rep("m", K - MM - max(k - 1 - MM, 0))), collapse = ""), sep = ""))
+                                               rep("m", K - MM - max(k - 1 - MM, 0))), collapse = ""), sep = ""))]
         }
       }
 

@@ -1,6 +1,6 @@
 Package: medRCT
 Title: Causal Mediation Analysis Estimating Interventional Effect Mapped to a Target Trial
-Version: 0.0.0.9005
+Version: 0.0.0.9006
 Authors@R: c(
     person("Tong", "Chen", email = "tong.chen@mcri.edu.au", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2751-2412")),
@@ -13,6 +13,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Imports: 
     stats,
+    data.table,
     boot,
     zoo
 Suggests: 
