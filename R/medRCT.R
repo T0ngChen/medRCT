@@ -3,7 +3,7 @@ utils::globalVariables(".SD")
 
 #' Causal mediation analysis for estimating the interventional effect
 #'
-#' 'medRCT' is used to estimating the interventional effects that emulate a target trial with any number of multiple
+#' 'medRCT' is used to estimating the interventional effects that are defined by a mapping to a target trial. It can handle multiple
 #' mediators, including some not of primary interest but that are intermediate confounders
 #'
 #' @param dat a data.frame with the data for analysis
@@ -14,24 +14,28 @@ utils::globalVariables(".SD")
 #' confounders must be binary variables.
 #' @param confounders a character vector representing the names of the confounders in the data, which must be of the required class
 #' (e.g. factor if appropriate)
-#' @param Xconfsint a character string specifying the exposure-confounder or confounder-confounder interaction terms
+#' @param interactions_XC a character string specifying the exposure-confounder or confounder-confounder interaction terms
 #' to include in all regression models in the procedure. Default is 'all', which includes all two-way exposure-confounder interactions
 #' and excludes confounder-confounder interactions.
-#' @param int_type a character string indicating the type of the interventional effect to be estimated.
-#' Can be 'all', 'shift_all', 'shift_k', 'shift_k_order'. Default is 'all'.
+#' @param intervention_type a character string indicating the type of the interventional effect to be estimated.
+#' Can be 'all', 'shift_all', 'shift_k', 'shift_k_order'. Default is 'all', under which all effects will be estimated.
+#' ‘shift all’ is to estimate the interventional effect under shifting the joint distribution of all mediatios.
+#' ‘shift k’ is to estimate the interventional effect under shifting the distribution of mediator k, independently of other mediators.
+#' ‘shift_k_order’ is to estimate the interventional effect under shifting the distribution of mediator k, independently of the its
+#' antecedent mediators, while allowing for the flow on effect of mediator k on its descendent mediators.
 #' @param mcsim the number of Monte Carlo simulations to conduct
 #' @param boostrap logical. If \code{TRUE}, bootstrap will be conducted.
 #' @param boot_args a \code{list} of bootstrapping arguments. \code{R} is the number of bootstrap replicates.
 #' \code{stype} indicates what the second argument of \code{statistics} in the \code{boot} function represents
-#' @param ... other arguments passed to the \code{boot} package.
+#' @param ... other arguments passed to the \code{boot} function in the \code{boot} package.
 #'
 #' @export
 medRCT <- function(dat, exposure, outcome, mediators, intermediate_confs, confounders,
-                   Xconfsint = "all",
-                   int_type = c("all", "shift_all", "shift_k", "shift_k_order"), mcsim,
+                   interactions_XC = "all",
+                   intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"), mcsim,
                    boostrap = TRUE,
                    boot_args = list(R = 100, stype = "i"), ...) {
-  int_type = sapply(int_type, function(arg) match.arg(arg, choices = c("all", "shift_all", "shift_k", "shift_k_order")))
+  intervention_type = sapply(intervention_type, function(arg) match.arg(arg, choices = c("all", "shift_all", "shift_k", "shift_k_order")))
   ci.type = "perc"
   mediators = c(intermediate_confs, mediators)
   first = length(intermediate_confs) + 1
@@ -50,11 +54,11 @@ medRCT <- function(dat, exposure, outcome, mediators, intermediate_confs, confou
   dat <- dat[stats::complete.cases(dat),]
   # Prepare confounder terms for formulae
   # (defaults to all exposure-confounder interactions if not provided)
-  if (Xconfsint == "all"){
-    Xconfsint <- paste(paste(rep("X", length(confounders)), confounders, sep ="*"),
+  if (interactions_XC == "all"){
+    interactions_XC <- paste(paste(rep("X", length(confounders)), confounders, sep ="*"),
                        collapse = "+")
   } else {
-    Xconfsint <- gsub(exposure, "X", Xconfsint)
+    interactions_XC <- gsub(exposure, "X", interactions_XC)
   }
 
   if (boostrap == FALSE) {
@@ -67,8 +71,8 @@ medRCT <- function(dat, exposure, outcome, mediators, intermediate_confs, confou
     first = first,
     K = K,
     mcsim = mcsim,
-    Xconfsint = Xconfsint,
-    int_type = int_type,
+    interactions_XC = interactions_XC,
+    intervention_type = intervention_type,
     stype = boot_args$stype,
     R = boot_args$R,
     ...
@@ -113,10 +117,10 @@ medRCT <- function(dat, exposure, outcome, mediators, intermediate_confs, confou
 #' This facilitates the use of this function within the boot() function from the boot package
 #' @param first index of first mediator of interest after combining intermediate confounders with mediators
 #' @param K the number of mediators
-#' @param Xconfsint a character string specifying the exposure-confounder or confounder-confounder interaction terms
+#' @param interactions_XC a character string specifying the exposure-confounder or confounder-confounder interaction terms
 #' to include in all regression models in the procedure. Defaults to include all two-way exposure-confounder interactions
 #' and no confounder-confounder interactions.
-#' @param int_type a character string indicating the type of the interventional effect to be estimated.
+#' @param intervention_type a character string indicating the type of the interventional effect to be estimated.
 #' Can be 'all', 'shift_all', 'shift_k', 'shift_k_order'. Default is 'all'.
 #' @param mcsim the number of Monte Carlo simulations to conduct
 #'
@@ -126,8 +130,8 @@ medRCT.fun <- function(dat,
                        ind = 1:nrow(dat),
                        first = first,
                        K = K,
-                       Xconfsint = Xconfsint,
-                       int_type = int_type,
+                       interactions_XC = interactions_XC,
+                       intervention_type = intervention_type,
                        mcsim) {
   # Take boostrap sample
   data <- dat[ind, ]
@@ -147,12 +151,12 @@ medRCT.fun <- function(dat,
 
   for (k in 1:K) {
     if (k == 1)
-      fit <- glm(as.formula(paste("M", k, "~X+", Xconfsint, sep = "")),
+      fit <- glm(as.formula(paste("M", k, "~X+", interactions_XC, sep = "")),
                  data = data, family = binomial)
     else
       fit <- glm(as.formula(paste("M", k, "~(X+",
                                   paste(paste("M", 1:(k - 1), sep = ""), collapse = "+"), ")^2+",
-                                  Xconfsint, sep = "")),
+                                  interactions_XC, sep = "")),
                  data = data, family = binomial)
     if ((!fit$converged) | any(is.na(fit$coefficients)))
       flag <- TRUE
@@ -176,7 +180,7 @@ medRCT.fun <- function(dat,
   # Estimating the target quantities
   # Marginals under X=0
   for (k in first:K) {
-    fit <- glm(as.formula(paste("M", k, "~X+", Xconfsint, sep = "")), data =
+    fit <- glm(as.formula(paste("M", k, "~X+", interactions_XC, sep = "")), data =
                  data, family = binomial)
 
     if ((!fit$converged) | any(is.na(fit$coefficients)))
@@ -191,12 +195,12 @@ medRCT.fun <- function(dat,
 
   # For p_first,..., p_K
   # Joint of others under X=1
-  if (any(int_type %in% c("all", "shift_k"))) {
+  if (any(intervention_type %in% c("all", "shift_k"))) {
     for (MM in first:K) {
       for (k in setdiff(first:K, MM)) {
         fit <- glm(as.formula(paste("M", k, "~(X+",
                                     paste(paste("M", setdiff(1:(k - 1), MM), sep = ""),
-                                          collapse = "+"),")^2+", Xconfsint, sep = "")),
+                                          collapse = "+"),")^2+", interactions_XC, sep = "")),
                    data = data, family = binomial)
 
         if ((!fit$converged) | any(is.na(fit$coefficients)))
@@ -222,12 +226,12 @@ medRCT.fun <- function(dat,
 
   # For p_first_prime,...., p_K_prime
   # Conditionals under X=1
-  if (any(int_type %in% c("all", "shift_k_order"))) {
+  if (any(intervention_type %in% c("all", "shift_k_order"))) {
     for (MM in first:(K - 1)) {
       for (k in (MM + 1):K) {
         fit <- glm(as.formula(paste("M", k, "~(X+",
                                     paste(paste("M", 1:(k - 1), sep = ""), collapse = "+"),
-                                    ")^2+", Xconfsint, sep = "")),
+                                    ")^2+", interactions_XC, sep = "")),
                    data = data, family = binomial)
 
         if ((!fit$converged) | any(is.na(fit$coefficients)))
@@ -263,11 +267,11 @@ medRCT.fun <- function(dat,
 
   # For p_all
   # Joint of main ones under X=0
-  if (any(int_type %in% c("all", "shift_all"))) {
+  if (any(intervention_type %in% c("all", "shift_all"))) {
     for (k in (first + 1):K) {
       fit <- glm(as.formula(paste("M", k, "~(X+",
                                   paste(paste("M", first:(k - 1), sep = ""), collapse = "+"),
-                                  ")^2+", Xconfsint, sep = "")),
+                                  ")^2+", interactions_XC, sep = "")),
                  data = data, family = binomial)
 
       if ((!fit$converged) | any(is.na(fit$coefficients)))
@@ -293,7 +297,7 @@ medRCT.fun <- function(dat,
   # Y
 
   fit <- glm(as.formula(
-    paste("Y~(X+", paste(paste("M", 1:K, sep = ""), collapse = "+"), ")^2+", Xconfsint, sep ="")),
+    paste("Y~(X+", paste(paste("M", 1:K, sep = ""), collapse = "+"), ")^2+", interactions_XC, sep ="")),
     data = data, family = binomial)
   if ((!fit$converged) | any(is.na(fit$coefficients)))
     flag <- TRUE
@@ -331,7 +335,7 @@ medRCT.fun <- function(dat,
 
 
   # p_all
-  if (any(int_type %in% c("all", "shift_all"))) {
+  if (any(intervention_type %in% c("all", "shift_all"))) {
     a <- 1
     dat2[, 'X' := a]
     for (k in 1:(first - 1)) {
@@ -356,7 +360,7 @@ medRCT.fun <- function(dat,
 
 
   # p_first....p_K
-  if (any(int_type %in% c("all", "shift_k"))) {
+  if (any(intervention_type %in% c("all", "shift_k"))) {
     a <- 1
     dat2[, 'X' := a]
 
@@ -387,7 +391,7 @@ medRCT.fun <- function(dat,
 
 
   # p_first_prime....p_Kminus1_prime
-  if (any(int_type %in% c("all", "shift_k_order"))) {
+  if (any(intervention_type %in% c("all", "shift_k_order"))) {
     a <- 1
     dat2$X <- a
 
@@ -427,33 +431,33 @@ medRCT.fun <- function(dat,
   res <- vector()
   res_names <- vector()
 
-  if (any(int_type %in% c("all", "shift_k"))) {
+  if (any(intervention_type %in% c("all", "shift_k"))) {
     res <- c(res, unlist(lapply(first:K, function(k) get(paste("IIE_", k, sep = "")))))
     res_names <- c(res_names, paste0("IIE_", first:K - (first - 1),
                                      " (p_trt - p_", first:K - (first - 1), ")"))
   }
 
-  if (any(int_type %in% c("all", "shift_k_order"))) {
+  if (any(intervention_type %in% c("all", "shift_k_order"))) {
     res <- c(res, unlist(lapply(first:(K - 1), function(k) get(paste("IIE_", k, "_prime", sep = "")))))
     res_names <- c(res_names, paste0("IIE_", first:(K - 1) - (first - 1), "_prime",
                                      " (p_trt - p_", first:(K - 1) - (first - 1), "_prime)"))
   }
-  if (any(int_type %in% c("all", "shift_all"))) {
+  if (any(intervention_type %in% c("all", "shift_all"))) {
     res <- c(res, IIE_all)
     res_names <- c(res_names, "IIE_all (p_trt - p_all)")
   }
   res <- c(res, p_trt, p_ctr)
   res_names <- c(res_names, "p_trt", "p_ctr")
-  if (any(int_type %in% c("all", "shift_k"))) {
+  if (any(intervention_type %in% c("all", "shift_k"))) {
     res <- c(res, unlist(lapply(first:K, function(k) get(paste("p_", k, sep = "")))))
     res_names <- c(res_names, paste("p_", first:K - (first - 1), sep = ""))
   }
 
-  if (any(int_type %in% c("all", "shift_k_order"))) {
+  if (any(intervention_type %in% c("all", "shift_k_order"))) {
     res <- c(res, unlist(lapply(first:(K - 1), function(k) get(paste("p_", k, "_prime", sep = "")))))
     res_names <- c(res_names, paste("p_", first:(K - 1) - (first - 1), "_prime", sep = ""))
   }
-  if (any(int_type %in% c("all", "shift_all"))) {
+  if (any(intervention_type %in% c("all", "shift_all"))) {
     res <- c(res, p_all)
     res_names <- c(res_names, "p_all")
   }
