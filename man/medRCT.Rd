@@ -11,8 +11,8 @@ medRCT(
   mediators,
   intermediate_confs,
   confounders,
-  Xconfsint = "all",
-  int_type = c("all", "shift_all", "shift_k", "shift_k_order"),
+  interactions_XC = "all",
+  intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"),
   mcsim,
   boostrap = TRUE,
   boot_args = list(R = 100, stype = "i"),
@@ -34,12 +34,16 @@ confounders must be binary variables.}
 \item{confounders}{a character vector representing the names of the confounders in the data, which must be of the required class
 (e.g. factor if appropriate)}
 
-\item{Xconfsint}{a character string specifying the exposure-confounder or confounder-confounder interaction terms
+\item{interactions_XC}{a character string specifying the exposure-confounder or confounder-confounder interaction terms
 to include in all regression models in the procedure. Default is 'all', which includes all two-way exposure-confounder interactions
 and excludes confounder-confounder interactions.}
 
-\item{int_type}{a character string indicating the type of the interventional effect to be estimated.
-Can be 'all', 'shift_all', 'shift_k', 'shift_k_order'. Default is 'all'.}
+\item{intervention_type}{a character string indicating the type of the interventional effect to be estimated.
+Can be 'all', 'shift_all', 'shift_k', 'shift_k_order'. Default is 'all', under which all effects will be estimated.
+‘shift all’ is to estimate the interventional effect under shifting the joint distribution of all mediatios.
+‘shift k’ is to estimate the interventional effect under shifting the distribution of mediator k, independently of other mediators.
+‘shift_k_order’ is to estimate the interventional effect under shifting the distribution of mediator k, independently of the its
+antecedent mediators, while allowing for the flow on effect of mediator k on its descendent mediators.}
 
 \item{mcsim}{the number of Monte Carlo simulations to conduct}
 
@@ -48,9 +52,9 @@ Can be 'all', 'shift_all', 'shift_k', 'shift_k_order'. Default is 'all'.}
 \item{boot_args}{a \code{list} of bootstrapping arguments. \code{R} is the number of bootstrap replicates.
 \code{stype} indicates what the second argument of \code{statistics} in the \code{boot} function represents}
 
-\item{...}{other arguments passed to the \code{boot} package.}
+\item{...}{other arguments passed to the \code{boot} function in the \code{boot} package.}
 }
 \description{
-'medRCT' is used to estimating the interventional effects that emulate a target trial with any number of multiple
+'medRCT' is used to estimating the interventional effects that are defined by a mapping to a target trial. It can handle multiple
 mediators, including some not of primary interest but that are intermediate confounders
 }

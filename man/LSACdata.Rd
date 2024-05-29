@@ -7,16 +7,16 @@
 \format{
 A data frame containing following variables from a longitudinal cohort study.
 \describe{
-\item{child_sex:}{ the binary}
-\item{child_atsi}{ the binary}
-\item{mat_cob}{ the binary}
-\item{mat_engl}{ the binary}
-\item{mat_age}{ the binary}
-\item{sep}{ the binary}
-\item{fam_stress}{ the binary}
-\item{parent_mh}{ the binary}
-\item{preschool_att}{ the binary}
-\item{child_mh}{ the binary}
+\item{sep}{A binary exposure variable}
+\item{fam_stress}{A binary intermediate confounder}
+\item{parent_mh}{A binary mediator}
+\item{preschool_att}{A binary mediator}
+\item{child_mh}{A binary outcome variable}
+\item{child_sex:}{A binary baseline confounder}
+\item{child_atsi}{A binary baseline confounder}
+\item{mat_cob}{A binary baseline confounder}
+\item{mat_engl}{A binary baseline confounder}
+\item{mat_age}{A binary baseline confounder}
 }
 }
 \usage{

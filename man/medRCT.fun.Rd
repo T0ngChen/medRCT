@@ -9,8 +9,8 @@ medRCT.fun(
   ind = 1:nrow(dat),
   first = first,
   K = K,
-  Xconfsint = Xconfsint,
-  int_type = int_type,
+  interactions_XC = interactions_XC,
+  intervention_type = intervention_type,
   mcsim
 )
 }
@@ -24,11 +24,11 @@ This facilitates the use of this function within the boot() function from the bo
 
 \item{K}{the number of mediators}
 
-\item{Xconfsint}{a character string specifying the exposure-confounder or confounder-confounder interaction terms
+\item{interactions_XC}{a character string specifying the exposure-confounder or confounder-confounder interaction terms
 to include in all regression models in the procedure. Defaults to include all two-way exposure-confounder interactions
 and no confounder-confounder interactions.}
 
-\item{int_type}{a character string indicating the type of the interventional effect to be estimated.
+\item{intervention_type}{a character string indicating the type of the interventional effect to be estimated.
 Can be 'all', 'shift_all', 'shift_k', 'shift_k_order'. Default is 'all'.}
 
 \item{mcsim}{the number of Monte Carlo simulations to conduct}
