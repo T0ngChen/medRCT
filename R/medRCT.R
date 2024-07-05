@@ -213,12 +213,13 @@ medRCT.fun <- function(dat,
         a <- 1
         dat2[, 'X' := a]
 
-        if ((first > 1 & k != 1) | (first == 1 & k != setdiff(first:K, MM)[1])) {
+        if (first == 1 & k != setdiff(first:K, MM)[1]) {
           for (l in setdiff(1:(k - 1), MM))
             dat2[, paste("M", l, sep = "") := get(
               paste("m", l, "_", a, "_", paste(c(rep(paste(a), (l - 1)), rep("m", K - (l - 1))),
                                                collapse = ""), sep = ""))]
         }
+
         dat2[, paste("m", k, "_", a, "_",
                      paste(c(rep(paste(a), min(k - 1, MM - 1)), "m", rep(paste(a), max(k - 1 - MM, 0)),
                              rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))), collapse = ""),
