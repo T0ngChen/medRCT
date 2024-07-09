@@ -198,32 +198,66 @@ medRCT.fun <- function(dat,
   if (any(intervention_type %in% c("all", "shift_k"))) {
     for (MM in first:K) {
       for (k in setdiff(first:K, MM)) {
-        if (first == 1 & k == setdiff(first:K, MM)[1]){
-          fit <- glm(as.formula(paste("M", k, "~X+", interactions_XC, sep = "")),
-                     data = data, family = binomial)
+        # with intermediate confounders
+        if (first == 1){
+          if(MM != 1 & k == setdiff(first:K, MM)[1]) {
+            a <- 1
+            dat2[, paste("M", k, sep = "") := get(
+              paste("m", k, "_", a, "_",
+                    paste(c(rep(paste(a), (k - 1)), rep("m", K - (k - 1))), collapse = ""),
+                    sep = ""))]
+          } else {
+            if (MM == 1 & k == setdiff(first:K, MM)[1]){
+              fit <- glm(as.formula(paste("M", k, "~X+", interactions_XC, sep = "")),
+                         data = data, family = binomial)
+            } else {
+              fit <- glm(as.formula(paste("M", k, "~(X+",
+                                          paste(paste("M", setdiff(1:(k - 1), MM), sep = ""),
+                                                collapse = "+"),")^2+", interactions_XC, sep = "")),
+                         data = data, family = binomial)
+            }
+            if ((!fit$converged) | any(is.na(fit$coefficients)))
+              flag <- TRUE
+
+            a <- 1
+            dat2[, 'X' := a]
+
+            if (k != setdiff(first:K, MM)[1]) {
+              for (l in setdiff(1:(k - 1), MM))
+                dat2[, paste("M", l, sep = "") := get(
+                  paste("m", l, "_", a, "_", paste(c(rep(paste(a), (l - 1)), rep("m", K - (l - 1))),
+                                                   collapse = ""), sep = ""))]
+            }
+
+            dat2[, paste("m", k, "_", a, "_",
+                         paste(c(rep(paste(a), min(k - 1, MM - 1)), "m", rep(paste(a), max(k - 1 - MM, 0)),
+                                 rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))), collapse = ""),
+                         sep = "") := rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
+          }
+
         } else {
+          # without intermediate confounders
           fit <- glm(as.formula(paste("M", k, "~(X+",
                                       paste(paste("M", setdiff(1:(k - 1), MM), sep = ""),
                                             collapse = "+"),")^2+", interactions_XC, sep = "")),
                      data = data, family = binomial)
-        }
-        if ((!fit$converged) | any(is.na(fit$coefficients)))
-          flag <- TRUE
 
-        a <- 1
-        dat2[, 'X' := a]
+          if ((!fit$converged) | any(is.na(fit$coefficients)))
+            flag <- TRUE
 
-        if (first == 1 & k != setdiff(first:K, MM)[1]) {
+          a <- 1
+          dat2[, 'X' := a]
+
           for (l in setdiff(1:(k - 1), MM))
             dat2[, paste("M", l, sep = "") := get(
               paste("m", l, "_", a, "_", paste(c(rep(paste(a), (l - 1)), rep("m", K - (l - 1))),
                                                collapse = ""), sep = ""))]
-        }
 
-        dat2[, paste("m", k, "_", a, "_",
-                     paste(c(rep(paste(a), min(k - 1, MM - 1)), "m", rep(paste(a), max(k - 1 - MM, 0)),
-                             rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))), collapse = ""),
-                     sep = "") := rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
+          dat2[, paste("m", k, "_", a, "_",
+                       paste(c(rep(paste(a), min(k - 1, MM - 1)), "m", rep(paste(a), max(k - 1 - MM, 0)),
+                               rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))), collapse = ""),
+                       sep = "") := rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
+        }
       }
     }
   }
