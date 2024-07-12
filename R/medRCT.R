@@ -201,11 +201,7 @@ medRCT.fun <- function(dat,
         # with intermediate confounders
         if (first == 1){
           if(MM != 1 & k == setdiff(first:K, MM)[1]) {
-            a <- 1
-            dat2[, paste("M", k, sep = "") := get(
-              paste("m", k, "_", a, "_",
-                    paste(c(rep(paste(a), (k - 1)), rep("m", K - (k - 1))), collapse = ""),
-                    sep = ""))]
+            next
           } else {
             if (MM == 1 & k == setdiff(first:K, MM)[1]){
               fit <- glm(as.formula(paste("M", k, "~X+", interactions_XC, sep = "")),
