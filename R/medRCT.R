@@ -24,7 +24,7 @@ utils::globalVariables(".SD")
 #' ‘shift_k_order’ is to estimate the interventional effect under shifting the distribution of mediator k, independently of the its
 #' antecedent mediators, while allowing for the flow on effect of mediator k on its descendent mediators.
 #' @param mcsim the number of Monte Carlo simulations to conduct
-#' @param boostrap logical. If \code{TRUE}, bootstrap will be conducted.
+#' @param bootstrap logical. If \code{TRUE}, bootstrap will be conducted.
 #' @param boot_args a \code{list} of bootstrapping arguments. \code{R} is the number of bootstrap replicates.
 #' \code{stype} indicates what the second argument of \code{statistics} in the \code{boot} function represents
 #' @param ... other arguments passed to the \code{boot} function in the \code{boot} package.
@@ -33,7 +33,7 @@ utils::globalVariables(".SD")
 medRCT <- function(dat, exposure, outcome, mediators, intermediate_confs, confounders,
                    interactions_XC = "all",
                    intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"), mcsim,
-                   boostrap = TRUE,
+                   bootstrap = TRUE,
                    boot_args = list(R = 100, stype = "i"), ...) {
   intervention_type = sapply(intervention_type, function(arg) match.arg(arg, choices = c("all", "shift_all", "shift_k", "shift_k_order")))
   ci.type = "perc"
@@ -61,7 +61,7 @@ medRCT <- function(dat, exposure, outcome, mediators, intermediate_confs, confou
     interactions_XC <- gsub(exposure, "X", interactions_XC)
   }
 
-  if (boostrap == FALSE) {
+  if (bootstrap == FALSE) {
     boot_args$R = 1
   }
 
@@ -78,7 +78,7 @@ medRCT <- function(dat, exposure, outcome, mediators, intermediate_confs, confou
     ...
   )
 
-  if (boostrap == TRUE) {
+  if (bootstrap == TRUE) {
     est = boot.out$t0
     se = apply(boot.out$t, 2, stats::sd)
     pval <- 2 * (1 - stats::pnorm(q = abs(est / se)))
@@ -96,12 +96,12 @@ medRCT <- function(dat, exposure, outcome, mediators, intermediate_confs, confou
       ciupp = ciupp,
       sample.size = nrow(dat),
       mcsim = mcsim,
-      boostrap = boostrap
+      bootstrap = bootstrap
     )
   } else {
     out = list(
       est = boot.out$t0,
-      boostrap = boostrap
+      bootstrap = bootstrap
     )
   }
 
@@ -133,7 +133,7 @@ medRCT.fun <- function(dat,
                        interactions_XC = interactions_XC,
                        intervention_type = intervention_type,
                        mcsim) {
-  # Take boostrap sample
+  # Take bootstrap sample
   data <- dat[ind, ]
 
   # Set flag to capure bootstrap samples to reject
