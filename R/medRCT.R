@@ -24,7 +24,7 @@ utils::globalVariables(".SD")
 #' ‘shift_k_order’ is to estimate the interventional effect under shifting the distribution of mediator k, independently of the its
 #' antecedent mediators, while allowing for the flow on effect of mediator k on its descendent mediators.
 #' @param mcsim the number of Monte Carlo simulations to conduct
-#' @param boostrap logical. If \code{TRUE}, bootstrap will be conducted.
+#' @param bootstrap logical. If \code{TRUE}, bootstrap will be conducted.
 #' @param boot_args a \code{list} of bootstrapping arguments. \code{R} is the number of bootstrap replicates.
 #' \code{stype} indicates what the second argument of \code{statistics} in the \code{boot} function represents
 #' @param ... other arguments passed to the \code{boot} function in the \code{boot} package.
@@ -33,7 +33,7 @@ utils::globalVariables(".SD")
 medRCT <- function(dat, exposure, outcome, mediators, intermediate_confs, confounders,
                    interactions_XC = "all",
                    intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"), mcsim,
-                   boostrap = TRUE,
+                   bootstrap = TRUE,
                    boot_args = list(R = 100, stype = "i"), ...) {
   intervention_type = sapply(intervention_type, function(arg) match.arg(arg, choices = c("all", "shift_all", "shift_k", "shift_k_order")))
   ci.type = "perc"
@@ -61,7 +61,7 @@ medRCT <- function(dat, exposure, outcome, mediators, intermediate_confs, confou
     interactions_XC <- gsub(exposure, "X", interactions_XC)
   }
 
-  if (boostrap == FALSE) {
+  if (bootstrap == FALSE) {
     boot_args$R = 1
   }
 
@@ -78,7 +78,7 @@ medRCT <- function(dat, exposure, outcome, mediators, intermediate_confs, confou
     ...
   )
 
-  if (boostrap == TRUE) {
+  if (bootstrap == TRUE) {
     est = boot.out$t0
     se = apply(boot.out$t, 2, stats::sd)
     pval <- 2 * (1 - stats::pnorm(q = abs(est / se)))
@@ -96,12 +96,12 @@ medRCT <- function(dat, exposure, outcome, mediators, intermediate_confs, confou
       ciupp = ciupp,
       sample.size = nrow(dat),
       mcsim = mcsim,
-      boostrap = boostrap
+      bootstrap = bootstrap
     )
   } else {
     out = list(
       est = boot.out$t0,
-      boostrap = boostrap
+      bootstrap = bootstrap
     )
   }
 
@@ -133,7 +133,7 @@ medRCT.fun <- function(dat,
                        interactions_XC = interactions_XC,
                        intervention_type = intervention_type,
                        mcsim) {
-  # Take boostrap sample
+  # Take bootstrap sample
   data <- dat[ind, ]
 
   # Set flag to capure bootstrap samples to reject
@@ -198,41 +198,37 @@ medRCT.fun <- function(dat,
   if (any(intervention_type %in% c("all", "shift_k"))) {
     for (MM in first:K) {
       for (k in setdiff(first:K, MM)) {
-        # with intermediate confounders
+        # without intermediate confounders
         if (first == 1){
-          if(MM != 1 & k == setdiff(first:K, MM)[1]) {
-            next
-          } else {
-            if (MM == 1 & k == setdiff(first:K, MM)[1]){
-              fit <- glm(as.formula(paste("M", k, "~X+", interactions_XC, sep = "")),
-                         data = data, family = binomial)
-            } else {
-              fit <- glm(as.formula(paste("M", k, "~(X+",
-                                          paste(paste("M", setdiff(1:(k - 1), MM), sep = ""),
-                                                collapse = "+"),")^2+", interactions_XC, sep = "")),
-                         data = data, family = binomial)
-            }
-            if ((!fit$converged) | any(is.na(fit$coefficients)))
-              flag <- TRUE
+          if (MM == 1 & k == setdiff(first:K, MM)[1]){
+            fit <- glm(as.formula(paste("M", k, "~X+", interactions_XC, sep = "")),
+                       data = data, family = binomial)
+          } else if (!(MM != 1 & k == setdiff(first:K, MM)[1])){
+            fit <- glm(as.formula(paste("M", k, "~(X+",
+                                        paste(paste("M", setdiff(1:(k - 1), MM), sep = ""),
+                                              collapse = "+"),")^2+", interactions_XC, sep = "")),
+                       data = data, family = binomial)
+          }
+          if ((!fit$converged) | any(is.na(fit$coefficients)))
+            flag <- TRUE
 
-            a <- 1
-            dat2[, 'X' := a]
+          a <- 1
+          dat2[, 'X' := a]
 
-            if (k != setdiff(first:K, MM)[1]) {
-              for (l in setdiff(1:(k - 1), MM))
-                dat2[, paste("M", l, sep = "") := get(
-                  paste("m", l, "_", a, "_", paste(c(rep(paste(a), (l - 1)), rep("m", K - (l - 1))),
-                                                   collapse = ""), sep = ""))]
-            }
-
-            dat2[, paste("m", k, "_", a, "_",
-                         paste(c(rep(paste(a), min(k - 1, MM - 1)), "m", rep(paste(a), max(k - 1 - MM, 0)),
-                                 rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))), collapse = ""),
-                         sep = "") := rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
+          if (k != setdiff(first:K, MM)[1]) {
+            for (l in setdiff(1:(k - 1), MM))
+              dat2[, paste("M", l, sep = "") := get(
+                paste("m", l, "_", a, "_", paste(c(rep(paste(a), (l - 1)), rep("m", K - (l - 1))),
+                                                 collapse = ""), sep = ""))]
           }
 
+          dat2[, paste("m", k, "_", a, "_",
+                       paste(c(rep(paste(a), min(k - 1, MM - 1)), "m", rep(paste(a), max(k - 1 - MM, 0)),
+                               rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))), collapse = ""),
+                       sep = "") := rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
+
         } else {
-          # without intermediate confounders
+          # with intermediate confounders
           fit <- glm(as.formula(paste("M", k, "~(X+",
                                       paste(paste("M", setdiff(1:(k - 1), MM), sep = ""),
                                             collapse = "+"),")^2+", interactions_XC, sep = "")),
