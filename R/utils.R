@@ -8,7 +8,7 @@
 #' @method summary medRCT
 #' @export
 summary.medRCT <- function(object, ...){
-  if (object$boostrap == TRUE) {
+  if (object$bootstrap == TRUE) {
     index <- grep("^p", names(object$est))[1]
 
     out1 = cbind(object$est, object$se, object$cilow, object$ciupp, object$pval)[1:index-1,]
