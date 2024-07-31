@@ -14,7 +14,7 @@ medRCT(
   interactions_XC = "all",
   intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"),
   mcsim,
-  boostrap = TRUE,
+  bootstrap = TRUE,
   boot_args = list(R = 100, stype = "i"),
   ...
 )
@@ -47,7 +47,7 @@ antecedent mediators, while allowing for the flow on effect of mediator k on its
 
 \item{mcsim}{the number of Monte Carlo simulations to conduct}
 
-\item{boostrap}{logical. If \code{TRUE}, bootstrap will be conducted.}
+\item{bootstrap}{logical. If \code{TRUE}, bootstrap will be conducted.}
 
 \item{boot_args}{a \code{list} of bootstrapping arguments. \code{R} is the number of bootstrap replicates.
 \code{stype} indicates what the second argument of \code{statistics} in the \code{boot} function represents}
