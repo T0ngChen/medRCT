@@ -36,10 +36,17 @@ medRCT <- function(dat, exposure, outcome, mediators, intermediate_confs, confou
                    bootstrap = TRUE,
                    boot_args = list(R = 100, stype = "i"), ...) {
   intervention_type = sapply(intervention_type, function(arg) match.arg(arg, choices = c("all", "shift_all", "shift_k", "shift_k_order")))
+  # set intervention type when K==1
+  if (length(mediators) == 1 & any(intervention_type %in% c("all", "shift_all", "shift_k_order"))) {
+    intervention_type = "shift_k"
+    message("Only able to estimate the effect type 'shift_k' with a single mediator.")
+  }
+
   ci.type = "perc"
   mediators = c(intermediate_confs, mediators)
   first = length(intermediate_confs) + 1
   K <- length(mediators)
+
   dat <- as.data.frame(dat)
   # Rename all variables & prepare dataset
   dat$X <- dat[, exposure]
