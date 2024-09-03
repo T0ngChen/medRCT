@@ -63,7 +63,6 @@ medRCT <- function(dat,
 
   fam_type = family_type(dat, mediators)
 
-
   # define the first mediator of interest
   first = length(intermediate_confs) + 1
 
@@ -108,6 +107,7 @@ medRCT <- function(dat,
     first = first,
     K = K,
     mcsim = mcsim,
+    fam_type = fam_type,
     interactions_XC = interactions_XC,
     intervention_type = intervention_type,
     stype = boot_args$stype,
@@ -155,6 +155,7 @@ medRCT <- function(dat,
 #' This facilitates the use of this function within the boot() function from the boot package
 #' @param first index of first mediator of interest after combining intermediate confounders with mediators
 #' @param K the number of mediators
+#' @param fam_type family type for mediators
 #' @param interactions_XC a character string specifying the exposure-confounder or confounder-confounder interaction terms
 #' to include in all regression models in the procedure. Defaults to include all two-way exposure-confounder interactions
 #' and no confounder-confounder interactions.
@@ -168,6 +169,7 @@ medRCT.fun <- function(dat,
                        ind = 1:nrow(dat),
                        first = first,
                        K = K,
+                       fam_type = fam_type,
                        interactions_XC = interactions_XC,
                        intervention_type = intervention_type,
                        mcsim) {
@@ -186,43 +188,58 @@ medRCT.fun <- function(dat,
   dat2 <- zoo::coredata(dat2)[rep(seq(nrow(dat2)), mcsim), ]
   n <- nrow(dat2)
 
+  # identify the exposure levels
+  data$X = as.factor(data$X)
+  exposure_level = sort(unique(as.numeric(dat$X)))
+  lnzero = exposure_level[exposure_level!=0]
+
   # ESTIMATE DISTRIBUTIONS
   # Joint of M1 to MK under X=0 and X=1
 
-
   for (k in 1:K) {
-    if (k == 1)
-      fit <- glm(as.formula(paste("M", k, "~X+", interactions_XC, sep = "")), data = data, family = binomial)
-    else
-      fit <- glm(as.formula(paste(
-        "M",
-        k,
-        "~(X+",
-        paste(paste("M", 1:(k - 1), sep = ""), collapse = "+"),
-        ")^2+",
-        interactions_XC,
-        sep = ""
-      )), data = data, family = binomial)
+
+    formula_str <- if (k == 1) {
+      paste0("M", k, "~ X +", interactions_XC)
+    } else {
+      paste0("M", k,
+             "~ (X +",
+             paste(paste("M", 1:(k - 1), sep = ""), collapse = "+"),
+             ")^2 +",
+             interactions_XC)
+    }
+
+    fit <- glm(as.formula(formula_str), data = data, family = fam_type[[k]])
+
     if ((!fit$converged) | any(is.na(fit$coefficients)))
       flag <- TRUE
 
-    for (a in c(0, 1)) {
+    for(a in exposure_level) {
+      dat2$X <- as.numeric(dat2$X)
       dat2$X <- a
+      dat2$X <- as.factor(dat2$X)
 
       if (k != 1) {
         for (l in 1:(k - 1))
           dat2[, paste("M", l, sep = "") := get(paste("m", l, "_", a, "_", paste(c(
-            rep(paste(a), (l - 1)), rep("m", K - (l - 1))
-          ), collapse = ""), sep = ""))]
+                     rep(paste(a), (l - 1)), rep("m", K - (l - 1))
+                  ), collapse = ""), sep = ""))]
       }
 
-      dat2[, paste("m", k, "_", a, "_", paste(c(rep(paste(
-        a
-      ), (
-        k - 1
-      )), rep("m", K - (
-        k - 1
-      ))), collapse = ""), sep = "") := rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
+
+      if(fam_type[[k]]$family == "binomial"){
+        dat2[, paste("m", k, "_", a, "_",
+                     paste(c(rep(paste(a), (k - 1)),
+                             rep("m", K - (k - 1))),
+                           collapse = ""), sep = "") :=
+               rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
+      } else if (fam_type[[k]]$family == "gaussian") {
+        dat2[, paste("m", k, "_", a, "_",
+                     paste(c(rep(paste(a), (k - 1)),
+                             rep("m", K - (k - 1))),
+                           collapse = ""), sep = "") :=
+               rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
+                     sd = sqrt(sum(fit$residuals^2)/df.residual(fit)))]
+      }
     }
   }
 
