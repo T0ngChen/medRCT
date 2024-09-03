@@ -363,6 +363,7 @@ medRCT.fun <- function(dat,
                 rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
                       sd = sqrt(sum(fit$residuals^2)/df.residual(fit)))]
             }
+          }
         }
       }
     }
@@ -373,17 +374,12 @@ medRCT.fun <- function(dat,
   if (any(intervention_type %in% c("all", "shift_k_order"))) {
     for (MM in first:(K - 1)) {
       for (k in (MM + 1):K) {
-        fit <- glm(as.formula(
-          paste(
-            "M",
-            k,
-            "~(X+",
-            paste(paste("M", 1:(k - 1), sep = ""), collapse = "+"),
-            ")^2+",
-            interactions_XC,
-            sep = ""
-          )
-        ), data = data, family = binomial)
+        fit <- glm(as.formula(paste0(
+          "M", k, "~(X+", paste0(paste("M", 1:(k - 1)), collapse = "+"),
+          ")^2+",
+          interactions_XC)),
+          data = data,
+          family = fam_type[[k]])
 
         if ((!fit$converged) | any(is.na(fit$coefficients)))
           flag <- TRUE
