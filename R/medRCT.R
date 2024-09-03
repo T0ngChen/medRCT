@@ -163,7 +163,7 @@ medRCT <- function(dat,
 #' Can be 'all', 'shift_all', 'shift_k', 'shift_k_order'. Default is 'all'.
 #' @param mcsim the number of Monte Carlo simulations to conduct
 #'
-#' @importFrom stats as.formula binomial glm predict rbinom
+#' @importFrom stats as.formula binomial glm predict rbinom rnorm df.residual
 #' @importFrom data.table as.data.table ":="
 medRCT.fun <- function(dat,
                        ind = 1:nrow(dat),
@@ -214,9 +214,9 @@ medRCT.fun <- function(dat,
       flag <- TRUE
 
     for(a in exposure_level) {
-      dat2[, X := as.numeric(X)]
-      dat2[, X := a]
-      dat2[, X := as.factor(X)]
+      dat2[, 'X' := as.numeric(dat2$X)]
+      dat2[, 'X' := a]
+      dat2[, 'X' := as.factor(dat2$X)]
 
       if (k != 1) {
         for (l in 1:(k - 1))
@@ -231,14 +231,14 @@ medRCT.fun <- function(dat,
                      paste(c(rep(paste(a), (k - 1)),
                              rep("m", K - (k - 1))),
                            collapse = ""), sep = "") :=
-               rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
+               stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
       } else if (fam_type[[k]]$family == "gaussian") {
         dat2[, paste("m", k, "_", a, "_",
                      paste(c(rep(paste(a), (k - 1)),
                              rep("m", K - (k - 1))),
                            collapse = ""), sep = "") :=
-               rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                     sd = sqrt(sum(fit$residuals^2)/df.residual(fit)))]
+               stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
+                     sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
       }
     }
   }
@@ -255,18 +255,18 @@ medRCT.fun <- function(dat,
     a <- 0
 
     # covert X to the correct class
-    dat2[, X := as.numeric(X)]
-    dat2[, X := a]
-    dat2[, X := as.factor(X)]
+    dat2[, 'X' := as.numeric(dat2$X)]
+    dat2[, 'X' := a]
+    dat2[, 'X' := as.factor(dat2$X)]
 
 
     if(fam_type[[k]]$family == "binomial"){
       dat2[, paste0("m", k, "_", a, "_", paste(rep("m", K), collapse = "")) :=
-             rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
+             stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
     } else if (fam_type[[k]]$family == "gaussian") {
       dat2[, paste0("m", k, "_", a, "_", paste(rep("m", K), collapse = "")) :=
-             rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                   sd = sqrt(sum(fit$residuals^2)/df.residual(fit)))]
+             stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
+                   sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
     }
   }
 
@@ -293,9 +293,9 @@ medRCT.fun <- function(dat,
             flag <- TRUE
 
           for(a in lnzero){
-            dat2[, X := as.numeric(X)]
-            dat2[, X := a]
-            dat2[, X := as.factor(X)]
+            dat2[, 'X' := as.numeric(dat2$X)]
+            dat2[, 'X' := a]
+            dat2[, 'X' := as.factor(dat2$X)]
 
             if (k != setdiff(first:K, MM)[1]) {
               for (l in setdiff(1:(k - 1), MM))
@@ -311,7 +311,7 @@ medRCT.fun <- function(dat,
                 rep(paste(a), max(k - 1 - MM, 0)),
                 rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
               ), collapse = "")) :=
-                rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
+                stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
             } else if (fam_type[[k]]$family == "gaussian") {
               dat2[, paste0("m", k, "_", a, "_", paste(c(
                 rep(paste(a), min(k - 1, MM - 1)),
@@ -319,8 +319,8 @@ medRCT.fun <- function(dat,
                 rep(paste(a), max(k - 1 - MM, 0)),
                 rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
               ), collapse = "")) :=
-                rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                      sd = sqrt(sum(fit$residuals^2)/df.residual(fit)))]
+                stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
+                      sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
             }
           }
         } else {
@@ -336,9 +336,9 @@ medRCT.fun <- function(dat,
             flag <- TRUE
 
           for(a in lnzero){
-            dat2[, X := as.numeric(X)]
-            dat2[, X := a]
-            dat2[, X := as.factor(X)]
+            dat2[, 'X' := as.numeric(dat2$X)]
+            dat2[, 'X' := a]
+            dat2[, 'X' := as.factor(dat2$X)]
 
             for (l in setdiff(1:(k - 1), MM))
               dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste(c(
@@ -352,7 +352,7 @@ medRCT.fun <- function(dat,
                 rep(paste(a), max(k - 1 - MM, 0)),
                 rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
               ), collapse = "")) :=
-                rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
+                stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
             } else if (fam_type[[k]]$family == "gaussian") {
               dat2[, paste0("m", k, "_", a, "_", paste(c(
                 rep(paste(a), min(k - 1, MM - 1)),
@@ -360,8 +360,8 @@ medRCT.fun <- function(dat,
                 rep(paste(a), max(k - 1 - MM, 0)),
                 rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
               ), collapse = "")) :=
-                rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                      sd = sqrt(sum(fit$residuals^2)/df.residual(fit)))]
+                stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
+                      sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
             }
           }
         }
@@ -385,9 +385,9 @@ medRCT.fun <- function(dat,
           flag <- TRUE
 
         for(a in lnzero){
-          dat2[, X := as.numeric(X)]
-          dat2[, X := a]
-          dat2[, X := as.factor(X)]
+          dat2[, 'X' := as.numeric(dat2$X)]
+          dat2[, 'X' := a]
+          dat2[, 'X' := as.factor(dat2$X)]
 
           if (MM != 1) {
             for (l in 1:(MM - 1))
@@ -414,15 +414,15 @@ medRCT.fun <- function(dat,
               0,
               rep(paste(a), max(k - 1 - MM, 0)),
               rep("m", K - MM - max(k - 1 - MM, 0))), collapse = "")) :=
-                rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
+                stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
           } else if (fam_type[[k]]$family == "gaussian") {
             dat2[, paste0("m", k, "_", a, "_", paste(c(
               rep(paste(a), MM - 1),
               0,
               rep(paste(a), max(k - 1 - MM, 0)),
               rep("m", K - MM - max(k - 1 - MM, 0))), collapse = "")) :=
-                rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                      sd = sqrt(sum(fit$residuals^2)/df.residual(fit)))]
+                stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
+                      sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
           }
         }
       }
@@ -447,9 +447,9 @@ medRCT.fun <- function(dat,
         flag <- TRUE
 
       a <- 0
-      dat2[, X := as.numeric(X)]
-      dat2[, X := a]
-      dat2[, X := as.factor(X)]
+      dat2[, 'X' := as.numeric(dat2$X)]
+      dat2[, 'X' := a]
+      dat2[, 'X' := as.factor(dat2$X)]
 
       for (l in first:(k - 1)) {
         dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste(c(
@@ -460,11 +460,12 @@ medRCT.fun <- function(dat,
       if(fam_type[[k]]$family == "binomial"){
         dat2[, paste0("m", k, "_", a, "_", paste(c(
           rep("m", first - 1), rep(paste(a), k - first), rep("m", K + 1 - k)
-        ), collapse = "")) := rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
+        ), collapse = "")) := stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
       } else if (fam_type[[k]]$family == "gaussian") {
         dat2[, paste0("m", k, "_", a, "_", paste(c(
           rep("m", first - 1), rep(paste(a), k - first), rep("m", K + 1 - k)
-        ), collapse = "")) := rnorm(n, mean = predict(fit,newdata=dat2,type="response"), sd = sqrt(sum(fit$residuals^2)/df.residual(fit)))]
+        ), collapse = "")) := stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
+                                    sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
       }
     }
   }
@@ -473,13 +474,12 @@ medRCT.fun <- function(dat,
   # outcome
   # Y
 
-  fit <- glm(as.formula(paste(
-    "Y~(X+",
-    paste(paste("M", 1:K, sep = ""), collapse = "+"),
-    ")^2+",
-    interactions_XC,
-    sep = ""
-  )), data = data, family = binomial)
+  fit <- glm(as.formula(paste0(
+    "Y~(X+", paste(paste0("M", 1:K), collapse = "+"), ")^2+",
+    interactions_XC)),
+    data = data,
+    family = fam_type[[k]])
+
   if ((!fit$converged) | any(is.na(fit$coefficients)))
     flag <- TRUE
 
@@ -488,11 +488,13 @@ medRCT.fun <- function(dat,
   # p_ctr
 
   a <- 0
+  dat2[, 'X' := as.numeric(dat2$X)]
   dat2[, 'X' := a]
+  dat2[, 'X' := as.factor(dat2$X)]
+
   for (k in 1:K) {
-    dat2[, paste("M", k, sep = "") := get(paste("m", k, "_", a, "_", paste(c(
-      rep(paste(a), (k - 1)), rep("m", K - (k - 1))
-    ), collapse = ""), sep = ""))]
+    dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste(c(
+      rep(paste(a), (k - 1)), rep("m", K - (k - 1))), collapse = "")))]
   }
 
   y0 <- predict(fit, newdata = dat2, type = "response")
@@ -501,124 +503,150 @@ medRCT.fun <- function(dat,
 
 
   # p_trt
-
-  a <- 1
-  dat2[, 'X' := a]
-  for (k in 1:K) {
-    dat2[, paste("M", k, sep = "") := get(paste("m", k, "_", a, "_", paste(c(
-      rep(paste(a), (k - 1)), rep("m", K - (k - 1))
-    ), collapse = ""), sep = ""))]
-  }
-
-  y1 <- predict(fit, newdata = dat2, type = "response")
-
-  p_trt <- mean(y1)
-
-
-  # p_all
-  if (any(intervention_type %in% c("all", "shift_all"))) {
-    a <- 1
+  for(a in lnzero){
+    dat2[, 'X' := as.numeric(dat2$X)]
     dat2[, 'X' := a]
+    dat2[, 'X' := as.factor(dat2$X)]
 
-    if (first > 1) {
-      for (k in 1:(first - 1)) {
-        dat2[, paste("M", k, sep = "") := get(paste("m", k, "_", a, "_", paste(c(
-          rep(paste(a), (k - 1)), rep("m", K - (k - 1))
-        ), collapse = ""), sep = ""))]
-      }
-    }
-
-
-    a <- 0
-    for (k in first:K) {
-      dat2[, paste("M", k, sep = "") := get(paste("m", k, "_", a, "_", paste(c(
-        rep("m", first - 1), rep(paste(a), k - first), rep("m", K + 1 - k)
-      ), collapse = ""), sep = ""))]
+    for (k in 1:K) {
+      dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste(c(
+        rep(paste(a), (k - 1)), rep("m", K - (k - 1))), collapse = "")))]
     }
 
     y1 <- predict(fit, newdata = dat2, type = "response")
 
-    p_all <- mean(y1)
-    # Interventional effects
-    IIE_all <- p_trt - p_all
+    if(length(lnzero) > 1){
+      assign(paste0("p_trt_", a), mean(y1))
+    } else {
+      p_trt <- mean(y1)
+    }
+  }
+
+
+  # p_all
+  if (any(intervention_type %in% c("all", "shift_all"))) {
+    for(a in lnzero){
+      dat2[, 'X' := as.numeric(dat2$X)]
+      dat2[, 'X' := a]
+      dat2[, 'X' := as.factor(dat2$X)]
+
+      if (first > 1) {
+        for (k in 1:(first - 1)) {
+          dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste(c(
+            rep(paste(a), (k - 1)), rep("m", K - (k - 1))),
+            collapse = "")))]
+        }
+      }
+
+      # all mediators of interest
+      for (k in first:K) {
+        dat2[, paste0("M", k) := get(paste0("m", k, "_", 0, "_", paste(c(
+          rep("m", first - 1), rep(paste(0), k - first), rep("m", K + 1 - k)
+        ), collapse = "")))]
+      }
+
+      y1 <- predict(fit, newdata = dat2, type = "response")
+
+      if(length(lnzero) > 1){
+        assign(paste0("p_all_",a), mean(y1))
+        # IIE
+        assign(paste0("IIE_all_",a), get(paste0("p_trt_", a))-get(paste0("p_all_", a)))
+      } else {
+        p_all <- mean(y1)
+        # IIE
+        IIE_all <- p_trt - p_all
+      }
+    }
   }
 
 
   # p_first....p_K
   if (any(intervention_type %in% c("all", "shift_k"))) {
-    a <- 1
-    dat2[, 'X' := a]
+    for(a in lnzero){
+      dat2[, 'X' := as.numeric(dat2$X)]
+      dat2[, 'X' := a]
+      dat2[, 'X' := as.factor(dat2$X)]
 
-    if (first > 1) {
-      for (k in 1:(first - 1)) {
-        dat2[, paste("M", k, sep = "") :=  get(paste("m", k, "_", a, "_", paste(c(
-          rep(paste(a), (k - 1)), rep("m", K - (k - 1))
-        ), collapse = ""), sep = ""))]
-      }
-    }
-
-    for (MM in first:K) {
-      dat2[, paste("M", MM, sep = "") := get(paste("m", MM, "_", 0, "_", paste(paste(
-        rep("m", K), sep = ""
-      ), collapse = ""), sep = ""))]
-
-      for (k in setdiff(first:K, MM)) {
-        dat2[, paste("M", k, sep = "") := get(paste("m", k, "_", a, "_", paste(c(
-          rep(paste(a), min(k - 1, MM - 1)),
-          "m",
-          rep(paste(a), max(k - 1 - MM, 0)),
-          rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
-        ), collapse = ""), sep = ""))]
+      if (first > 1) {
+        for (k in 1:(first - 1)) {
+          dat2[, paste("M", k) :=  get(paste0("m", k, "_", a, "_", paste(c(
+            rep(paste(a), (k - 1)), rep("m", K - (k - 1))
+          ), collapse = "")))]
+        }
       }
 
-      y0 <- predict(fit, newdata = dat2, type = "response")
+      for (MM in first:K) {
+        dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_", paste(paste0(
+          rep("m", K)), collapse = "")))]
 
-      assign(paste("p_", MM, sep = ""), mean(y0))
+        for (k in setdiff(first:K, MM)) {
+          dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste(c(
+            rep(paste(a), min(k - 1, MM - 1)),
+            "m",
+            rep(paste(a), max(k - 1 - MM, 0)),
+            rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
+          ), collapse = "")))]
+        }
+
+        y0 <- predict(fit, newdata = dat2, type = "response")
+
+        if(length(lnzero) > 1){
+          assign(paste0("p_", MM, "_", a), mean(y0))
+          # IIE
+          assign(paste("IIE_", MM, "_", a, sep=""), get(paste0("p_trt_", a)) - get(paste0("p_", MM, "_", a)))
+        } else {
+          assign(paste("p_", MM, sep = ""), mean(y0))
+          # IIE
+          assign(paste("IIE_", MM, sep = ""), p_trt - get(paste0("p_", MM)))
+        }
+      }
     }
-    # Interventional effects
-    for (k in first:K)
-      assign(paste("IIE_", k, sep = ""), p_trt - get(paste("p_", k, sep =
-                                                             "")))
   }
 
 
   # p_first_prime....p_Kminus1_prime
   if (any(intervention_type %in% c("all", "shift_k_order"))) {
-    a <- 1
-    dat2$X <- a
+    for(a in lnzero){
+      dat2[, 'X' := as.numeric(dat2$X)]
+      dat2[, 'X' := a]
+      dat2[, 'X' := as.factor(dat2$X)]
 
-    for (MM in first:(K - 1)) {
-      if (MM != 1) {
-        for (k in 1:(MM - 1)) {
-          dat2[, paste("M", k, sep = "") := get(paste("m", k, "_", a, "_", paste(c(
-            rep(paste(a), (k - 1)), rep("m", K - (k - 1))
-          ), collapse = ""), sep = ""))]
+      for (MM in first:(K - 1)) {
+        if (MM != 1) {
+          for (k in 1:(MM - 1)) {
+            dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste(c(
+              rep(paste(a), (k - 1)), rep("m", K - (k - 1))
+            ), collapse = "")))]
+          }
+        }
+
+        dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
+                                             paste(paste0(rep("m", K)), collapse = "")))]
+
+        if ((MM + 1) <= K) {
+          for (k in (MM + 1):K) {
+            dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste(c(
+              rep(paste(a), MM - 1),
+              0,
+              rep(paste(a), max(k - 1 - MM, 0)),
+              rep("m", K - MM - max(k - 1 - MM, 0))
+            ), collapse = "")))]
+          }
+        }
+
+        y0 <- predict(fit, newdata = dat2, type = "response")
+
+        if(length(lnzero) > 1){
+          assign(paste0("p_", MM, "_prime", "_", a), mean(y0))
+          # IIE
+          assign(paste0("IIE_", MM,"_prime_", a), get(paste0("p_trt_", a)) - get(paste0("p_", MM, "_prime_", a)))
+        } else {
+          assign(paste0("p_", MM, "_prime"), mean(y0))
+          # IIE
+          assign(paste0("IIE_", MM, "_prime"), p_trt - get(paste0("p_", MM, "_prime")))
         }
       }
-
-      dat2[, paste("M", MM, sep = "") := get(paste("m", MM, "_", 0, "_", paste(paste(
-        rep("m", K), sep = ""
-      ), collapse = ""), sep = ""))]
-
-      if ((MM + 1) <= K) {
-        for (k in (MM + 1):K) {
-          dat2[, paste("M", k, sep = "") := get(paste("m", k, "_", a, "_", paste(c(
-            rep(paste(a), MM - 1),
-            0,
-            rep(paste(a), max(k - 1 - MM, 0)),
-            rep("m", K - MM - max(k - 1 - MM, 0))
-          ), collapse = ""), sep = ""))]
-        }
-      }
-
-      y0 <- predict(fit, newdata = dat2, type = "response")
-
-      assign(paste("p_", MM, "_prime", sep = ""), mean(y0))
     }
-    # Interventional effects
-    for (k in first:(K - 1))
-      assign(paste("IIE_", k, "_prime", sep = ""), p_trt - get(paste("p_", k, "_prime", sep =
-                                                                       "")))
   }
 
 
@@ -628,60 +656,164 @@ medRCT.fun <- function(dat,
   res <- vector()
   res_names <- vector()
 
+
+  # save results for IIE_k
   if (any(intervention_type %in% c("all", "shift_k"))) {
-    res <- c(res, unlist(lapply(first:K, function(k)
-      get(
-        paste("IIE_", k, sep = "")
-      ))))
-    res_names <- c(res_names,
-                   paste0(
-                     "IIE_",
-                     first:K - (first - 1),
-                     " (p_trt - p_",
-                     first:K - (first - 1),
-                     ")"
-                   ))
+    if(length(lnzero) > 1){
+      res <- c(res, unlist(sapply(lnzero, function(a) {
+        sapply(first:K, function(k) {
+          get(paste("IIE_", k, "_", a, sep=""))
+        })
+      })))
+
+      res_names <- c(res_names,
+                     paste0(
+                       "IIE_",
+                       rep(first:K - (first - 1), length(lnzero)), "_",
+                       rep(lnzero, each = length(first:K)),
+                       " (p_trt_",
+                       rep(lnzero, each = length(first:K)),
+                       " - p_",
+                       rep(first:K - (first - 1), length(lnzero)), "_",
+                       rep(lnzero, each = length(first:K)),
+                       ")"
+                     ))
+    } else {
+      res <- c(res, sapply(first:K, function(k)
+        get(paste0("IIE_", k))))
+
+      res_names <- c(res_names,
+                     paste0(
+                       "IIE_",
+                       first:K - (first - 1),
+                       " (p_trt - p_",
+                       first:K - (first - 1),
+                       ")"
+                     ))
+    }
   }
 
+  # save results for IIE_k_prime
   if (any(intervention_type %in% c("all", "shift_k_order"))) {
-    res <- c(res, unlist(lapply(first:(K - 1), function(k)
-      get(
-        paste("IIE_", k, "_prime", sep = "")
-      ))))
-    res_names <- c(res_names,
-                   paste0(
-                     "IIE_",
-                     first:(K - 1) - (first - 1),
-                     "_prime",
-                     " (p_trt - p_",
-                     first:(K - 1) - (first - 1),
-                     "_prime)"
-                   ))
-  }
-  if (any(intervention_type %in% c("all", "shift_all"))) {
-    res <- c(res, IIE_all)
-    res_names <- c(res_names, "IIE_all (p_trt - p_all)")
-  }
-  res <- c(res, p_trt, p_ctr)
-  res_names <- c(res_names, "p_trt", "p_ctr")
-  if (any(intervention_type %in% c("all", "shift_k"))) {
-    res <- c(res, unlist(lapply(first:K, function(k)
-      get(
-        paste("p_", k, sep = "")
-      ))))
-    res_names <- c(res_names, paste("p_", first:K - (first - 1), sep = ""))
+    if(length(lnzero) > 1){
+      res <- c(res, unlist(sapply(lnzero, function(a) {
+        sapply(first:(K-1), function(k) {
+          get(paste0("IIE_", k, "_prime_", a))
+        })
+      })))
+
+      res_names <- c(res_names,
+                     paste0(
+                       "IIE_",
+                       rep(first:(K - 1) - (first - 1), length(lnzero)), "_",
+                       rep(lnzero, each = length(first:(K - 1))), "_prime",
+                       " (p_trt_",
+                       rep(lnzero, each = length(first:(K - 1))),
+                       " - p_",
+                       rep(first:(K - 1) - (first - 1), length(lnzero)), "_",
+                       rep(lnzero, each = length(first:(K - 1))),
+                       "_prime)"
+                     ))
+    } else {
+
+      res <- c(res, sapply(first:(K - 1), function(k)
+        get(paste0("IIE_", k, "_prime"))))
+
+      res_names <- c(res_names,
+                     paste0(
+                       "IIE_",
+                       first:(K - 1) - (first - 1),
+                       "_prime",
+                       " (p_trt - p_",
+                       first:(K - 1) - (first - 1),
+                       "_prime)"
+                     ))
+    }
   }
 
-  if (any(intervention_type %in% c("all", "shift_k_order"))) {
-    res <- c(res, unlist(lapply(first:(K - 1), function(k)
-      get(
-        paste("p_", k, "_prime", sep = "")
-      ))))
-    res_names <- c(res_names, paste("p_", first:(K - 1) - (first - 1), "_prime", sep = ""))
-  }
+  # save results for IIE_k_all
+
   if (any(intervention_type %in% c("all", "shift_all"))) {
-    res <- c(res, p_all)
-    res_names <- c(res_names, "p_all")
+    if(length(lnzero) > 1){
+      res <- c(res, sapply(lnzero, function(a) {
+        get(paste0("IIE_all_", a))
+      }))
+
+      res_names <- c(res_names, paste0("IIE_all_", lnzero,
+                     " (p_trt_", lnzero, " - p_all_", lnzero, ")"))
+
+    } else {
+      res <- c(res, IIE_all)
+      res_names <- c(res_names, "IIE_all (p_trt - p_all)")
+      }
+  }
+
+  # p_trt & p_ctr
+  if(length(lnzero) > 1){
+    res <- c(res, sapply(lnzero, function(a) {
+      get(paste0("p_trt_", a))
+    }), p_ctr)
+    res_names <- c(res_names, paste0("p_trt_", lnzero), "p_ctr")
+  } else {
+    res <- c(res, p_trt, p_ctr)
+    res_names <- c(res_names, "p_trt", "p_ctr")
+  }
+
+  # p_k
+  if (any(intervention_type %in% c("all", "shift_k"))) {
+    if(length(lnzero) > 1){
+      res <- c(res, unlist(sapply(lnzero, function(a) {
+        sapply(first:K, function(k) {
+          get(paste0("p_", k, "_", a))
+        })
+      })))
+
+      res_names <- c(res_names,
+                     paste0("p_",
+                            rep(first:K - (first - 1), length(lnzero)),
+                            "_",
+                            rep(lnzero, each = length(first:K))))
+    } else {
+      res <- c(res, sapply(first:K, function(k)
+        get(paste0("p_", k))))
+      res_names <- c(res_names, paste0("p_", first:K - (first - 1)))
+    }
+  }
+
+  # p_k_prime
+  if (any(intervention_type %in% c("all", "shift_k_order"))) {
+    if(length(lnzero) > 1){
+      res <- c(res, unlist(sapply(lnzero, function(a) {
+        sapply(first:(K-1), function(k) {
+          get(paste0("p_", k, "_prime_", a))
+        })
+      })))
+
+      res_names <- c(res_names,
+                     paste0("p_",
+                            rep(first:(K-1) - (first - 1), length(lnzero)),
+                            "_prime_",
+                            rep(lnzero, each = length(first:(K-1)))))
+
+    } else {
+      res <- c(res, sapply(first:(K - 1), function(k)
+        get(paste0("p_", k, "_prime"))))
+      res_names <- c(res_names, paste0("p_", first:(K - 1) - (first - 1), "_prime"))
+    }
+  }
+
+  # p_all
+  if (any(intervention_type %in% c("all", "shift_all"))) {
+    if(length(lnzero) > 1){
+      res <- c(res, sapply(lnzero, function(a) {
+        get(paste0("p_all_", a))
+      }))
+
+      res_names <- c(res_names, paste0("p_all_", lnzero))
+    } else {
+      res <- c(res, p_all)
+      res_names <- c(res_names, "p_all")
+    }
   }
   names(res) = res_names
 
