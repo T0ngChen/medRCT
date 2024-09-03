@@ -37,7 +37,7 @@ summary.medRCT <- function(object, ...){
 
 
 
-#' Determine Variable Type
+#' Determine Family Type for GLM
 #'
 #' @param data A data frame containing the variables to be analyzed.
 #' @param variable_names A character vector of variable names to check. Each variable name should correspond
@@ -45,17 +45,17 @@ summary.medRCT <- function(object, ...){
 #' @param unique_threshold An integer value specifying the minimum number of unique values for a variable to
 #' be considered continuous. Default is 10.
 #'
-#' @return A named character vector where each element corresponds to a variable name from `variable_names`
-#' and the value is either "continuous" or "binary", indicating the type of the variable.
+#' @return A list where each element corresponds to a family type for variables from `variable_names`
+#' and the value is either "binomial()" or "gaussian()", indicating the type of the family.
 #'
 #' @export
-var_type <- function(data, variable_names, unique_threshold = 10) {
-  result <- sapply(variable_names, function(var) {
+family_type <- function(data, variable_names, unique_threshold = 10) {
+  result <- lapply(variable_names, function(var) {
     unique_vals <- unique(data[[var]])
     if (length(unique_vals) == 2) {
-      return("binary")
+      return(binomial())
     } else if (length(unique_vals) > unique_threshold) {
-      return("continuous")
+      return(gaussian())
     } else {
       stop("Error: The variable must be either continuous or binary.")
     }

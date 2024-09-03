@@ -61,7 +61,8 @@ medRCT <- function(dat,
 
   mediators = c(intermediate_confs, mediators)
 
-  med_type = var_type(dat, mediators)
+  fam_type = family_type(dat, mediators)
+
 
   # define the first mediator of interest
   first = length(intermediate_confs) + 1
