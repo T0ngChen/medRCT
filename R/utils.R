@@ -47,15 +47,15 @@ summary.medRCT <- function(object, ...){
 #'
 #' @return A list where each element corresponds to a family type for variables from `variable_names`
 #' and the value is either "binomial()" or "gaussian()", indicating the type of the family.
-#'
+#' @importFrom stats binomial gaussian
 #' @export
 family_type <- function(data, variable_names, unique_threshold = 10) {
   result <- lapply(variable_names, function(var) {
     unique_vals <- unique(data[[var]])
     if (length(unique_vals) == 2) {
-      return(binomial())
+      return(stats::binomial())
     } else if (length(unique_vals) > unique_threshold) {
-      return(gaussian())
+      return(stats::gaussian())
     } else {
       stop("Error: The variable must be either continuous or binary.")
     }
