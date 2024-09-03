@@ -74,8 +74,8 @@ medRCT <- function(dat,
   dat$X <- dat[, exposure]
   dat$Y <- dat[, outcome]
   for (k in 1:K)
-    dat[, paste("M", k, sep = "")] <- dat[, mediators[k]]
-  dat <- dat[, c("X", paste("M", 1:K, sep = ""), "Y", confounders)]
+    dat[, paste0("M", k)] <- dat[, mediators[k]]
+  dat <- dat[, c("X", paste0("M", 1:K), "Y", confounders)]
 
   # count the No. of missing values
   no.miss = nrow(dat) - sum(stats::complete.cases(dat))
@@ -203,7 +203,7 @@ medRCT.fun <- function(dat,
     } else {
       paste0("M", k,
              "~ (X +",
-             paste(paste("M", 1:(k - 1), sep = ""), collapse = "+"),
+             paste0(paste0("M", 1:(k - 1)), collapse = "+"),
              ")^2 +",
              interactions_XC)
     }
@@ -220,23 +220,23 @@ medRCT.fun <- function(dat,
 
       if (k != 1) {
         for (l in 1:(k - 1))
-          dat2[, paste("M", l, sep = "") := get(paste("m", l, "_", a, "_", paste(c(
-                     rep(paste(a), (l - 1)), rep("m", K - (l - 1))
-                  ), collapse = ""), sep = ""))]
+          dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste0(c(
+                     rep(paste0(a), (l - 1)), rep("m", K - (l - 1))
+                  ), collapse = "")))]
       }
 
 
       if(fam_type[[k]]$family == "binomial"){
-        dat2[, paste("m", k, "_", a, "_",
-                     paste(c(rep(paste(a), (k - 1)),
+        dat2[, paste0("m", k, "_", a, "_",
+                     paste0(c(rep(paste0(a), (k - 1)),
                              rep("m", K - (k - 1))),
-                           collapse = ""), sep = "") :=
+                           collapse = "")) :=
                stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
       } else if (fam_type[[k]]$family == "gaussian") {
-        dat2[, paste("m", k, "_", a, "_",
-                     paste(c(rep(paste(a), (k - 1)),
+        dat2[, paste0("m", k, "_", a, "_",
+                     paste0(c(rep(paste0(a), (k - 1)),
                              rep("m", K - (k - 1))),
-                           collapse = ""), sep = "") :=
+                           collapse = "")) :=
                stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
                      sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
       }
@@ -261,10 +261,10 @@ medRCT.fun <- function(dat,
 
 
     if(fam_type[[k]]$family == "binomial"){
-      dat2[, paste0("m", k, "_", a, "_", paste(rep("m", K), collapse = "")) :=
+      dat2[, paste0("m", k, "_", a, "_", paste0(rep("m", K), collapse = "")) :=
              stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
     } else if (fam_type[[k]]$family == "gaussian") {
-      dat2[, paste0("m", k, "_", a, "_", paste(rep("m", K), collapse = "")) :=
+      dat2[, paste0("m", k, "_", a, "_", paste0(rep("m", K), collapse = "")) :=
              stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
                    sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
     }
@@ -279,12 +279,12 @@ medRCT.fun <- function(dat,
         # without intermediate confounders
         if (first == 1) {
           if (MM == 1 & k == setdiff(first:K, MM)[1]) {
-            fit <- glm(as.formula(paste("M", k, "~X+", interactions_XC, sep = "")),
+            fit <- glm(as.formula(paste0("M", k, "~X+", interactions_XC)),
                        data = data,
                        family = fam_type[[k]])
           } else if (!(MM != 1 & k == setdiff(first:K, MM)[1])) {
             fit <- glm(as.formula(
-              paste0("M", k, "~(X+", paste(paste0("M", setdiff(1:(k - 1), MM)), collapse = "+"),
+              paste0("M", k, "~(X+", paste0(paste0("M", setdiff(1:(k - 1), MM)), collapse = "+"),
                 ")^2+", interactions_XC)),
               data = data,
               family = fam_type[[k]])
@@ -299,24 +299,24 @@ medRCT.fun <- function(dat,
 
             if (k != setdiff(first:K, MM)[1]) {
               for (l in setdiff(1:(k - 1), MM))
-                dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste(c(
-                  rep(paste(a), (l - 1)), rep("m", K - (l - 1))
+                dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste0(c(
+                  rep(paste0(a), (l - 1)), rep("m", K - (l - 1))
                   ), collapse = "")))]
             }
 
             if(fam_type[[k]]$family == "binomial"){
-              dat2[, paste0("m", k, "_", a, "_", paste(c(
-                rep(paste(a), min(k - 1, MM - 1)),
+              dat2[, paste0("m", k, "_", a, "_", paste0(c(
+                rep(paste0(a), min(k - 1, MM - 1)),
                 "m",
-                rep(paste(a), max(k - 1 - MM, 0)),
+                rep(paste0(a), max(k - 1 - MM, 0)),
                 rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
               ), collapse = "")) :=
                 stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
             } else if (fam_type[[k]]$family == "gaussian") {
-              dat2[, paste0("m", k, "_", a, "_", paste(c(
-                rep(paste(a), min(k - 1, MM - 1)),
+              dat2[, paste0("m", k, "_", a, "_", paste0(c(
+                rep(paste0(a), min(k - 1, MM - 1)),
                 "m",
-                rep(paste(a), max(k - 1 - MM, 0)),
+                rep(paste0(a), max(k - 1 - MM, 0)),
                 rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
               ), collapse = "")) :=
                 stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
@@ -340,24 +340,26 @@ medRCT.fun <- function(dat,
             dat2[, 'X' := a]
             dat2[, 'X' := as.factor(dat2$X)]
 
-            for (l in setdiff(1:(k - 1), MM))
-              dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste(c(
-                rep(paste(a), (l - 1)), rep("m", K - (l - 1))
-              ), collapse = "")))]
+            if(k!=1){
+              for (l in setdiff(1:(k - 1), MM))
+                dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste0(c(
+                  rep(paste0(a), (l - 1)), rep("m", K - (l - 1))
+                ), collapse = "")))]
+            }
 
             if(fam_type[[k]]$family == "binomial"){
-              dat2[, paste0("m", k, "_", a, "_", paste(c(
-                rep(paste(a), min(k - 1, MM - 1)),
+              dat2[, paste0("m", k, "_", a, "_", paste0(c(
+                rep(paste0(a), min(k - 1, MM - 1)),
                 "m",
-                rep(paste(a), max(k - 1 - MM, 0)),
+                rep(paste0(a), max(k - 1 - MM, 0)),
                 rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
               ), collapse = "")) :=
                 stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
             } else if (fam_type[[k]]$family == "gaussian") {
-              dat2[, paste0("m", k, "_", a, "_", paste(c(
-                rep(paste(a), min(k - 1, MM - 1)),
+              dat2[, paste0("m", k, "_", a, "_", paste0(c(
+                rep(paste0(a), min(k - 1, MM - 1)),
                 "m",
-                rep(paste(a), max(k - 1 - MM, 0)),
+                rep(paste0(a), max(k - 1 - MM, 0)),
                 rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
               ), collapse = "")) :=
                 stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
@@ -391,35 +393,35 @@ medRCT.fun <- function(dat,
 
           if (MM != 1) {
             for (l in 1:(MM - 1))
-              dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste(c(
-                rep(paste(a), (l - 1)), rep("m", K - (l - 1))), collapse = "")))]
+              dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste0(c(
+                rep(paste0(a), (l - 1)), rep("m", K - (l - 1))), collapse = "")))]
           }
 
           dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
-                                               paste(rep("m", K), collapse = "")))]
+                                               paste0(rep("m", K), collapse = "")))]
 
           if (k > (MM + 1)) {
             for (l in (MM + 1):(k - 1))
-              dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste(c(
-                rep(paste(a), MM - 1),
+              dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste0(c(
+                rep(paste0(a), MM - 1),
                 0,
-                rep(paste(a), max(l - 1 - MM, 0)),
+                rep(paste0(a), max(l - 1 - MM, 0)),
                 rep("m", K - MM - max(l - 1 - MM, 0))
               ), collapse = "")))]
           }
 
           if(fam_type[[k]]$family == "binomial"){
-            dat2[, paste0("m", k, "_", a, "_", paste(c(
-              rep(paste(a), MM - 1),
+            dat2[, paste0("m", k, "_", a, "_", paste0(c(
+              rep(paste0(a), MM - 1),
               0,
-              rep(paste(a), max(k - 1 - MM, 0)),
+              rep(paste0(a), max(k - 1 - MM, 0)),
               rep("m", K - MM - max(k - 1 - MM, 0))), collapse = "")) :=
                 stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
           } else if (fam_type[[k]]$family == "gaussian") {
-            dat2[, paste0("m", k, "_", a, "_", paste(c(
-              rep(paste(a), MM - 1),
+            dat2[, paste0("m", k, "_", a, "_", paste0(c(
+              rep(paste0(a), MM - 1),
               0,
-              rep(paste(a), max(k - 1 - MM, 0)),
+              rep(paste0(a), max(k - 1 - MM, 0)),
               rep("m", K - MM - max(k - 1 - MM, 0))), collapse = "")) :=
                 stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
                       sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
@@ -437,7 +439,7 @@ medRCT.fun <- function(dat,
     for (k in (first + 1):K) {
       fit <- glm(as.formula(
         paste0("M", k, "~(X+",
-          paste(paste0("M", first:(k - 1)), collapse = "+"),
+          paste0(paste0("M", first:(k - 1)), collapse = "+"),
           ")^2+",
           interactions_XC)),
         data = data,
@@ -452,18 +454,18 @@ medRCT.fun <- function(dat,
       dat2[, 'X' := as.factor(dat2$X)]
 
       for (l in first:(k - 1)) {
-        dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste(c(
-          rep("m", first - 1), rep(paste(a), (l - first)), rep("m", K - l + 1)
+        dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste0(c(
+          rep("m", first - 1), rep(paste0(a), (l - first)), rep("m", K - l + 1)
         ), collapse = "")))]
       }
 
       if(fam_type[[k]]$family == "binomial"){
-        dat2[, paste0("m", k, "_", a, "_", paste(c(
-          rep("m", first - 1), rep(paste(a), k - first), rep("m", K + 1 - k)
+        dat2[, paste0("m", k, "_", a, "_", paste0(c(
+          rep("m", first - 1), rep(paste0(a), k - first), rep("m", K + 1 - k)
         ), collapse = "")) := stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
       } else if (fam_type[[k]]$family == "gaussian") {
-        dat2[, paste0("m", k, "_", a, "_", paste(c(
-          rep("m", first - 1), rep(paste(a), k - first), rep("m", K + 1 - k)
+        dat2[, paste0("m", k, "_", a, "_", paste0(c(
+          rep("m", first - 1), rep(paste0(a), k - first), rep("m", K + 1 - k)
         ), collapse = "")) := stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
                                     sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
       }
@@ -475,7 +477,7 @@ medRCT.fun <- function(dat,
   # Y
 
   fit <- glm(as.formula(paste0(
-    "Y~(X+", paste(paste0("M", 1:K), collapse = "+"), ")^2+",
+    "Y~(X+", paste0(paste0("M", 1:K), collapse = "+"), ")^2+",
     interactions_XC)),
     data = data,
     family = fam_type[[k]])
@@ -493,8 +495,8 @@ medRCT.fun <- function(dat,
   dat2[, 'X' := as.factor(dat2$X)]
 
   for (k in 1:K) {
-    dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste(c(
-      rep(paste(a), (k - 1)), rep("m", K - (k - 1))), collapse = "")))]
+    dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste0(c(
+      rep(paste0(a), (k - 1)), rep("m", K - (k - 1))), collapse = "")))]
   }
 
   y0 <- predict(fit, newdata = dat2, type = "response")
@@ -509,8 +511,8 @@ medRCT.fun <- function(dat,
     dat2[, 'X' := as.factor(dat2$X)]
 
     for (k in 1:K) {
-      dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste(c(
-        rep(paste(a), (k - 1)), rep("m", K - (k - 1))), collapse = "")))]
+      dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste0(c(
+        rep(paste0(a), (k - 1)), rep("m", K - (k - 1))), collapse = "")))]
     }
 
     y1 <- predict(fit, newdata = dat2, type = "response")
@@ -532,16 +534,16 @@ medRCT.fun <- function(dat,
 
       if (first > 1) {
         for (k in 1:(first - 1)) {
-          dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste(c(
-            rep(paste(a), (k - 1)), rep("m", K - (k - 1))),
+          dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste0(c(
+            rep(paste0(a), (k - 1)), rep("m", K - (k - 1))),
             collapse = "")))]
         }
       }
 
       # all mediators of interest
       for (k in first:K) {
-        dat2[, paste0("M", k) := get(paste0("m", k, "_", 0, "_", paste(c(
-          rep("m", first - 1), rep(paste(0), k - first), rep("m", K + 1 - k)
+        dat2[, paste0("M", k) := get(paste0("m", k, "_", 0, "_", paste0(c(
+          rep("m", first - 1), rep(paste0(0), k - first), rep("m", K + 1 - k)
         ), collapse = "")))]
       }
 
@@ -569,21 +571,21 @@ medRCT.fun <- function(dat,
 
       if (first > 1) {
         for (k in 1:(first - 1)) {
-          dat2[, paste("M", k) :=  get(paste0("m", k, "_", a, "_", paste(c(
-            rep(paste(a), (k - 1)), rep("m", K - (k - 1))
+          dat2[, paste0("M", k) :=  get(paste0("m", k, "_", a, "_", paste0(c(
+            rep(paste0(a), (k - 1)), rep("m", K - (k - 1))
           ), collapse = "")))]
         }
       }
 
       for (MM in first:K) {
-        dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_", paste(paste0(
+        dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_", paste0(paste0(
           rep("m", K)), collapse = "")))]
 
         for (k in setdiff(first:K, MM)) {
-          dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste(c(
-            rep(paste(a), min(k - 1, MM - 1)),
+          dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste0(c(
+            rep(paste0(a), min(k - 1, MM - 1)),
             "m",
-            rep(paste(a), max(k - 1 - MM, 0)),
+            rep(paste0(a), max(k - 1 - MM, 0)),
             rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
           ), collapse = "")))]
         }
@@ -593,11 +595,11 @@ medRCT.fun <- function(dat,
         if(length(lnzero) > 1){
           assign(paste0("p_", MM, "_", a), mean(y0))
           # IIE
-          assign(paste("IIE_", MM, "_", a, sep=""), get(paste0("p_trt_", a)) - get(paste0("p_", MM, "_", a)))
+          assign(paste0("IIE_", MM, "_", a), get(paste0("p_trt_", a)) - get(paste0("p_", MM, "_", a)))
         } else {
-          assign(paste("p_", MM, sep = ""), mean(y0))
+          assign(paste0("p_", MM), mean(y0))
           # IIE
-          assign(paste("IIE_", MM, sep = ""), p_trt - get(paste0("p_", MM)))
+          assign(paste0("IIE_", MM), p_trt - get(paste0("p_", MM)))
         }
       }
     }
@@ -614,21 +616,21 @@ medRCT.fun <- function(dat,
       for (MM in first:(K - 1)) {
         if (MM != 1) {
           for (k in 1:(MM - 1)) {
-            dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste(c(
-              rep(paste(a), (k - 1)), rep("m", K - (k - 1))
+            dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste0(c(
+              rep(paste0(a), (k - 1)), rep("m", K - (k - 1))
             ), collapse = "")))]
           }
         }
 
         dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
-                                             paste(paste0(rep("m", K)), collapse = "")))]
+                                             paste0(paste0(rep("m", K)), collapse = "")))]
 
         if ((MM + 1) <= K) {
           for (k in (MM + 1):K) {
-            dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste(c(
-              rep(paste(a), MM - 1),
+            dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste0(c(
+              rep(paste0(a), MM - 1),
               0,
-              rep(paste(a), max(k - 1 - MM, 0)),
+              rep(paste0(a), max(k - 1 - MM, 0)),
               rep("m", K - MM - max(k - 1 - MM, 0))
             ), collapse = "")))]
           }
@@ -662,7 +664,7 @@ medRCT.fun <- function(dat,
     if(length(lnzero) > 1){
       res <- c(res, unlist(sapply(lnzero, function(a) {
         sapply(first:K, function(k) {
-          get(paste("IIE_", k, "_", a, sep=""))
+          get(paste0("IIE_", k, "_", a))
         })
       })))
 
