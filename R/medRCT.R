@@ -375,7 +375,7 @@ medRCT.fun <- function(dat,
     for (MM in first:(K - 1)) {
       for (k in (MM + 1):K) {
         fit <- glm(as.formula(paste0(
-          "M", k, "~(X+", paste0(paste("M", 1:(k - 1)), collapse = "+"),
+          "M", k, "~(X+", paste0(paste0("M", 1:(k - 1)), collapse = "+"),
           ")^2+",
           interactions_XC)),
           data = data,
@@ -384,32 +384,47 @@ medRCT.fun <- function(dat,
         if ((!fit$converged) | any(is.na(fit$coefficients)))
           flag <- TRUE
 
-        a <- 1
-        dat2[, 'X' := a]
+        for(a in lnzero){
+          dat2[, X := as.numeric(X)]
+          dat2[, X := a]
+          dat2[, X := as.factor(X)]
 
-        if (MM != 1) {
-          for (l in 1:(MM - 1))
-            dat2[, paste("M", l, sep = "") := get(paste("m", l, "_", a, "_", paste(c(
-              rep(paste(a), (l - 1)), rep("m", K - (l - 1))
-            ), collapse = ""), sep = ""))]
-        }
-        dat2[, paste("M", MM, sep = "") := get(paste("m", MM, "_", 0, "_", paste(rep("m", K), collapse = ""), sep = ""))]
-        if (k > (MM + 1)) {
-          for (l in (MM + 1):(k - 1))
-            dat2[, paste("M", l, sep = "") := get(paste("m", l, "_", a, "_", paste(c(
+          if (MM != 1) {
+            for (l in 1:(MM - 1))
+              dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste(c(
+                rep(paste(a), (l - 1)), rep("m", K - (l - 1))), collapse = "")))]
+          }
+
+          dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
+                                               paste(rep("m", K), collapse = "")))]
+
+          if (k > (MM + 1)) {
+            for (l in (MM + 1):(k - 1))
+              dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste(c(
+                rep(paste(a), MM - 1),
+                0,
+                rep(paste(a), max(l - 1 - MM, 0)),
+                rep("m", K - MM - max(l - 1 - MM, 0))
+              ), collapse = "")))]
+          }
+
+          if(fam_type[[k]]$family == "binomial"){
+            dat2[, paste0("m", k, "_", a, "_", paste(c(
               rep(paste(a), MM - 1),
               0,
-              rep(paste(a), max(l - 1 - MM, 0)),
-              rep("m", K - MM - max(l - 1 - MM, 0))
-            ), collapse = ""), sep = ""))]
+              rep(paste(a), max(k - 1 - MM, 0)),
+              rep("m", K - MM - max(k - 1 - MM, 0))), collapse = "")) :=
+                rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
+          } else if (fam_type[[k]]$family == "gaussian") {
+            dat2[, paste0("m", k, "_", a, "_", paste(c(
+              rep(paste(a), MM - 1),
+              0,
+              rep(paste(a), max(k - 1 - MM, 0)),
+              rep("m", K - MM - max(k - 1 - MM, 0))), collapse = "")) :=
+                rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
+                      sd = sqrt(sum(fit$residuals^2)/df.residual(fit)))]
+          }
         }
-
-        dat2[, paste("m", k, "_", a, "_", paste(c(
-          rep(paste(a), MM - 1),
-          0,
-          rep(paste(a), max(k - 1 - MM, 0)),
-          rep("m", K - MM - max(k - 1 - MM, 0))
-        ), collapse = ""), sep = "") := rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
       }
     }
   }
@@ -421,32 +436,36 @@ medRCT.fun <- function(dat,
   if (any(intervention_type %in% c("all", "shift_all"))) {
     for (k in (first + 1):K) {
       fit <- glm(as.formula(
-        paste(
-          "M",
-          k,
-          "~(X+",
-          paste(paste("M", first:(k - 1), sep = ""), collapse = "+"),
+        paste0("M", k, "~(X+",
+          paste(paste0("M", first:(k - 1)), collapse = "+"),
           ")^2+",
-          interactions_XC,
-          sep = ""
-        )
-      ), data = data, family = binomial)
+          interactions_XC)),
+        data = data,
+        family = fam_type[[k]])
 
       if ((!fit$converged) | any(is.na(fit$coefficients)))
         flag <- TRUE
 
       a <- 0
-      dat2[, 'X' := a]
+      dat2[, X := as.numeric(X)]
+      dat2[, X := a]
+      dat2[, X := as.factor(X)]
 
       for (l in first:(k - 1)) {
-        dat2[, paste("M", l, sep = "") := get(paste("m", l, "_", a, "_", paste(c(
+        dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste(c(
           rep("m", first - 1), rep(paste(a), (l - first)), rep("m", K - l + 1)
-        ), collapse = ""), sep = ""))]
+        ), collapse = "")))]
       }
 
-      dat2[, paste("m", k, "_", a, "_", paste(c(
-        rep("m", first - 1), rep(paste(a), k - first), rep("m", K + 1 - k)
-      ), collapse = ""), sep = "") := rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
+      if(fam_type[[k]]$family == "binomial"){
+        dat2[, paste0("m", k, "_", a, "_", paste(c(
+          rep("m", first - 1), rep(paste(a), k - first), rep("m", K + 1 - k)
+        ), collapse = "")) := rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
+      } else if (fam_type[[k]]$family == "gaussian") {
+        dat2[, paste0("m", k, "_", a, "_", paste(c(
+          rep("m", first - 1), rep(paste(a), k - first), rep("m", K + 1 - k)
+        ), collapse = "")) := rnorm(n, mean = predict(fit,newdata=dat2,type="response"), sd = sqrt(sum(fit$residuals^2)/df.residual(fit)))]
+      }
     }
   }
 
