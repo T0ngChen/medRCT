@@ -60,7 +60,12 @@ medRCT <- function(dat,
   ci.type = "perc"
 
   mediators = c(intermediate_confs, mediators)
+
+  med_type = var_type(dat, mediators)
+
+  # define the first mediator of interest
   first = length(intermediate_confs) + 1
+
   K <- length(mediators)
 
   dat <- as.data.frame(dat)

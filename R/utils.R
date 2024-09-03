@@ -34,3 +34,32 @@ summary.medRCT <- function(object, ...){
   }
 }
 
+
+
+
+#' Determine Variable Type
+#'
+#' @param data A data frame containing the variables to be analyzed.
+#' @param variable_names A character vector of variable names to check. Each variable name should correspond
+#' to a column in the data frame.
+#' @param unique_threshold An integer value specifying the minimum number of unique values for a variable to
+#' be considered continuous. Default is 10.
+#'
+#' @return A named character vector where each element corresponds to a variable name from `variable_names`
+#' and the value is either "continuous" or "binary", indicating the type of the variable.
+#'
+#' @export
+var_type <- function(data, variable_names, unique_threshold = 10) {
+  result <- sapply(variable_names, function(var) {
+    unique_vals <- unique(data[[var]])
+    if (length(unique_vals) == 2) {
+      return("binary")
+    } else if (length(unique_vals) > unique_threshold) {
+      return("continuous")
+    } else {
+      stop("Error: The variable must be either continuous or binary.")
+    }
+  })
+  return(result)
+}
+
