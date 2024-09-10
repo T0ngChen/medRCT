@@ -474,12 +474,12 @@ medRCT.fun <- function(dat,
 
   # outcome
   # Y
-  outcome_type = faimly_type(dat, Y)
+  outcome_type = family_type(data, "Y")
   fit <- glm(as.formula(paste0(
     "Y~(X+", paste0(paste0("M", 1:K), collapse = "+"), ")^2+",
     interactions_XC)),
     data = data,
-    family = outcome_type)
+    family = outcome_type[[1]])
 
   if ((!fit$converged) | any(is.na(fit$coefficients)))
     flag <- TRUE
