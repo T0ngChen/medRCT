@@ -61,8 +61,6 @@ medRCT <- function(dat,
 
   mediators = c(intermediate_confs, mediators)
 
-  fam_type = family_type(dat, mediators)
-
   # define the first mediator of interest
   first = length(intermediate_confs) + 1
 
@@ -85,6 +83,7 @@ medRCT <- function(dat,
     " observations deleted\n"
   ))
   dat <- dat[stats::complete.cases(dat), ]
+  fam_type = family_type(dat, mediators)
 
   # Prepare confounder terms for formulae
   # (defaults to all exposure-confounder interactions if not provided)
