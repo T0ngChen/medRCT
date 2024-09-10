@@ -67,6 +67,16 @@ medRCT <- function(dat,
   K <- length(mediators)
 
   dat <- as.data.frame(dat)
+  # count the No. of missing values
+  no.miss = nrow(dat) - sum(stats::complete.cases(dat))
+  message(paste0(
+    "Conducting complete case analysis, ",
+    no.miss,
+    " observations were excluded due to missing data.\n"
+  ))
+  dat <- dat[stats::complete.cases(dat), ]
+
+  fam_type = family_type(dat, mediators)
 
   # Rename all variables & prepare dataset
   dat$X <- dat[, exposure]
@@ -74,16 +84,6 @@ medRCT <- function(dat,
   for (k in 1:K)
     dat[, paste0("M", k)] <- dat[, mediators[k]]
   dat <- dat[, c("X", paste0("M", 1:K), "Y", confounders)]
-
-  # count the No. of missing values
-  no.miss = nrow(dat) - sum(stats::complete.cases(dat))
-  message(paste0(
-    "Conducting complete case analysis, ",
-    no.miss,
-    " observations deleted\n"
-  ))
-  dat <- dat[stats::complete.cases(dat), ]
-  fam_type = family_type(dat, mediators)
 
   # Prepare confounder terms for formulae
   # (defaults to all exposure-confounder interactions if not provided)
