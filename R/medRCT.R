@@ -219,10 +219,10 @@ medRCT.fun <- function(dat,
       dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
       if (k != 1) {
-        for (l in 1:(k - 1))
-          dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste0(c(
-                     rep(paste0(a), (l - 1)), rep("m", K - (l - 1))
-                  ), collapse = "")))]
+        l = 1:(k - 1)
+        dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
+                                                       l = l,
+                                                       K = K))]
       }
 
 
@@ -295,10 +295,10 @@ medRCT.fun <- function(dat,
             dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
             if (k != setdiff(first:K, MM)[1]) {
-              for (l in setdiff(1:(k - 1), MM))
-                dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste0(c(
-                  rep(paste0(a), (l - 1)), rep("m", K - (l - 1))
-                  ), collapse = "")))]
+              l = setdiff(1:(k - 1), MM)
+              dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
+                                                             l = l,
+                                                             K = K))]
             }
 
             if(fam_type[[k]]$family == "binomial"){
@@ -337,10 +337,10 @@ medRCT.fun <- function(dat,
             dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
             if(k!=1){
-              for (l in setdiff(1:(k - 1), MM))
-                dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste0(c(
-                  rep(paste0(a), (l - 1)), rep("m", K - (l - 1))
-                ), collapse = "")))]
+              l = setdiff(1:(k - 1), MM)
+              dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
+                                                             l = l,
+                                                             K = K))]
             }
 
             if(fam_type[[k]]$family == "binomial"){
@@ -387,9 +387,10 @@ medRCT.fun <- function(dat,
           dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
           if (MM != 1) {
-            for (l in 1:(MM - 1))
-              dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste0(c(
-                rep(paste0(a), (l - 1)), rep("m", K - (l - 1))), collapse = "")))]
+            l = 1:(MM - 1)
+            dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
+                                                           l = l,
+                                                           K = K))]
           }
 
           dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
@@ -487,10 +488,10 @@ medRCT.fun <- function(dat,
 
   dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
-  for (k in 1:K) {
-    dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste0(c(
-      rep(paste0(a), (k - 1)), rep("m", K - (k - 1))), collapse = "")))]
-  }
+  l = 1:K
+  dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
+                                                 l = l,
+                                                 K = K))]
 
   y0 <- predict(fit, newdata = dat2, type = "response")
 
@@ -502,10 +503,9 @@ medRCT.fun <- function(dat,
 
     dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
-    for (k in 1:K) {
-      dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste0(c(
-        rep(paste0(a), (k - 1)), rep("m", K - (k - 1))), collapse = "")))]
-    }
+    dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
+                                                   l = l,
+                                                   K = K))]
 
     y1 <- predict(fit, newdata = dat2, type = "response")
 
@@ -524,11 +524,10 @@ medRCT.fun <- function(dat,
       dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
       if (first > 1) {
-        for (k in 1:(first - 1)) {
-          dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste0(c(
-            rep(paste0(a), (k - 1)), rep("m", K - (k - 1))),
-            collapse = "")))]
-        }
+        l = 1:(first - 1)
+        dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
+                                                       l = l,
+                                                       K = K))]
       }
 
       # all mediators of interest
@@ -560,11 +559,10 @@ medRCT.fun <- function(dat,
       dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
       if (first > 1) {
-        for (k in 1:(first - 1)) {
-          dat2[, paste0("M", k) :=  get(paste0("m", k, "_", a, "_", paste0(c(
-            rep(paste0(a), (k - 1)), rep("m", K - (k - 1))
-          ), collapse = "")))]
-        }
+        l = 1:(first - 1)
+        dat2[, paste0("M", l) :=  mget(med_outcome_name(a = a,
+                                                        l = l,
+                                                        K = K))]
       }
 
       for (MM in first:K) {
@@ -604,11 +602,11 @@ medRCT.fun <- function(dat,
 
       for (MM in first:(K - 1)) {
         if (MM != 1) {
-          for (k in 1:(MM - 1)) {
-            dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste0(c(
-              rep(paste0(a), (k - 1)), rep("m", K - (k - 1))
-            ), collapse = "")))]
-          }
+          l = 1:(MM - 1)
+
+          dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
+                                                         l = l,
+                                                         K = K))]
         }
 
         dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
