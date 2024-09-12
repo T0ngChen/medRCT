@@ -253,10 +253,10 @@ medRCT.fun <- function(dat,
 
 
     if(fam_type[[k]]$family == "binomial"){
-      dat2[, paste0("m", k, "_", a, "_", paste0(rep("m", K), collapse = "")) :=
+      dat2[, paste0("m", k, "_", a, "_", strrep("m", K)) :=
              stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
     } else if (fam_type[[k]]$family == "gaussian") {
-      dat2[, paste0("m", k, "_", a, "_", paste0(rep("m", K), collapse = "")) :=
+      dat2[, paste0("m", k, "_", a, "_", strrep("m", K)) :=
              stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
                    sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
     }
@@ -388,7 +388,7 @@ medRCT.fun <- function(dat,
           }
 
           dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
-                                               paste0(rep("m", K), collapse = "")))]
+                                               strrep("m", K)))]
 
           if (k > (MM + 1)) {
             for (l in (MM + 1):(k - 1))
@@ -557,8 +557,8 @@ medRCT.fun <- function(dat,
       }
 
       for (MM in first:K) {
-        dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_", paste0(paste0(
-          rep("m", K)), collapse = "")))]
+        dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
+                                             strrep("m", K)))]
 
         for (k in setdiff(first:K, MM)) {
           dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste0(c(
@@ -601,7 +601,7 @@ medRCT.fun <- function(dat,
         }
 
         dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
-                                             paste0(paste0(rep("m", K)), collapse = "")))]
+                                             strrep("m", K)))]
 
         if ((MM + 1) <= K) {
           for (k in (MM + 1):K) {
