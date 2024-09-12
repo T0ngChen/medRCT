@@ -82,3 +82,12 @@ med_outcome_name = function(l, a, K) {
   ))
 }
 
+med_outcome_all = function(l, first, a, K){
+  paste0("m", l, "_", a, "_", paste0(
+    strrep("m", first - 1), strrep(a, (l - first)), strrep("m", K - l + 1)))
+}
+
+
+
+
+

@@ -442,25 +442,22 @@ medRCT.fun <- function(dat,
 
       dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
-      for (l in first:(k - 1)) {
-        dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste0(c(
-          rep("m", first - 1), rep(paste0(a), (l - first)), rep("m", K - l + 1)
-        ), collapse = "")))]
-      }
+      l = first:(k - 1)
+      dat2[, paste0("M", l) := mget(med_outcome_all(l = l,
+                                                    first = first,
+                                                    a = a,
+                                                    K = K))]
 
       if(fam_type[[k]]$family == "binomial"){
-        dat2[, paste0("m", k, "_", a, "_", paste0(c(
-          rep("m", first - 1), rep(paste0(a), k - first), rep("m", K + 1 - k)
-        ), collapse = "")) := stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
+        dat2[, med_outcome_all(l = k, first = first, a = a,K = K) :=
+               stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
       } else if (fam_type[[k]]$family == "gaussian") {
-        dat2[, paste0("m", k, "_", a, "_", paste0(c(
-          rep("m", first - 1), rep(paste0(a), k - first), rep("m", K + 1 - k)
-        ), collapse = "")) := stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                                    sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
+        dat2[, med_outcome_all(l = k, first = first, a = a, K = K) :=
+               stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
+                            sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
       }
     }
   }
-
 
   # outcome
   # Y
@@ -525,11 +522,11 @@ medRCT.fun <- function(dat,
       }
 
       # all mediators of interest
-      for (k in first:K) {
-        dat2[, paste0("M", k) := get(paste0("m", k, "_", 0, "_", paste0(c(
-          rep("m", first - 1), rep(paste0(0), k - first), rep("m", K + 1 - k)
-        ), collapse = "")))]
-      }
+      k = first:K
+      dat2[, paste0("M", k) := mget(med_outcome_all(l=k,
+                                                    first = first,
+                                                    a = 0,
+                                                    K=K))]
 
       y1 <- predict(fit, newdata = dat2, type = "response")
 
