@@ -63,3 +63,15 @@ family_type <- function(data, variable_names, unique_threshold = 10) {
   return(result)
 }
 
+
+
+set_exposure = function(data, column_name, exp_val) {
+  # Convert column to numeric
+  data[, (column_name) := as.numeric(get(column_name))]
+  # Assign the new value
+  data[, (column_name) := exp_val]
+  # Convert column to factor
+  data[, (column_name) := as.factor(get(column_name))]
+  data
+}
+

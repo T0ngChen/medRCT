@@ -215,9 +215,8 @@ medRCT.fun <- function(dat,
       flag <- TRUE
 
     for(a in exposure_level) {
-      dat2[, 'X' := as.numeric(dat2$X)]
-      dat2[, 'X' := a]
-      dat2[, 'X' := as.factor(dat2$X)]
+
+      dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
       if (k != 1) {
         for (l in 1:(k - 1))
@@ -256,9 +255,7 @@ medRCT.fun <- function(dat,
     a <- 0
 
     # covert X to the correct class
-    dat2[, 'X' := as.numeric(dat2$X)]
-    dat2[, 'X' := a]
-    dat2[, 'X' := as.factor(dat2$X)]
+    dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
 
     if(fam_type[[k]]$family == "binomial"){
@@ -294,9 +291,8 @@ medRCT.fun <- function(dat,
             flag <- TRUE
 
           for(a in lnzero){
-            dat2[, 'X' := as.numeric(dat2$X)]
-            dat2[, 'X' := a]
-            dat2[, 'X' := as.factor(dat2$X)]
+
+            dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
             if (k != setdiff(first:K, MM)[1]) {
               for (l in setdiff(1:(k - 1), MM))
@@ -337,9 +333,8 @@ medRCT.fun <- function(dat,
             flag <- TRUE
 
           for(a in lnzero){
-            dat2[, 'X' := as.numeric(dat2$X)]
-            dat2[, 'X' := a]
-            dat2[, 'X' := as.factor(dat2$X)]
+
+            dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
             if(k!=1){
               for (l in setdiff(1:(k - 1), MM))
@@ -388,9 +383,8 @@ medRCT.fun <- function(dat,
           flag <- TRUE
 
         for(a in lnzero){
-          dat2[, 'X' := as.numeric(dat2$X)]
-          dat2[, 'X' := a]
-          dat2[, 'X' := as.factor(dat2$X)]
+
+          dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
           if (MM != 1) {
             for (l in 1:(MM - 1))
@@ -450,9 +444,8 @@ medRCT.fun <- function(dat,
         flag <- TRUE
 
       a <- 0
-      dat2[, 'X' := as.numeric(dat2$X)]
-      dat2[, 'X' := a]
-      dat2[, 'X' := as.factor(dat2$X)]
+
+      dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
       for (l in first:(k - 1)) {
         dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste0(c(
@@ -491,9 +484,8 @@ medRCT.fun <- function(dat,
   # p_ctr
 
   a <- 0
-  dat2[, 'X' := as.numeric(dat2$X)]
-  dat2[, 'X' := a]
-  dat2[, 'X' := as.factor(dat2$X)]
+
+  dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
   for (k in 1:K) {
     dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste0(c(
@@ -507,9 +499,8 @@ medRCT.fun <- function(dat,
 
   # p_trt
   for(a in lnzero){
-    dat2[, 'X' := as.numeric(dat2$X)]
-    dat2[, 'X' := a]
-    dat2[, 'X' := as.factor(dat2$X)]
+
+    dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
     for (k in 1:K) {
       dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste0(c(
@@ -529,9 +520,8 @@ medRCT.fun <- function(dat,
   # p_all
   if (any(intervention_type %in% c("all", "shift_all"))) {
     for(a in lnzero){
-      dat2[, 'X' := as.numeric(dat2$X)]
-      dat2[, 'X' := a]
-      dat2[, 'X' := as.factor(dat2$X)]
+
+      dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
       if (first > 1) {
         for (k in 1:(first - 1)) {
@@ -566,9 +556,8 @@ medRCT.fun <- function(dat,
   # p_first....p_K
   if (any(intervention_type %in% c("all", "shift_k"))) {
     for(a in lnzero){
-      dat2[, 'X' := as.numeric(dat2$X)]
-      dat2[, 'X' := a]
-      dat2[, 'X' := as.factor(dat2$X)]
+
+      dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
       if (first > 1) {
         for (k in 1:(first - 1)) {
@@ -610,9 +599,8 @@ medRCT.fun <- function(dat,
   # p_first_prime....p_Kminus1_prime
   if (any(intervention_type %in% c("all", "shift_k_order"))) {
     for(a in lnzero){
-      dat2[, 'X' := as.numeric(dat2$X)]
-      dat2[, 'X' := a]
-      dat2[, 'X' := as.factor(dat2$X)]
+
+      dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
 
       for (MM in first:(K - 1)) {
         if (MM != 1) {
