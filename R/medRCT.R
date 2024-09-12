@@ -227,16 +227,10 @@ medRCT.fun <- function(dat,
 
 
       if(fam_type[[k]]$family == "binomial"){
-        dat2[, paste0("m", k, "_", a, "_",
-                     paste0(c(rep(paste0(a), (k - 1)),
-                             rep("m", K - (k - 1))),
-                           collapse = "")) :=
+        dat2[, med_outcome_name(a, l = k, K) :=
                stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
       } else if (fam_type[[k]]$family == "gaussian") {
-        dat2[, paste0("m", k, "_", a, "_",
-                     paste0(c(rep(paste0(a), (k - 1)),
-                             rep("m", K - (k - 1))),
-                           collapse = "")) :=
+        dat2[, med_outcome_name(a, l = k, K) :=
                stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
                      sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
       }
