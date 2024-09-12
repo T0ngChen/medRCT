@@ -75,3 +75,10 @@ set_exposure = function(data, column_name, exp_val) {
   data
 }
 
+
+med_outcome_name = function(l, a, K) {
+  paste0("m", l, "_", a, "_", paste0(
+    strrep(a, (l - 1)), strrep("m", K - (l - 1))
+  ))
+}
+
