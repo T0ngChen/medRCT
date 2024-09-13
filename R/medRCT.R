@@ -640,12 +640,10 @@ medRCT.fun <- function(dat,
   # save results for IIE_k
   if (any(intervention_type %in% c("all", "shift_k"))) {
     if(length(lnzero) > 1){
-      res <- c(res, unlist(sapply(lnzero, function(a) {
-        sapply(first:K, function(k) {
-          get(paste0("IIE_", k, "_", a))
-        })
-      })))
-
+      res <- c(res, unlist(mget(paste0("IIE_",
+                                       rep(first:K, length(lnzero)),
+                                       "_",
+                                       rep(lnzero, each = length(first:K))))))
       res_names <- c(res_names,
                      paste0(
                        "IIE_",
@@ -659,9 +657,7 @@ medRCT.fun <- function(dat,
                        ")"
                      ))
     } else {
-      res <- c(res, sapply(first:K, function(k)
-        get(paste0("IIE_", k))))
-
+      res <- c(res, unlist(mget(paste0("IIE_", first:K))))
       res_names <- c(res_names,
                      paste0(
                        "IIE_",
@@ -676,12 +672,10 @@ medRCT.fun <- function(dat,
   # save results for IIE_k_prime
   if (any(intervention_type %in% c("all", "shift_k_order"))) {
     if(length(lnzero) > 1){
-      res <- c(res, unlist(sapply(lnzero, function(a) {
-        sapply(first:(K-1), function(k) {
-          get(paste0("IIE_", k, "_prime_", a))
-        })
-      })))
-
+      res <- c(res, unlist(mget(paste0("IIE_",
+                                       rep(first:(K-1), length(lnzero)),
+                                       "_prime_",
+                                       rep(lnzero, each = length(first:(K-1)))))))
       res_names <- c(res_names,
                      paste0(
                        "IIE_",
@@ -696,9 +690,7 @@ medRCT.fun <- function(dat,
                      ))
     } else {
 
-      res <- c(res, sapply(first:(K - 1), function(k)
-        get(paste0("IIE_", k, "_prime"))))
-
+      res <- c(res, unlist(mget(paste0("IIE_", first:(K - 1), "_prime"))))
       res_names <- c(res_names,
                      paste0(
                        "IIE_",
@@ -715,10 +707,7 @@ medRCT.fun <- function(dat,
 
   if (any(intervention_type %in% c("all", "shift_all"))) {
     if(length(lnzero) > 1){
-      res <- c(res, sapply(lnzero, function(a) {
-        get(paste0("IIE_all_", a))
-      }))
-
+      res <- c(res, unlist(mget(paste0("IIE_all_", lnzero))))
       res_names <- c(res_names, paste0("IIE_all_", lnzero,
                      " (p_trt_", lnzero, " - p_all_", lnzero, ")"))
 
@@ -730,9 +719,7 @@ medRCT.fun <- function(dat,
 
   # p_trt & p_ctr
   if(length(lnzero) > 1){
-    res <- c(res, sapply(lnzero, function(a) {
-      get(paste0("p_trt_", a))
-    }), p_ctr)
+    res <- c(res, unlist(mget(paste0("p_trt_", lnzero))), p_ctr)
     res_names <- c(res_names, paste0("p_trt_", lnzero), "p_ctr")
   } else {
     res <- c(res, p_trt, p_ctr)
@@ -742,20 +729,17 @@ medRCT.fun <- function(dat,
   # p_k
   if (any(intervention_type %in% c("all", "shift_k"))) {
     if(length(lnzero) > 1){
-      res <- c(res, unlist(sapply(lnzero, function(a) {
-        sapply(first:K, function(k) {
-          get(paste0("p_", k, "_", a))
-        })
-      })))
-
+      res <- c(res, unlist(mget(paste0("p_",
+                                       rep(first:K, length(lnzero)),
+                                       "_",
+                                       rep(lnzero, each = length(first:K))))))
       res_names <- c(res_names,
                      paste0("p_",
                             rep(first:K - (first - 1), length(lnzero)),
                             "_",
                             rep(lnzero, each = length(first:K))))
     } else {
-      res <- c(res, sapply(first:K, function(k)
-        get(paste0("p_", k))))
+      res <- c(res, unlist(mget(paste0("p_", first:K))))
       res_names <- c(res_names, paste0("p_", first:K - (first - 1)))
     }
   }
@@ -763,11 +747,10 @@ medRCT.fun <- function(dat,
   # p_k_prime
   if (any(intervention_type %in% c("all", "shift_k_order"))) {
     if(length(lnzero) > 1){
-      res <- c(res, unlist(sapply(lnzero, function(a) {
-        sapply(first:(K-1), function(k) {
-          get(paste0("p_", k, "_prime_", a))
-        })
-      })))
+      res <- c(res, unlist(mget(paste0("p_",
+                                       rep(first:(K-1), length(lnzero)),
+                                       "_prime_",
+                                       rep(lnzero, each = length(first:(K-1)))))))
 
       res_names <- c(res_names,
                      paste0("p_",
@@ -776,8 +759,7 @@ medRCT.fun <- function(dat,
                             rep(lnzero, each = length(first:(K-1)))))
 
     } else {
-      res <- c(res, sapply(first:(K - 1), function(k)
-        get(paste0("p_", k, "_prime"))))
+      res <- c(res, unlist(mget(paste0("p_", first:(K - 1), "_prime"))))
       res_names <- c(res_names, paste0("p_", first:(K - 1) - (first - 1), "_prime"))
     }
   }
@@ -785,10 +767,7 @@ medRCT.fun <- function(dat,
   # p_all
   if (any(intervention_type %in% c("all", "shift_all"))) {
     if(length(lnzero) > 1){
-      res <- c(res, sapply(lnzero, function(a) {
-        get(paste0("p_all_", a))
-      }))
-
+      res <- c(res, unlist(mget(paste0("p_all_", lnzero))))
       res_names <- c(res_names, paste0("p_all_", lnzero))
     } else {
       res <- c(res, p_all)
