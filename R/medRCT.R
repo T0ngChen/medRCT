@@ -502,8 +502,10 @@ medRCT.fun <- function(dat,
 
     if(length(lnzero) > 1){
       assign(paste0("p_trt_", a), mean(y1))
+      assign(paste0("TCE_",a), get(paste0("p_trt_", a)) - p_ctr)
     } else {
       p_trt <- mean(y1)
+      TCE <- p_trt - p_ctr
     }
   }
 
@@ -717,13 +719,14 @@ medRCT.fun <- function(dat,
       }
   }
 
+  # TCE
   # p_trt & p_ctr
   if(length(lnzero) > 1){
-    res <- c(res, unlist(mget(paste0("p_trt_", lnzero))), p_ctr)
-    res_names <- c(res_names, paste0("p_trt_", lnzero), "p_ctr")
+    res <- c(res, unlist(mget(paste0("TCE_", lnzero))), unlist(mget(paste0("p_trt_", lnzero))), p_ctr)
+    res_names <- c(res_names, paste0("TCE_", lnzero, " (p_trt_", lnzero, " - p_ctr)"), paste0("p_trt_", lnzero), "p_ctr")
   } else {
-    res <- c(res, p_trt, p_ctr)
-    res_names <- c(res_names, "p_trt", "p_ctr")
+    res <- c(res, TCE, p_trt, p_ctr)
+    res_names <- c(res_names, "TCE (p_trt - p_ctr)", "p_trt", "p_ctr")
   }
 
   # p_k
