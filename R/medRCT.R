@@ -40,7 +40,7 @@ medRCT <- function(dat,
                    intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"),
                    mcsim,
                    bootstrap = TRUE,
-                   boot_args = list(R = 100, stype = "i"),
+                   boot_args = list(R = 100, stype = "i", ci.type = "perc"),
                    ...) {
   # match intervention type
   intervention_type = sapply(intervention_type, function(arg)
@@ -55,9 +55,6 @@ medRCT <- function(dat,
     intervention_type = "shift_k"
     message("Only able to estimate the effect type 'shift_k' with a single mediator.")
   }
-
-  # set boot ci type for now
-  ci.type = "perc"
 
   mediators = c(intermediate_confs, mediators)
 
@@ -123,7 +120,7 @@ medRCT <- function(dat,
     pval <- 2 * (1 - stats::pnorm(q = abs(est / se)))
     cilow = ciupp = numeric()
     for (i in 1:length(boot.out$t0)) {
-      bt <- boot::boot.ci(boot.out, index = i, type = ci.type)
+      bt <- boot::boot.ci(boot.out, index = i, type = boot_args$ci.type)
       cilow <- c(cilow, bt$percent[4])
       ciupp <- c(ciupp, bt$percent[5])
     }
