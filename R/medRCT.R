@@ -40,7 +40,7 @@ medRCT <- function(dat,
                    intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"),
                    mcsim,
                    bootstrap = TRUE,
-                   boot_args = list(R = 100, stype = "i", ci.type = "perc"),
+                   boot_args = list(R = 100, stype = "i", ci.type = "norm"),
                    ...) {
   # match intervention type
   intervention_type = sapply(intervention_type, function(arg)
@@ -120,9 +120,15 @@ medRCT <- function(dat,
     pval <- 2 * (1 - stats::pnorm(q = abs(est / se)))
     cilow = ciupp = numeric()
     for (i in 1:length(boot.out$t0)) {
-      bt <- boot::boot.ci(boot.out, index = i, type = boot_args$ci.type)
-      cilow <- c(cilow, bt$percent[4])
-      ciupp <- c(ciupp, bt$percent[5])
+      ci.type = ifelse(is.null(boot_args$ci.type), "norm", boot_args$ci.type)
+      bt <- boot::boot.ci(boot.out, index = i, type = ci.type)
+      if (ci.type == "perc") {
+        cilow <- c(cilow, bt$percent[4])
+        ciupp <- c(ciupp, bt$percent[5])
+      } else if (ci.type == "norm") {
+        cilow <- c(cilow, bt$normal[2])
+        ciupp <- c(ciupp, bt$normal[3])
+      }
     }
 
     # save results
