@@ -30,7 +30,7 @@ summary.medRCT <- function(object, ...){
     cat("Simulations:", object$mcsim,"\n\n")
 
     # Return as a list for easy extraction of coefficients
-    return(list(
+    invisible(list(
       IIE = out1,
       expected_outcome = out2,
       sample_size = object$sample.size,
