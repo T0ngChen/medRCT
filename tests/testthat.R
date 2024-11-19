@@ -9,4 +9,4 @@
 library(testthat)
 library(medRCT)
 
-#test_check("medRCT")
+test_check("medRCT")

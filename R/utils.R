@@ -10,7 +10,6 @@
 summary.medRCT <- function(object, ...){
   if (object$bootstrap == TRUE) {
     index <- grep("^p", names(object$est))[1]
-
     out1 = cbind(object$est, object$se, object$cilow, object$ciupp, object$pval)[1:index-1,]
     out1 = matrix(out1, ncol = 5)
     row.names(out1) = names(object$est)[1:index-1]
