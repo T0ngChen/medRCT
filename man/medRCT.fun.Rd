@@ -9,6 +9,7 @@ medRCT.fun(
   ind = 1:nrow(dat),
   first = first,
   K = K,
+  fam_type = fam_type,
   interactions_XC = interactions_XC,
   intervention_type = intervention_type,
   mcsim
@@ -23,6 +24,8 @@ This facilitates the use of this function within the boot() function from the bo
 \item{first}{index of first mediator of interest after combining intermediate confounders with mediators}
 
 \item{K}{the number of mediators}
+
+\item{fam_type}{family type for mediators}
 
 \item{interactions_XC}{a character string specifying the exposure-confounder or confounder-confounder interaction terms
 to include in all regression models in the procedure. Defaults to include all two-way exposure-confounder interactions

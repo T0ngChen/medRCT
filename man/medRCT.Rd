@@ -15,7 +15,7 @@ medRCT(
   intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"),
   mcsim,
   bootstrap = TRUE,
-  boot_args = list(R = 100, stype = "i"),
+  boot_args = list(R = 100, stype = "i", ci.type = "norm"),
   ...
 )
 }
