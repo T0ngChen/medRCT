@@ -81,7 +81,8 @@ The outcome variable can be specified as either binary or continuous.</p></dd>
 
 <dt id="arg-mediators">mediators<a class="anchor" aria-label="anchor" href="#arg-mediators"></a></dt>
 <dd><p>A <code>character</code> vector specifying the names of mediator variables in the dataset. The mediators
-can be specified as either binary or continuous.</p></dd>
+can be specified as either binary or continuous. When estimating the effect type <code>"shift_k_order"</code>,
+the order of mediators in the vector is important, as it determines the causal sequence of mediators.</p></dd>
 
 
 <dt id="arg-intermediate-confs">intermediate_confs<a class="anchor" aria-label="anchor" href="#arg-intermediate-confs"></a></dt>
@@ -110,7 +111,7 @@ mediators in the exposed to match the level in the unexposed.</p></li>
 mediator (<code>k</code>) in the exposed to match the level in the unexposed.</p></li>
 <li><p><code>"shift_k_order"</code>: Estimates the interventional indirect effect of shifting the distribution of a
 specific mediator (<code>k</code>) in the exposed to match the level in the unexposed while accounting for the flow-on
-effects on its causal descendent mediators.</p></li>
+effects on its causally descendent mediators.</p></li>
 </ul></dd>
 
 
