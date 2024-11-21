@@ -80,13 +80,20 @@ family_type <- function(data, variable_names, unique_threshold = 10) {
 
 
 
+#' Set Exposure Column to a Specific Value and Convert to Factor
+#'
+#' @param data A `data.table` object.
+#' @param column_name A character string specifying the name of the column to modify.
+#' @param exp_val The exposure value to assign to the column.
+#'
+#' @importFrom collapse qF
 set_exposure = function(data, column_name, exp_val) {
   # Convert column to numeric
   data[, (column_name) := as.numeric(get(column_name))]
   # Assign the new value
   data[, (column_name) := exp_val]
   # Convert column to factor
-  data[, (column_name) := as.factor(get(column_name))]
+  data[, (column_name) := collapse::qF(get(column_name))]
   data
 }
 

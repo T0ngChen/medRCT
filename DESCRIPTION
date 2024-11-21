@@ -15,7 +15,8 @@ Imports:
     stats,
     data.table,
     boot,
-    zoo
+    zoo,
+    collapse
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
