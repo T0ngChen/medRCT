@@ -20,41 +20,59 @@ medRCT(
 )
 }
 \arguments{
-\item{dat}{a data.frame with the data for analysis}
+\item{dat}{A \code{data.frame} containing the dataset for analysis. It should include variables for the exposure,
+outcome, mediators, confounders, and exposure-induced mediator-outcome confounders specified in the analysis.}
 
-\item{exposure}{a character string representing the name of the exposure variable in the data. The exposure variable must be binary, with \code{1} indicating exposed or treated, and \code{0} indicating unexposed or control.}
+\item{exposure}{A \code{character} string specifying the name of the exposure variable in the dataset.
+The exposure variable can be categorical, with \code{0} explicitly denoting the unexposed (or control) group.
+Other values represent different exposure categories.}
 
-\item{outcome}{a character string representing the name of the outcome variable in the data. The outcome variable must be binary.}
+\item{outcome}{A \code{character} string specifying the name of the outcome variable in the dataset.
+The outcome variable can be specified as either binary or continuous.}
 
-\item{mediators}{a character vector representing the names of the mediators in the data. The mediators must be binary variables.}
+\item{mediators}{A \code{character} vector specifying the names of mediator variables in the dataset. The mediators
+can be specified as either binary or continuous.}
 
-\item{intermediate_confs}{a character vector representing the names of the intermediate confounders in the data. The intermediate
-confounders must be binary variables.}
+\item{intermediate_confs}{A \code{character} vector specifying the names of intermediate confounders in the dataset.
+The intermediate confounders can be specified as either binary or continuous. If \code{NULL},
+no intermediate confounders are specified, and the natural effect will be estimated.}
 
-\item{confounders}{a character vector representing the names of the confounders in the data, which must be of the required class
-(e.g. factor if appropriate)}
+\item{confounders}{A \code{character} vector listing the names of baseline confounders.}
 
-\item{interactions_XC}{a character string specifying the exposure-confounder or confounder-confounder interaction terms
-to include in all regression models in the procedure. Default is 'all', which includes all two-way exposure-confounder interactions
-and excludes confounder-confounder interactions.}
+\item{interactions_XC}{A \code{character} string specifying the exposure-confounder or confounder-confounder
+interaction terms to include in the regression models for confounder adjustment. The default value, \code{"all"},
+includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
+Specify \code{"none"} to exclude all two-way exposure-confounder and confounder-confounder interactions.}
 
-\item{intervention_type}{a character string indicating the type of the interventional effect to be estimated.
-Can be 'all', 'shift_all', 'shift_k', 'shift_k_order'. Default is 'all', under which all effects will be estimated.
-‘shift all’ is to estimate the interventional effect under shifting the joint distribution of all mediatios.
-‘shift k’ is to estimate the interventional effect under shifting the distribution of mediator k, independently of other mediators.
-‘shift_k_order’ is to estimate the interventional effect under shifting the distribution of mediator k, independently of the its
-antecedent mediators, while allowing for the flow on effect of mediator k on its descendent mediators.}
+\item{intervention_type}{A \code{character} string indicating the type of interventional effect to be estimated.
+Options include:
+\itemize{
+\item \code{"all"} (default): Estimates all types of interventional indirect effects.
+\item \code{"shift_all"}: Estimates the interventional indirect effect of shifting the joint distribution of all
+mediators in the exposed to match the level in the unexposed.
+\item \code{"shift_k"}: Estimates the interventional indirect effect of shifting the distribution of a specific
+mediator (\code{k}) in the exposed to match the level in the unexposed.
+\item \code{"shift_k_order"}: Estimates the interventional indirect effect of shifting the distribution of a
+specific mediator (\code{k}) in the exposed to match the level in the unexposed while accounting for the flow-on
+effects on its causal descendent mediators.
+}}
 
-\item{mcsim}{the number of Monte Carlo simulations to conduct}
+\item{mcsim}{An \code{integer} specifying the number of Monte Carlo simulations to perform.}
 
-\item{bootstrap}{logical. If \code{TRUE}, bootstrap will be conducted.}
+\item{bootstrap}{A \code{logical} value indicating whether bootstrapping should be performed. If \code{TRUE}
+(default), bootstrapping is conducted using the \code{boot} function from the \code{boot} package.}
 
-\item{boot_args}{a \code{list} of bootstrapping arguments. \code{R} is the number of bootstrap replicates.
-\code{stype} indicates what the second argument of \code{statistics} in the \code{boot} function represents}
+\item{boot_args}{A \code{list} of arguments for bootstrapping. The default settings are:
+\itemize{
+\item \code{R}: Number of bootstrap replicates (default: 100).
+\item \code{stype}: Specifies the statistic type passed to the \code{boot} function (default: \code{"i"}).
+\item \code{ci.type}: Specifies the type of confidence interval to compute (default: \code{"norm"}).
+}}
 
-\item{...}{other arguments passed to the \code{boot} function in the \code{boot} package.}
+\item{...}{Additional arguments passed to the \code{boot} function from the \code{boot} package.}
 }
 \description{
-'medRCT' is used to estimating the interventional effects that are defined by a mapping to a target trial. It can handle multiple
-mediators, including some not of primary interest but that are intermediate confounders
+'medRCT' is used to estimate interventional effects by mapping observational data to a hypothetical target trial.
+It can handle multiple mediators, including some not of primary interest but that are exposure-induced
+mediator-outcome confounders.
 }

@@ -1,10 +1,13 @@
 
 
 
-#' Summarizing Output from Mediation Analysis
+#' Summarise Results from Mediation Analysis
 #'
-#' @param object a \code{medRCT} object
-#' @param ... other arguments
+#' Provides a summary of the results obtained from a mediation analysis conducted
+#' using the \code{medRCT} function.
+#'
+#' @param object An object of class \code{medRCT}.
+#' @param ... Additional arguments to customise the summary output.
 #' @method summary medRCT
 #' @export
 summary.medRCT <- function(object, ...){
@@ -45,16 +48,20 @@ summary.medRCT <- function(object, ...){
 
 
 
-#' Determine Family Type for GLM
+
+#' Determine Appropriate Family Types for GLM
 #'
-#' @param data A data frame containing the variables to be analyzed.
-#' @param variable_names A character vector of variable names to check. Each variable name should correspond
-#' to a column in the data frame.
-#' @param unique_threshold An integer value specifying the minimum number of unique values for a variable to
-#' be considered continuous. Default is 10.
+#' Identifies the appropriate family type (\code{"binomial()"} or \code{"gaussian()"}) for a set of variables.
 #'
-#' @return A list where each element corresponds to a family type for variables from `variable_names`
-#' and the value is either "binomial()" or "gaussian()", indicating the type of the family.
+#' @param data A \code{data.frame} containing the variables to be analyzed.
+#' @param variable_names A \code{character} vector specifying the names of the variables to evaluate.
+#' Each variable name should correspond to a column in the \code{data.frame}.
+#' @param unique_threshold An \code{integer} value specifying the minimum number of unique values required for a variable
+#' to be classified as continuous. Defaults to \code{10}.
+#'
+#' @return A \code{list} where each element corresponds to a variable in \code{variable_names}, and the value indicates
+#' the family type: either \code{"binomial()"} for binary variables or \code{"gaussian()"} for continuous variables.
+#'
 #' @importFrom stats binomial gaussian
 #' @export
 family_type <- function(data, variable_names, unique_threshold = 10) {

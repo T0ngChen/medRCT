@@ -2,7 +2,7 @@
 % Please edit documentation in R/medRCT.R
 \name{medRCT.fun}
 \alias{medRCT.fun}
-\title{Causal mediation analysis for estimating the interventional effect mapped to a target trial}
+\title{Causal Mediation Analysis for Estimating Interventional Effects}
 \usage{
 medRCT.fun(
   dat,
@@ -16,26 +16,42 @@ medRCT.fun(
 )
 }
 \arguments{
-\item{dat}{A data.frame with the data for analysis}
+\item{dat}{A \code{data.frame} containing the dataset for analysis.}
 
-\item{ind}{A vector of indices that define the sample from dat on which to conduct the analysis. Defaults to all rows of the data.
-This facilitates the use of this function within the boot() function from the boot package}
+\item{ind}{A \code{vector} of indices specifying the subset of \code{dat} to use for the analysis.
+Defaults to all rows of \code{dat}. This parameter is particularly useful when using this function within the
+\code{boot()} function from the \code{boot} package, as it enables resampling by specifying subsets of the data.}
 
-\item{first}{index of first mediator of interest after combining intermediate confounders with mediators}
+\item{first}{An \code{integer} specifying the index of the first mediator of interest in the combined list of
+intermediate confounders and mediators.}
 
-\item{K}{the number of mediators}
+\item{K}{An \code{integer} specifying the total number of mediators included in the analysis.
+Mediators are considered sequentially based on their order.}
 
-\item{fam_type}{family type for mediators}
+\item{fam_type}{A \code{character} string specifying the family type to use for modeling mediators.
+Options typically include \code{"gaussian"} for continuous mediators or \code{"binomial"} for binary mediators, among others.}
 
-\item{interactions_XC}{a character string specifying the exposure-confounder or confounder-confounder interaction terms
-to include in all regression models in the procedure. Defaults to include all two-way exposure-confounder interactions
-and no confounder-confounder interactions.}
+\item{interactions_XC}{A \code{character} string specifying the exposure-confounder or confounder-confounder
+interaction terms to include in the regression models for confounder adjustment. The default value, \code{"all"},
+includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
+Specify \code{"none"} to exclude all two-way exposure-confounder and confounder-confounder interactions.}
 
-\item{intervention_type}{a character string indicating the type of the interventional effect to be estimated.
-Can be 'all', 'shift_all', 'shift_k', 'shift_k_order'. Default is 'all'.}
+\item{intervention_type}{A \code{character} string indicating the type of interventional effect to be estimated.
+Options include:
+\itemize{
+\item \code{"all"} (default): Estimates all types of interventional indirect effects.
+\item \code{"shift_all"}: Estimates the interventional indirect effect of shifting the joint distribution of all
+mediators in the exposed to match the level in the unexposed.
+\item \code{"shift_k"}: Estimates the interventional indirect effect of shifting the distribution of a specific
+mediator (\code{k}) in the exposed to match the level in the unexposed.
+\item \code{"shift_k_order"}: Estimates the interventional indirect effect of shifting the distribution of a
+specific mediator (\code{k}) in the exposed to match the level in the unexposed while accounting for the flow-on
+effects on its causal descendent mediators.
+}}
 
-\item{mcsim}{the number of Monte Carlo simulations to conduct}
+\item{mcsim}{An \code{integer} specifying the number of Monte Carlo simulations to perform.}
 }
 \description{
-Causal mediation analysis for estimating the interventional effect mapped to a target trial
+This function performs the actual causal mediation analysis to estimate interventional effects mapped to a hypothetical
+target trial.
 }

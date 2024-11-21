@@ -2,23 +2,23 @@
 % Please edit documentation in R/utils.R
 \name{family_type}
 \alias{family_type}
-\title{Determine Family Type for GLM}
+\title{Determine Appropriate Family Types for GLM}
 \usage{
 family_type(data, variable_names, unique_threshold = 10)
 }
 \arguments{
-\item{data}{A data frame containing the variables to be analyzed.}
+\item{data}{A \code{data.frame} containing the variables to be analyzed.}
 
-\item{variable_names}{A character vector of variable names to check. Each variable name should correspond
-to a column in the data frame.}
+\item{variable_names}{A \code{character} vector specifying the names of the variables to evaluate.
+Each variable name should correspond to a column in the \code{data.frame}.}
 
-\item{unique_threshold}{An integer value specifying the minimum number of unique values for a variable to
-be considered continuous. Default is 10.}
+\item{unique_threshold}{An \code{integer} value specifying the minimum number of unique values required for a variable
+to be classified as continuous. Defaults to \code{10}.}
 }
 \value{
-A list where each element corresponds to a family type for variables from \code{variable_names}
-and the value is either "binomial()" or "gaussian()", indicating the type of the family.
+A \code{list} where each element corresponds to a variable in \code{variable_names}, and the value indicates
+the family type: either \code{"binomial()"} for binary variables or \code{"gaussian()"} for continuous variables.
 }
 \description{
-Determine Family Type for GLM
+Identifies the appropriate family type (\code{"binomial()"} or \code{"gaussian()"}) for a set of variables.
 }

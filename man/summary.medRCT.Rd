@@ -2,15 +2,16 @@
 % Please edit documentation in R/utils.R
 \name{summary.medRCT}
 \alias{summary.medRCT}
-\title{Summarizing Output from Mediation Analysis}
+\title{Summarise Results from Mediation Analysis}
 \usage{
 \method{summary}{medRCT}(object, ...)
 }
 \arguments{
-\item{object}{a \code{medRCT} object}
+\item{object}{An object of class \code{medRCT}.}
 
-\item{...}{other arguments}
+\item{...}{Additional arguments to customise the summary output.}
 }
 \description{
-Summarizing Output from Mediation Analysis
+Provides a summary of the results obtained from a mediation analysis conducted
+using the \code{medRCT} function.
 }
