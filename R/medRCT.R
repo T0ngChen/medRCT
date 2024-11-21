@@ -15,7 +15,8 @@ utils::globalVariables(".SD")
 #' @param outcome A \code{character} string specifying the name of the outcome variable in the dataset.
 #'  The outcome variable can be specified as either binary or continuous.
 #' @param mediators A \code{character} vector specifying the names of mediator variables in the dataset. The mediators
-#'  can be specified as either binary or continuous.
+#'  can be specified as either binary or continuous. When estimating the effect type \code{"shift_k_order"},
+#'  the order of mediators in the vector is important, as it determines the causal sequence of mediators.
 #' @param intermediate_confs A \code{character} vector specifying the names of intermediate confounders in the dataset.
 #'  The intermediate confounders can be specified as either binary or continuous. If \code{NULL},
 #'  no intermediate confounders are specified, and the natural effect will be estimated.
@@ -34,7 +35,7 @@ utils::globalVariables(".SD")
 #'    mediator (\code{k}) in the exposed to match the level in the unexposed.
 #'   \item \code{"shift_k_order"}: Estimates the interventional indirect effect of shifting the distribution of a
 #'    specific mediator (\code{k}) in the exposed to match the level in the unexposed while accounting for the flow-on
-#'    effects on its causal descendent mediators.
+#'    effects on its causally descendent mediators.
 #' }
 #' @param mcsim An \code{integer} specifying the number of Monte Carlo simulations to perform.
 #' @param bootstrap A \code{logical} value indicating whether bootstrapping should be performed. If \code{TRUE}
