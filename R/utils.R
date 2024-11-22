@@ -98,6 +98,35 @@ set_exposure = function(data, column_name, exp_val) {
 }
 
 
+#' Counterfactual Prediction and Random Draw
+#'
+#' @param fit A fitted glm model object
+#' @param data A `data.table` containing the data to which the counterfactual predictions
+#'             will be applied.
+#' @param var_name A character string specifying the name of the variable to store
+#'                 the random draws.
+#' @param n An integer specifying the number of observations in the dataset.
+#' @param family A character string specifying the distribution family to use for
+#'               generating random draws. Must be either `"binomial"` or `"gaussian"`.
+cf_predict = function(fit, data, var_name, n, family){
+  # get predictions
+  predictions <- predict(fit, newdata = data, type = "response")
+
+  # counterfactual prediction and random draw
+  data[, (var_name) := switch(
+    family,
+    "binomial" = stats::rbinom(n, 1, predictions),
+    "gaussian" = stats::rnorm(
+      n,
+      mean = predictions,
+      sd = sqrt(sum(fit$residuals^2) / stats::df.residual(fit))
+    )
+  )]
+
+  data
+}
+
+
 med_outcome_name = function(l, a, K) {
   paste0("m", l, "_", a, "_", paste0(
     strrep(a, (l - 1)), strrep("m", K - (l - 1))
@@ -108,6 +137,10 @@ med_outcome_all = function(l, first, a, K){
   paste0("m", l, "_", a, "_", paste0(
     strrep("m", first - 1), strrep(a, (l - first)), strrep("m", K - l + 1)))
 }
+
+
+
+
 
 
 

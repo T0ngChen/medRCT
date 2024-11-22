@@ -44,7 +44,7 @@ medRCT.fun <- function(dat,
   # Take bootstrap sample
   data <- dat[ind, ]
 
-  # Set flag to capure bootstrap samples to reject
+  # Set flag to capture bootstrap samples to reject
   flag <- FALSE
 
   # Replicate dataset for simulations
@@ -92,15 +92,13 @@ medRCT.fun <- function(dat,
                                                        K = K))]
       }
 
+      # performs counterfactual prediction & random draw
+      dat2 = cf_predict(fit = fit,
+                        data = dat2,
+                        var_name = med_outcome_name(a, l = k, K),
+                        n = n,
+                        family = fam_type[[k]]$family)
 
-      if(fam_type[[k]]$family == "binomial"){
-        dat2[, med_outcome_name(a, l = k, K) :=
-               stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
-      } else if (fam_type[[k]]$family == "gaussian") {
-        dat2[, med_outcome_name(a, l = k, K) :=
-               stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                            sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
-      }
     }
   }
 
@@ -117,16 +115,13 @@ medRCT.fun <- function(dat,
 
     # covert X to the correct class
     dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
+    # performs counterfactual prediction & random draw
+    dat2 = cf_predict(fit = fit,
+                      data = dat2,
+                      var_name = paste0("m", k, "_", a, "_", strrep("m", K)),
+                      n = n,
+                      family = fam_type[[k]]$family)
 
-
-    if(fam_type[[k]]$family == "binomial"){
-      dat2[, paste0("m", k, "_", a, "_", strrep("m", K)) :=
-             stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
-    } else if (fam_type[[k]]$family == "gaussian") {
-      dat2[, paste0("m", k, "_", a, "_", strrep("m", K)) :=
-             stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                          sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
-    }
   }
 
 
@@ -162,24 +157,18 @@ medRCT.fun <- function(dat,
                                                              K = K))]
             }
 
-            if(fam_type[[k]]$family == "binomial"){
-              dat2[, paste0("m", k, "_", a, "_", paste0(c(
-                rep(paste0(a), min(k - 1, MM - 1)),
-                "m",
-                rep(paste0(a), max(k - 1 - MM, 0)),
-                rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
-              ), collapse = "")) :=
-                stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
-            } else if (fam_type[[k]]$family == "gaussian") {
-              dat2[, paste0("m", k, "_", a, "_", paste0(c(
-                rep(paste0(a), min(k - 1, MM - 1)),
-                "m",
-                rep(paste0(a), max(k - 1 - MM, 0)),
-                rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
-              ), collapse = "")) :=
-                stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                             sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
-            }
+            # performs counterfactual prediction & random draw
+            dat2 = cf_predict(fit = fit,
+                              data = dat2,
+                              var_name = paste0("m", k, "_", a, "_", paste0(c(
+                                rep(paste0(a), min(k - 1, MM - 1)),
+                                "m",
+                                rep(paste0(a), max(k - 1 - MM, 0)),
+                                rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
+                              ), collapse = "")),
+                              n = n,
+                              family = fam_type[[k]]$family)
+
           }
         } else {
           # with intermediate confounders
@@ -204,24 +193,18 @@ medRCT.fun <- function(dat,
                                                              K = K))]
             }
 
-            if(fam_type[[k]]$family == "binomial"){
-              dat2[, paste0("m", k, "_", a, "_", paste0(c(
-                rep(paste0(a), min(k - 1, MM - 1)),
-                "m",
-                rep(paste0(a), max(k - 1 - MM, 0)),
-                rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
-              ), collapse = "")) :=
-                stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
-            } else if (fam_type[[k]]$family == "gaussian") {
-              dat2[, paste0("m", k, "_", a, "_", paste0(c(
-                rep(paste0(a), min(k - 1, MM - 1)),
-                "m",
-                rep(paste0(a), max(k - 1 - MM, 0)),
-                rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
-              ), collapse = "")) :=
-                stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                             sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
-            }
+            # performs counterfactual prediction & random draw
+            dat2 = cf_predict(fit = fit,
+                              data = dat2,
+                              var_name = paste0("m", k, "_", a, "_", paste0(c(
+                                rep(paste0(a), min(k - 1, MM - 1)),
+                                "m",
+                                rep(paste0(a), max(k - 1 - MM, 0)),
+                                rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
+                              ), collapse = "")),
+                              n = n,
+                              family = fam_type[[k]]$family)
+
           }
         }
       }
@@ -267,22 +250,17 @@ medRCT.fun <- function(dat,
               ), collapse = "")))]
           }
 
-          if(fam_type[[k]]$family == "binomial"){
-            dat2[, paste0("m", k, "_", a, "_", paste0(c(
-              rep(paste0(a), MM - 1),
-              0,
-              rep(paste0(a), max(k - 1 - MM, 0)),
-              rep("m", K - MM - max(k - 1 - MM, 0))), collapse = "")) :=
-                stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
-          } else if (fam_type[[k]]$family == "gaussian") {
-            dat2[, paste0("m", k, "_", a, "_", paste0(c(
-              rep(paste0(a), MM - 1),
-              0,
-              rep(paste0(a), max(k - 1 - MM, 0)),
-              rep("m", K - MM - max(k - 1 - MM, 0))), collapse = "")) :=
-                stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                             sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
-          }
+          # performs counterfactual prediction & random draw
+          dat2 = cf_predict(fit = fit,
+                            data = dat2,
+                            var_name = paste0("m", k, "_", a, "_", paste0(c(
+                              rep(paste0(a), MM - 1),
+                              0,
+                              rep(paste0(a), max(k - 1 - MM, 0)),
+                              rep("m", K - MM - max(k - 1 - MM, 0))), collapse = "")),
+                            n = n,
+                            family = fam_type[[k]]$family)
+
         }
       }
     }
@@ -315,14 +293,14 @@ medRCT.fun <- function(dat,
                                                     a = a,
                                                     K = K))]
 
-      if(fam_type[[k]]$family == "binomial"){
-        dat2[, med_outcome_all(l = k, first = first, a = a,K = K) :=
-               stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
-      } else if (fam_type[[k]]$family == "gaussian") {
-        dat2[, med_outcome_all(l = k, first = first, a = a, K = K) :=
-               stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                            sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
-      }
+      # performs counterfactual prediction & random draw
+      dat2 = cf_predict(fit = fit,
+                        data = dat2,
+                        var_name = med_outcome_all(l = k, first = first,
+                                                   a = a, K = K),
+                        n = n,
+                        family = fam_type[[k]]$family)
+
     }
   }
 
