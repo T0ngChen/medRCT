@@ -51,16 +51,18 @@ summary.medRCT <- function(object, ...){
 
 #' Determine Appropriate Family Types for GLM
 #'
-#' Identifies the appropriate family type (\code{"binomial()"} or \code{"gaussian()"}) for a set of variables.
+#' Identifies the appropriate family type (\code{"binomial()"} or \code{"gaussian()"})
+#' for a set of variables.
 #'
 #' @param data A \code{data.frame} containing the variables to be analyzed.
-#' @param variable_names A \code{character} vector specifying the names of the variables to evaluate.
-#' Each variable name should correspond to a column in the \code{data.frame}.
-#' @param unique_threshold An \code{integer} value specifying the minimum number of unique values required for a variable
-#' to be classified as continuous. Defaults to \code{10}.
+#' @param variable_names A \code{character} vector specifying the names of the variables
+#'  to evaluate. Each variable name should correspond to a column in the \code{data.frame}.
+#' @param unique_threshold An \code{integer} value specifying the minimum number of unique
+#' values required for a variable to be classified as continuous. Defaults to \code{10}.
 #'
-#' @return A \code{list} where each element corresponds to a variable in \code{variable_names}, and the value indicates
-#' the family type: either \code{"binomial()"} for binary variables or \code{"gaussian()"} for continuous variables.
+#' @return A \code{list} where each element corresponds to a variable in
+#' \code{variable_names}, and the value indicates the family type: either
+#' \code{"binomial()"} for binary variables or \code{"gaussian()"} for continuous variables.
 #'
 #' @importFrom stats binomial gaussian
 #' @export
@@ -101,13 +103,13 @@ set_exposure = function(data, column_name, exp_val) {
 #' Counterfactual Prediction and Random Draw
 #'
 #' @param fit A fitted glm model object
-#' @param data A `data.table` containing the data to which the counterfactual predictions
-#'             will be applied.
+#' @param data A `data.table` containing the data to which the counterfactual
+#'  predictions will be applied.
 #' @param var_name A character string specifying the name of the variable to store
-#'                 the random draws.
+#'  the random draws.
 #' @param n An integer specifying the number of observations in the dataset.
 #' @param family A character string specifying the distribution family to use for
-#'               generating random draws. Must be either `"binomial"` or `"gaussian"`.
+#'  generating random draws. Must be either `"binomial"` or `"gaussian"`.
 cf_predict = function(fit, data, var_name, n, family){
   # get predictions
   predictions <- predict(fit, newdata = data, type = "response")
@@ -125,6 +127,64 @@ cf_predict = function(fit, data, var_name, n, family){
 
   data
 }
+
+
+
+#' Generate Model Formula for Mediator Models
+#'
+#' This function generates a model formula for mediator models based on
+#' the input parameters.
+#'
+#' @param k An integer specifying the index of the mediator for which the
+#'  formula is being generated.
+#' @param first An integer (optional) specifying the index of the first
+#'  mediator. Defaults to `NULL`, indicating that the function
+#'  will generate formulas without explicitly considering this parameter.
+#' @param MM An integer (optional) specifying the index of the mediator
+#'  whose distribution will be shifted. Defaults to `NULL`, indicating that
+#'  the function will generate formulas without explicitly considering
+#'  this parameter.
+#' @param K An integer (optional) specifying the total number of mediators.
+#'  Defaults to `NULL`, indicating that the function will generate formulas
+#'  without explicitly considering this parameter.
+#' @param interactions_XC A \code{character} string specifying the exposure-confounder
+#'  or confounder-confounder interaction terms to include in the regression models
+#'  for confounder adjustment.
+#' @param include_all Logical.
+#' @param marginal Logical. If `TRUE`, estimating marginals under `X=0`.
+gen_formula <- function(k, first=NULL, MM = NULL, K=NULL, interactions_XC,
+                        include_all = FALSE, marginal = FALSE) {
+  if ((k == 1 || marginal) && is.null(MM))  {
+    # Formula does not include other mediators
+    return(paste0("M", k, "~ X +", interactions_XC))
+  } else if (include_all) {
+    # Formula including all mediators up to (k - 1)
+    if (is.null(first)){
+      return(paste0(
+        "M", k, "~ (X +",
+        paste0(paste0("M", 1:(k - 1)), collapse = "+"),
+        ")^2 +", interactions_XC
+      ))
+    } else {
+      paste0("M", k, "~(X+",
+             paste0(paste0("M", first:(k - 1)), collapse = "+"),
+             ")^2+",
+             interactions_XC)
+    }
+  } else if (!is.null(MM)) {
+    # Formula for cases involving MM
+    if (first == 1 && MM == 1 && k == setdiff(first:K, MM)[1]) {
+      return(paste0("M", k, "~ X +", interactions_XC))
+    } else {
+      return(paste0(
+        "M", k, "~ (X +",
+        paste0(paste0("M", setdiff(1:(k - 1), MM)), collapse = "+"),
+        ")^2 +", interactions_XC
+      ))
+    }
+  }
+}
+
 
 
 med_outcome_name = function(l, a, K) {
