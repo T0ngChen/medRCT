@@ -66,17 +66,11 @@ medRCT.fun <- function(dat,
 
   for (k in 1:K) {
 
-    formula_str <- if (k == 1) {
-      paste0("M", k, "~ X +", interactions_XC)
-    } else {
-      paste0("M", k,
-             "~ (X +",
-             paste0(paste0("M", 1:(k - 1)), collapse = "+"),
-             ")^2 +",
-             interactions_XC)
-    }
-
-    fit <- glm(as.formula(formula_str), data = data, family = fam_type[[k]])
+    fit <- glm(as.formula(gen_formula(k = k,
+                                      interactions_XC = interactions_XC,
+                                      include_all = TRUE)),
+               data = data,
+               family = fam_type[[k]])
 
     if ((!fit$converged) | any(is.na(fit$coefficients)))
       flag <- TRUE
@@ -105,8 +99,11 @@ medRCT.fun <- function(dat,
   # Estimating the target quantities
   # Marginals under X=0
   for (k in first:K) {
-    fit <- glm(as.formula(paste0("M", k, "~ X +", interactions_XC)),
-               data = data, family = fam_type[[k]])
+    fit <- glm(as.formula(gen_formula(k = k,
+                                      interactions_XC = interactions_XC,
+                                      marginal = TRUE)),
+               data = data,
+               family = fam_type[[k]])
 
     if ((!fit$converged) | any(is.na(fit$coefficients)))
       flag <- TRUE
@@ -121,7 +118,6 @@ medRCT.fun <- function(dat,
                       var_name = paste0("m", k, "_", a, "_", strrep("m", K)),
                       n = n,
                       family = fam_type[[k]]$family)
-
   }
 
 
@@ -132,14 +128,20 @@ medRCT.fun <- function(dat,
       for (k in setdiff(first:K, MM)) {
         # without intermediate confounders
         if (first == 1) {
-          if (MM == 1 & k == setdiff(first:K, MM)[1]) {
-            fit <- glm(as.formula(paste0("M", k, "~X+", interactions_XC)),
+          if (MM == 1 && k == setdiff(first:K, MM)[1]) {
+            fit <- glm(as.formula(gen_formula(k = k,
+                                              MM = MM,
+                                              first = first,
+                                              K = K,
+                                              interactions_XC = interactions_XC)),
                        data = data,
                        family = fam_type[[k]])
           } else if (!(MM != 1 & k == setdiff(first:K, MM)[1])) {
-            fit <- glm(as.formula(
-              paste0("M", k, "~(X+", paste0(paste0("M", setdiff(1:(k - 1), MM)), collapse = "+"),
-                     ")^2+", interactions_XC)),
+            fit <- glm(as.formula(gen_formula(k = k,
+                                              MM = MM,
+                                              first = first,
+                                              K = K,
+                                              interactions_XC = interactions_XC)),
               data = data,
               family = fam_type[[k]])
           }
@@ -172,10 +174,11 @@ medRCT.fun <- function(dat,
           }
         } else {
           # with intermediate confounders
-          fit <- glm(as.formula(
-            paste0("M", k, "~(X+",
-                   paste0(paste0("M", setdiff(1:(k - 1), MM)), collapse = "+"),
-                   ")^2+", interactions_XC)),
+          fit <- glm(as.formula(gen_formula(k = k,
+                                            MM = MM,
+                                            first = first,
+                                            K = K,
+                                            interactions_XC = interactions_XC)),
             data = data,
             family = fam_type[[k]])
 
@@ -216,12 +219,11 @@ medRCT.fun <- function(dat,
   if (any(intervention_type %in% c("all", "shift_k_order"))) {
     for (MM in first:(K - 1)) {
       for (k in (MM + 1):K) {
-        fit <- glm(as.formula(paste0(
-          "M", k, "~(X+", paste0(paste0("M", 1:(k - 1)), collapse = "+"),
-          ")^2+",
-          interactions_XC)),
-          data = data,
-          family = fam_type[[k]])
+        fit <- glm(as.formula(gen_formula(k = k,
+                                          interactions_XC = interactions_XC,
+                                          include_all = TRUE)),
+                   data = data,
+                   family = fam_type[[k]])
 
         if ((!fit$converged) | any(is.na(fit$coefficients)))
           flag <- TRUE
@@ -272,13 +274,12 @@ medRCT.fun <- function(dat,
   # Joint of main ones under X=0
   if (any(intervention_type %in% c("all", "shift_all"))) {
     for (k in (first + 1):K) {
-      fit <- glm(as.formula(
-        paste0("M", k, "~(X+",
-               paste0(paste0("M", first:(k - 1)), collapse = "+"),
-               ")^2+",
-               interactions_XC)),
-        data = data,
-        family = fam_type[[k]])
+      fit <- glm(as.formula(gen_formula(k = k,
+                                        interactions_XC = interactions_XC,
+                                        include_all = TRUE,
+                                        first = first)),
+                 data = data,
+                 family = fam_type[[k]])
 
       if ((!fit$converged) | any(is.na(fit$coefficients)))
         flag <- TRUE
