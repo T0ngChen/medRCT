@@ -9,8 +9,8 @@ cf_predict(fit, data, var_name, n, family)
 \arguments{
 \item{fit}{A fitted glm model object}
 
-\item{data}{A \code{data.table} containing the data to which the counterfactual predictions
-will be applied.}
+\item{data}{A \code{data.table} containing the data to which the counterfactual
+predictions will be applied.}
 
 \item{var_name}{A character string specifying the name of the variable to store
 the random draws.}

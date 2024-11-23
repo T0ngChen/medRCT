@@ -97,3 +97,39 @@ test_that("cf_predict generates counterfactual predictions correctly", {
 
 
 
+
+test_that("gen_formula generates correct formulas for marginal cases", {
+  result <- gen_formula(k = 1, interactions_XC = "X1:X2", marginal = TRUE)
+  expect_equal(result, "M1~ X +X1:X2")
+  result <- gen_formula(k = 3, interactions_XC = "X1:X2", marginal = TRUE)
+  expect_equal(result, "M3~ X +X1:X2")
+})
+
+test_that("gen_formula generates correct formulas with include_all = TRUE", {
+  result <- gen_formula(k = 3, K = 5, interactions_XC = "X1:X2", include_all = TRUE)
+  expect_equal(result, "M3~ (X +M1+M2)^2 +X1:X2")
+
+  result <- gen_formula(k = 4, first = 2, K = 5, interactions_XC = "X1:X2", include_all = TRUE)
+  expect_equal(result, "M4~(X+M2+M3)^2+X1:X2")
+})
+
+test_that("gen_formula generates correct formulas for cases involving MM", {
+  result <- gen_formula(k = 4, MM = 2, K = 5, interactions_XC = "X1:X2")
+  expect_equal(result, "M4~ (X +M1+M3)^2 +X1:X2")
+
+  result <- gen_formula(k = 4, first = 1, MM = 1, K = 5, interactions_XC = "X1:X2")
+  expect_equal(result, "M4~ (X +M2+M3)^2 +X1:X2")
+})
+
+test_that("gen_formula handles some special cases", {
+  result <- gen_formula(k = 1, interactions_XC = "X1:X2")
+  expect_equal(result, "M1~ X +X1:X2")
+
+  result <- gen_formula(k = 1, interactions_XC = "X1:X2", include_all = TRUE)
+  expect_equal(result, "M1~ X +X1:X2")
+
+  result <- gen_formula(k = 4, K = 5, interactions_XC = "X1:X2", include_all = TRUE)
+  expect_equal(result, "M4~ (X +M1+M2+M3)^2 +X1:X2")
+})
+
+

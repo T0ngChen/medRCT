@@ -9,16 +9,18 @@ family_type(data, variable_names, unique_threshold = 10)
 \arguments{
 \item{data}{A \code{data.frame} containing the variables to be analyzed.}
 
-\item{variable_names}{A \code{character} vector specifying the names of the variables to evaluate.
-Each variable name should correspond to a column in the \code{data.frame}.}
+\item{variable_names}{A \code{character} vector specifying the names of the variables
+to evaluate. Each variable name should correspond to a column in the \code{data.frame}.}
 
-\item{unique_threshold}{An \code{integer} value specifying the minimum number of unique values required for a variable
-to be classified as continuous. Defaults to \code{10}.}
+\item{unique_threshold}{An \code{integer} value specifying the minimum number of unique
+values required for a variable to be classified as continuous. Defaults to \code{10}.}
 }
 \value{
-A \code{list} where each element corresponds to a variable in \code{variable_names}, and the value indicates
-the family type: either \code{"binomial()"} for binary variables or \code{"gaussian()"} for continuous variables.
+A \code{list} where each element corresponds to a variable in
+\code{variable_names}, and the value indicates the family type: either
+\code{"binomial()"} for binary variables or \code{"gaussian()"} for continuous variables.
 }
 \description{
-Identifies the appropriate family type (\code{"binomial()"} or \code{"gaussian()"}) for a set of variables.
+Identifies the appropriate family type (\code{"binomial()"} or \code{"gaussian()"})
+for a set of variables.
 }
