@@ -104,7 +104,7 @@ marg_dist <- function(k, first, K, data, dat2, fam_type, interactions_XC, n) {
 
 
 
-#' Estimation of Joint Distribution of Mediators under Exposed
+#' Estimation of Joint Distribution of All Other Mediators under Exposed
 #'
 #' @param MM An integer specifying the index of the mediator whose distribution
 #'  will be shifted.
@@ -265,7 +265,7 @@ con_exposed <- function(MM, k, K, data, dat2, fam_type, interactions_XC,
 
 
 
-#' Estimation of Joint Distribution of Mediators under Unexposed
+#' Estimation of Joint Distribution of All Mediators under Unexposed
 #'
 #' @param k An integer specifying the index of the current mediator being processed.
 #' @param first An integer specifying the index of the first mediator.

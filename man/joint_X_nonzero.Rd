@@ -2,7 +2,7 @@
 % Please edit documentation in R/est_proc.R
 \name{joint_X_nonzero}
 \alias{joint_X_nonzero}
-\title{Estimation of Joint Distribution of Mediators under Exposed}
+\title{Estimation of Joint Distribution of All Other Mediators under Exposed}
 \usage{
 joint_X_nonzero(
   MM,
@@ -50,5 +50,5 @@ confounder adjustment.}
 specified by \code{MM}.}
 }
 \description{
-Estimation of Joint Distribution of Mediators under Exposed
+Estimation of Joint Distribution of All Other Mediators under Exposed
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/est_proc.R
 \name{joint_unexposed}
 \alias{joint_unexposed}
-\title{Estimation of Joint Distribution of Mediators under Unexposed}
+\title{Estimation of Joint Distribution of All Mediators under Unexposed}
 \usage{
 joint_unexposed(k, first, K, data, dat2, fam_type, interactions_XC, n)
 }
@@ -30,5 +30,5 @@ confounder adjustment.}
 \item{n}{An integer specifying the number of observations for \code{dat2}.}
 }
 \description{
-Estimation of Joint Distribution of Mediators under Unexposed
+Estimation of Joint Distribution of All Mediators under Unexposed
 }
