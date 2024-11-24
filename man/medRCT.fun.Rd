@@ -25,11 +25,11 @@ Defaults to all rows of \code{dat}. This parameter is particularly useful when u
 \item{first}{An \code{integer} specifying the index of the first mediator of interest in the combined list of
 intermediate confounders and mediators.}
 
-\item{K}{An \code{integer} specifying the total number of mediators included in the analysis.
+\item{K}{An \code{integer} specifying the total number of mediators and intermediate confounders.
 Mediators are considered sequentially based on their order.}
 
-\item{fam_type}{A \code{character} string specifying the family type to use for modeling mediators.
-Options typically include \code{"gaussian"} for continuous mediators or \code{"binomial"} for binary mediators, among others.}
+\item{fam_type}{A \code{character} string specifying the family type for modeling. Options typically include
+\code{"gaussian"} for continuous variables or \code{"binomial"} for binary variables.}
 
 \item{interactions_XC}{A \code{character} string specifying the exposure-confounder or confounder-confounder
 interaction terms to include in the regression models for confounder adjustment. The default value, \code{"all"},
@@ -52,6 +52,6 @@ effects on its causal descendent mediators.
 \item{mcsim}{An \code{integer} specifying the number of Monte Carlo simulations to perform.}
 }
 \description{
-This function performs the actual causal mediation analysis to estimate interventional effects mapped to a hypothetical
-target trial.
+This function performs the actual causal mediation analysis to estimate interventional effects mapped to a
+hypothetical target trial.
 }

@@ -144,9 +144,9 @@ cf_predict = function(fit, data, var_name, n, family){
 #'  whose distribution will be shifted. Defaults to `NULL`, indicating that
 #'  the function will generate formulas without explicitly considering
 #'  this parameter.
-#' @param K An integer (optional) specifying the total number of mediators.
-#'  Defaults to `NULL`, indicating that the function will generate formulas
-#'  without explicitly considering this parameter.
+#' @param K An integer (optional) specifying the total number of mediators and
+#'  intermediate confounders. Defaults to `NULL`, indicating that the function will
+#'  generate formulas without explicitly considering this parameter.
 #' @param interactions_XC A \code{character} string specifying the exposure-confounder
 #'  or confounder-confounder interaction terms to include in the regression models
 #'  for confounder adjustment.
