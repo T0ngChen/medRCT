@@ -134,7 +134,9 @@ joint_X_nonzero <- function(MM, k, first, K, data, dat2,
                                         first = first, K = K,
                                         interactions_XC = interactions_XC)),
                  data = data, family = fam_type[[k]])
-    } else if (!(MM != 1 & k == index[1])) {
+    } else if (MM != 1 && k == index[1]) {
+      return(dat2)
+    } else {
       fit <- glm(as.formula(gen_formula(k = k, MM = MM,
                                         first = first, K = K,
                                         interactions_XC = interactions_XC)),
@@ -157,7 +159,7 @@ joint_X_nonzero <- function(MM, k, first, K, data, dat2,
     dat2 <- set_exposure(data = dat2, column_name = "X", exp_val = a)
 
     # Update mediators
-    if ((first == 1 && k != index[1]) || (first != 1 && k != 1)) {
+    if ((first == 1 && k != index[1]) || first != 1) {
       l <- setdiff(1:(k - 1), MM)
       dat2[, paste0("M", l) := mget(med_outcome_name(a = a, l = l, K = K))]
     }
