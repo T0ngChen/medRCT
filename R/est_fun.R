@@ -223,15 +223,9 @@ medRCT.fun <- function(dat,
       for (MM in first:K) {
         dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
                                              strrep("m", K)))]
-
-        for (k in setdiff(first:K, MM)) {
-          dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste0(c(
-            rep(paste0(a), min(k - 1, MM - 1)),
-            "m",
-            rep(paste0(a), max(k - 1 - MM, 0)),
-            rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
-          ), collapse = "")))]
-        }
+        k = setdiff(first:K, MM)
+        dat2[, paste0("M", k) := mget(med_joint_other(k = k, a = a, MM = MM, K = K,
+                                                      ordering = FALSE))]
 
         y0 <- predict(fit, newdata = dat2, type = "response")
 
@@ -268,14 +262,8 @@ medRCT.fun <- function(dat,
                                              strrep("m", K)))]
 
         if ((MM + 1) <= K) {
-          for (k in (MM + 1):K) {
-            dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste0(c(
-              rep(paste0(a), MM - 1),
-              0,
-              rep(paste0(a), max(k - 1 - MM, 0)),
-              rep("m", K - MM - max(k - 1 - MM, 0))
-            ), collapse = "")))]
-          }
+          k = (MM + 1):K
+          dat2[, paste0("M", k) := mget(med_joint_other(k = k, a = a, MM = MM, K = K))]
         }
 
         y0 <- predict(fit, newdata = dat2, type = "response")
