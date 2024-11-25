@@ -1,3 +1,4 @@
+# simulate data
 K <- 4
 n <- 100
 data <- data.table::data.table(

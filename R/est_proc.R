@@ -165,15 +165,10 @@ joint_X_nonzero <- function(MM, k, first, K, data, dat2,
     }
 
     # Perform counterfactual prediction
-    var_name <- paste0("m", k, "_", a, "_", paste0(c(
-      rep(paste0(a), min(k - 1, MM - 1)),
-      "m",
-      rep(paste0(a), max(k - 1 - MM, 0)),
-      rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
-    ), collapse = ""))
-
     dat2 <- cf_predict(fit = fit, data = dat2,
-                       var_name = var_name, n = n,
+                       var_name = med_joint_other(k = k, a = a, MM = MM, K = K,
+                                                  ordering = FALSE),
+                       n = n,
                        family = fam_type[[k]]$family)
   }
   dat2
@@ -233,28 +228,16 @@ con_exposed <- function(MM, k, K, data, dat2, fam_type, interactions_XC,
 
     # Handle mediators between MM and k
     if (k > (MM + 1)) {
-      for (l in (MM + 1):(k - 1)) {
-        dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste0(c(
-          rep(paste0(a), MM - 1),
-          0,
-          rep(paste0(a), max(l - 1 - MM, 0)),
-          rep("m", K - MM - max(l - 1 - MM, 0))
-        ), collapse = "")))]
-      }
+    l = (MM + 1):(k - 1)
+    dat2[, paste0("M", l) := mget(med_joint_other(k = l, a = a, MM = MM, K = K))]
     }
 
     # Perform counterfactual prediction
-    var_name <- paste0("m", k, "_", a, "_", paste0(c(
-      rep(paste0(a), MM - 1),
-      0,
-      rep(paste0(a), max(k - 1 - MM, 0)),
-      rep("m", K - MM - max(k - 1 - MM, 0))
-    ), collapse = ""))
 
     dat2 <- cf_predict(
       fit = fit,
       data = dat2,
-      var_name = var_name,
+      var_name = med_joint_other(k = k, a = a, MM = MM, K = K),
       n = n,
       family = fam_type[[k]]$family
     )

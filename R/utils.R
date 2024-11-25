@@ -199,7 +199,15 @@ med_outcome_all = function(l, first, a, K){
 }
 
 
-
+med_joint_other <- function(k, a, MM, K, ordering = TRUE) {
+  re = if (ordering == TRUE) MM - 1 else min(k - 1, MM - 1)
+  paste0("m", k, "_", a, "_", paste0(c(
+    rep(paste0(a), re),
+    if(ordering == T) 0 else "m",
+    rep(paste0(a), max(k - 1 - MM, 0)),
+    rep("m", K - re - 1  - max(k - 1 - MM, 0))
+  ), collapse = ""))
+}
 
 
 

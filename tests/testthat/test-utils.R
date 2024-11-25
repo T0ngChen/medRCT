@@ -13,7 +13,7 @@ test_that("check faimly type", {
 
 
 
-test_that("set_exposure assigns values correctly", {
+test_that("test set_exposure", {
   dt <- data.table::data.table(id = 1:100, exposure = as.factor(sample(c(0,1,2), 100, replace=T)))
   fit = lm(rnorm(100)~dt$exposure)
 
@@ -74,7 +74,7 @@ test_that("test med_outcome_all", {
 
 
 
-test_that("cf_predict generates counterfactual predictions correctly", {
+test_that("test cf_predict", {
 
   data <- data.table::data.table(x = rnorm(100))
   fit_binomial <- glm(rbinom(100, 1, 0.1) ~ x, family = "binomial", data = data)
@@ -98,14 +98,14 @@ test_that("cf_predict generates counterfactual predictions correctly", {
 
 
 
-test_that("gen_formula generates correct formulas for marginal cases", {
+test_that("test gen_formula", {
   result <- gen_formula(k = 1, interactions_XC = "X1:X2", marginal = TRUE)
   expect_equal(result, "M1~ X +X1:X2")
   result <- gen_formula(k = 3, interactions_XC = "X1:X2", marginal = TRUE)
   expect_equal(result, "M3~ X +X1:X2")
 })
 
-test_that("gen_formula generates correct formulas with include_all = TRUE", {
+test_that("test gen_formula with include_all = TRUE", {
   result <- gen_formula(k = 3, K = 5, interactions_XC = "X1:X2", include_all = TRUE)
   expect_equal(result, "M3~ (X +M1+M2)^2 +X1:X2")
 
@@ -113,7 +113,7 @@ test_that("gen_formula generates correct formulas with include_all = TRUE", {
   expect_equal(result, "M4~(X+M2+M3)^2+X1:X2")
 })
 
-test_that("gen_formula generates correct formulas for cases involving MM", {
+test_that("test gen_formula for cases involving MM", {
   result <- gen_formula(k = 4, MM = 2, K = 5, interactions_XC = "X1:X2")
   expect_equal(result, "M4~ (X +M1+M3)^2 +X1:X2")
 
@@ -121,7 +121,7 @@ test_that("gen_formula generates correct formulas for cases involving MM", {
   expect_equal(result, "M4~ (X +M2+M3)^2 +X1:X2")
 })
 
-test_that("gen_formula handles some special cases", {
+test_that("test gen_formula for some special cases", {
   result <- gen_formula(k = 1, interactions_XC = "X1:X2")
   expect_equal(result, "M1~ X +X1:X2")
 
@@ -130,6 +130,33 @@ test_that("gen_formula handles some special cases", {
 
   result <- gen_formula(k = 4, K = 5, interactions_XC = "X1:X2", include_all = TRUE)
   expect_equal(result, "M4~ (X +M1+M2+M3)^2 +X1:X2")
+})
+
+
+
+test_that("test med_joint_other", {
+
+  k <- 4
+  a <- 1
+  MM <- 2
+  K <- 5
+  result <- med_joint_other(k = k, a = a, MM = MM, K = K)
+  expect_equal(result, "m4_1_101mm")
+
+  result <- med_joint_other(k = k, a = a, MM = MM, K = K, ordering = FALSE)
+  expect_equal(result, "m4_1_1m1mm")
+
+  k <- 3
+  result <- med_joint_other(k = k, a = a, MM = MM, K = K, ordering = TRUE)
+  expect_equal(result, "m3_1_10mmm")
+
+  MM <- 1
+  result <- med_joint_other(k = k, a = a, MM = MM, K = K, ordering = FALSE)
+  expect_equal(result, "m3_1_m1mmm")
+
+
+  K <- 1
+  expect_error(med_joint_other(k = k, a = a, MM = MM, K = K, ordering = TRUE), "invalid 'times' argument")
 })
 
 
