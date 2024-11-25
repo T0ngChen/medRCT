@@ -13,6 +13,8 @@
 #'  Mediators are considered sequentially based on their order.
 #' @param fam_type A \code{character} string specifying the family type for modeling. Options typically include
 #'  \code{"gaussian"} for continuous variables or \code{"binomial"} for binary variables.
+#' @param mediators A \code{character} vector including the variable names for mediators (including intermediate
+#' confounders).
 #' @param interactions_XC A \code{character} string specifying the exposure-confounder or confounder-confounder
 #'  interaction terms to include in the regression models for confounder adjustment. The default value, \code{"all"},
 #'  includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
@@ -38,6 +40,7 @@ medRCT.fun <- function(dat,
                        first = first,
                        K = K,
                        fam_type = fam_type,
+                       mediators = mediators,
                        interactions_XC = interactions_XC,
                        intervention_type = intervention_type,
                        mcsim) {
@@ -65,7 +68,7 @@ medRCT.fun <- function(dat,
   # Joint of M1 to MK under X=0 and X!=0 ...
 
   for (k in 1:K) {
-    dat2 = joint_dist(k = k, K = K, data = data, dat2 = dat2,
+    dat2 = joint_dist(k = k, K = K, data = data, dat2 = dat2, mediators = mediators,
                       fam_type = fam_type, interactions_XC = interactions_XC,
                       exposure_level = exposure_level, n = n)
   }
@@ -74,7 +77,7 @@ medRCT.fun <- function(dat,
   # Marginals under X=0
   for (k in first:K) {
     dat2 <- marg_dist(
-      k = k, first = first, K = K, data = data, dat2 = dat2,
+      k = k, first = first, K = K, data = data, dat2 = dat2, mediators = mediators,
       fam_type = fam_type, interactions_XC = interactions_XC, n = n
     )
   }
@@ -87,7 +90,7 @@ medRCT.fun <- function(dat,
       index = setdiff(first:K, MM)
       for (k in index) {
         dat2 <- joint_X_nonzero(
-          MM = MM, k = k, first = first, K = K, data = data,
+          MM = MM, k = k, first = first, K = K, data = data, mediators = mediators,
           dat2 = dat2, fam_type = fam_type, interactions_XC = interactions_XC,
           lnzero = lnzero, n = n, index = index
         )
@@ -101,7 +104,7 @@ medRCT.fun <- function(dat,
     for (MM in first:(K - 1)) {
       for (k in (MM + 1):K) {
         dat2 <- con_exposed(
-          MM = MM, k = k, K = K, data = data, dat2 = dat2,
+          MM = MM, k = k, K = K, data = data, dat2 = dat2, mediators = mediators,
           fam_type = fam_type, interactions_XC = interactions_XC,
           lnzero = lnzero, n = n
         )
@@ -116,7 +119,7 @@ medRCT.fun <- function(dat,
   if (any(intervention_type %in% c("all", "shift_all"))) {
     for (k in (first + 1):K) {
       dat2 <- joint_unexposed(
-        k = k, first = first, K = K, data = data, dat2 = dat2,
+        k = k, first = first, K = K, data = data, dat2 = dat2, mediators = mediators,
         fam_type = fam_type, interactions_XC = interactions_XC, n = n
       )
     }
@@ -130,8 +133,14 @@ medRCT.fun <- function(dat,
     data = data,
     family = outcome_type[[1]])
 
-  if ((!fit$converged) | any(is.na(fit$coefficients)))
-    flag <- TRUE
+  if(!fit$converged){
+    stop(paste0("Model did not converge when using the outcome Y as the response"))
+  }
+  if(any(is.na(fit$coefficients))){
+    na_coefs <- names(coef(fit))[is.na(coef(fit))]
+    stop(paste0("The following coefficients were NA:", paste(na_coefs, collapse = ", "),
+                "when using the outcome Y as the response"))
+  }
 
 
   # ESTIMATE OUTCOME EXPECTATION IN EACH ARM & ESTIMATE EFFECTS

@@ -11,13 +11,15 @@
 #' @param fam_type A \code{character} string specifying the family type for modeling.
 #'  Options typically include \code{"gaussian"} for continuous variables or \code{"binomial"}
 #'  for binary variables.
+#' @param mediators A \code{character} vector including the variable names for mediators
+#' (including intermediate confounders).
 #' @param interactions_XC  A \code{character} string specifying the exposure-confounder or
 #'  confounder-confounder interaction terms to include in the regression models for
 #'  confounder adjustment.
 #' @param exposure_level A numeric vector specifying the levels of the exposure
 #'  (e.g., \code{c(0, 1)}) for which counterfactual predictions are performed.
 #' @param n An integer specifying the number of observations for `dat2`.
-joint_dist <- function(k, K, data, dat2, fam_type,
+joint_dist <- function(k, K, data, dat2, fam_type, mediators,
                        interactions_XC, exposure_level, n) {
   # Fit the model
   fit <- glm(
@@ -29,9 +31,15 @@ joint_dist <- function(k, K, data, dat2, fam_type,
   )
 
   # Check convergence and coefficients
-  if((!fit$converged) || any(is.na(fit$coefficients))){
-
+  if(!fit$converged){
+    stop(paste0("Model did not converge when using variable", mediators[k] ,"as the response"))
   }
+  if(any(is.na(fit$coefficients))){
+    na_coefs <- names(coef(fit))[is.na(coef(fit))]
+    stop(paste0("The following coefficients were NA:", paste(na_coefs, collapse = ", "),
+                "when using variable", mediators[k] ,"as the response"))
+  }
+
 
   # Loop through exposure levels
   for (a in exposure_level) {
@@ -70,11 +78,14 @@ joint_dist <- function(k, K, data, dat2, fam_type,
 #' @param fam_type A \code{character} string specifying the family type for modeling.
 #'  Options typically include \code{"gaussian"} for continuous variables or \code{"binomial"}
 #'  for binary variables.
+#' @param mediators A \code{character} vector including the variable names for mediators
+#'  (including intermediate confounders).
 #' @param interactions_XC A \code{character} string specifying the exposure-confounder or
 #'  confounder-confounder interaction terms to include in the regression models for
 #'  confounder adjustment.
 #' @param n An integer specifying the number of observations for `dat2`.
-marg_dist <- function(k, first, K, data, dat2, fam_type, interactions_XC, n) {
+marg_dist <- function(k, first, K, data, dat2, fam_type, mediators,
+                      interactions_XC, n) {
   # Fit the model
   fit <- glm(
     as.formula(gen_formula(k = k,
@@ -85,7 +96,14 @@ marg_dist <- function(k, first, K, data, dat2, fam_type, interactions_XC, n) {
   )
 
   # Initialize a flag for convergence issues
-  flag <- (!fit$converged) | any(is.na(fit$coefficients))
+  if(!fit$converged){
+    stop(paste0("Model did not converge when using variable", mediators[k] ,"as the response"))
+  }
+  if(any(is.na(fit$coefficients))){
+    na_coefs <- names(coef(fit))[is.na(coef(fit))]
+    stop(paste0("The following coefficients were NA:", paste(na_coefs, collapse = ", "),
+                "when using variable", mediators[k] ,"as the response"))
+  }
 
   # Set exposure to 0
   a <- 0
@@ -120,6 +138,8 @@ marg_dist <- function(k, first, K, data, dat2, fam_type, interactions_XC, n) {
 #' @param fam_type A \code{character} string specifying the family type for modeling.
 #'  Options typically include \code{"gaussian"} for continuous variables or \code{"binomial"}
 #'  for binary variables.
+#' @param mediators A \code{character} vector including the variable names for mediators
+#'  (including intermediate confounders).
 #' @param interactions_XC A \code{character} string specifying the exposure-confounder or
 #'  confounder-confounder interaction terms to include in the regression models for
 #'  confounder adjustment.
@@ -127,8 +147,8 @@ marg_dist <- function(k, first, K, data, dat2, fam_type, interactions_XC, n) {
 #' @param n An integer specifying the number of observations for `dat2`.
 #' @param index An integer vector specifying the indices of all mediators, excluding the mediator
 #'  specified by `MM`.
-joint_X_nonzero <- function(MM, k, first, K, data, dat2,
-                            fam_type, interactions_XC, lnzero, n, index) {
+joint_X_nonzero <- function(MM, k, first, K, data, dat2, fam_type,
+                            mediators, interactions_XC, lnzero, n, index) {
   # Check for intermediate confounders
   if (first == 1) {
     if (MM == 1 && k == index[1]) {
@@ -152,8 +172,13 @@ joint_X_nonzero <- function(MM, k, first, K, data, dat2,
   }
 
   # Check model convergence and coefficients
-  if ((!fit$converged) | any(is.na(fit$coefficients))) {
-    flag <- TRUE
+  if(!fit$converged){
+    stop(paste0("Model did not converge when using variable", mediators[k] ,"as the response"))
+  }
+  if(any(is.na(fit$coefficients))){
+    na_coefs <- names(coef(fit))[is.na(coef(fit))]
+    stop(paste0("The following coefficients were NA:", paste(na_coefs, collapse = ", "),
+                "when using variable", mediators[k] ,"as the response"))
   }
 
   # loop over exposure levels
@@ -193,13 +218,15 @@ joint_X_nonzero <- function(MM, k, first, K, data, dat2,
 #' @param fam_type A \code{character} string specifying the family type for modeling.
 #'  Options typically include \code{"gaussian"} for continuous variables or \code{"binomial"}
 #'  for binary variables.
+#' @param mediators A \code{character} vector including the variable names for mediators
+#'  (including intermediate confounders).
 #' @param interactions_XC A \code{character} string specifying the exposure-confounder or
 #'  confounder-confounder interaction terms to include in the regression models for
 #'  confounder adjustment.
 #' @param lnzero A numeric vector specifying the non-zero levels of the exposure.
 #' @param n An integer specifying the number of observations for `dat2`.
-con_exposed <- function(MM, k, K, data, dat2, fam_type, interactions_XC,
-                        lnzero, n) {
+con_exposed <- function(MM, k, K, data, dat2, fam_type, mediators,
+                        interactions_XC, lnzero, n) {
   # Fit the model for the mediator k
   fit <- glm(
     as.formula(gen_formula(k = k,
@@ -210,7 +237,14 @@ con_exposed <- function(MM, k, K, data, dat2, fam_type, interactions_XC,
   )
 
   # Check for convergence or NA coefficients
-  flag <- (!fit$converged) | any(is.na(fit$coefficients))
+  if(!fit$converged){
+    stop(paste0("Model did not converge when using variable", mediators[k] ,"as the response"))
+  }
+  if(any(is.na(fit$coefficients))){
+    na_coefs <- names(coef(fit))[is.na(coef(fit))]
+    stop(paste0("The following coefficients were NA:", paste(na_coefs, collapse = ", "),
+                "when using variable", mediators[k] ,"as the response"))
+  }
 
   # Iterate over exposure levels
   for (a in lnzero) {
@@ -262,11 +296,14 @@ con_exposed <- function(MM, k, K, data, dat2, fam_type, interactions_XC,
 #' @param fam_type A \code{character} string specifying the family type for modeling.
 #'  Options typically include \code{"gaussian"} for continuous variables or \code{"binomial"}
 #'  for binary variables.
+#' @param mediators A \code{character} vector including the variable names for mediators
+#'  (including intermediate confounders).
 #' @param interactions_XC A \code{character} string specifying the exposure-confounder or
 #'  confounder-confounder interaction terms to include in the regression models for
 #'  confounder adjustment.
 #' @param n An integer specifying the number of observations for `dat2`.
-joint_unexposed <- function(k, first, K, data, dat2, fam_type, interactions_XC, n) {
+joint_unexposed <- function(k, first, K, data, dat2, fam_type,
+                            mediators, interactions_XC, n) {
   # Fit the model for the mediator k
   fit <- glm(
     as.formula(gen_formula(k = k, interactions_XC = interactions_XC,
@@ -276,7 +313,14 @@ joint_unexposed <- function(k, first, K, data, dat2, fam_type, interactions_XC, 
   )
 
   # Check for convergence or NA coefficients
-  flag <- (!fit$converged) | any(is.na(fit$coefficients))
+  if(!fit$converged){
+    stop(paste0("Model did not converge when using variable", mediators[k] ,"as the response"))
+  }
+  if(any(is.na(fit$coefficients))){
+    na_coefs <- names(coef(fit))[is.na(coef(fit))]
+    stop(paste0("The following coefficients were NA:", paste(na_coefs, collapse = ", "),
+                "when using variable", mediators[k] ,"as the response"))
+  }
 
   # Set exposure
   a <- 0
