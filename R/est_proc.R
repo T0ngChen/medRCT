@@ -29,7 +29,9 @@ joint_dist <- function(k, K, data, dat2, fam_type,
   )
 
   # Check convergence and coefficients
-  flag <- (!fit$converged) | any(is.na(fit$coefficients))
+  if((!fit$converged) || any(is.na(fit$coefficients))){
+
+  }
 
   # Loop through exposure levels
   for (a in exposure_level) {
@@ -300,4 +302,110 @@ joint_unexposed <- function(k, first, K, data, dat2, fam_type, interactions_XC, 
 }
 
 
+# estimation IIE and return results
+compute_assign = function(dat2, fit, a, K, first, type, lnzero, p_ctr, results) {
+  if (type == "trt") {
+    l = 1:K
+    dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
+                                                   l = l,
+                                                   K = K))]
+  } else if (type == "all") {
+    if (first > 1) {
+      l = 1:(first - 1)
+      dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
+                                                     l = l,
+                                                     K = K))]
+    }
 
+    # all mediators of interest
+    k = first:K
+    dat2[, paste0("M", k) := mget(med_outcome_all(l = k,
+                                                  first = first,
+                                                  a = 0,
+                                                  K = K))]
+  }
+  y1 <- predict(fit, newdata = dat2, type = "response")
+  avg_pred = mean(y1)
+  if (type == "trt") {
+    if(length(lnzero) > 1){
+      results[[paste0("p_trt_", a)]] <- avg_pred
+      results[[paste0("TCE_", a, " (p_trt_", a, " - p_ctr)")]] <- avg_pred - p_ctr
+    } else {
+      results$p_trt <- avg_pred
+      results[["TCE (p_trt - p_ctr)"]] <- avg_pred - p_ctr
+    }
+  } else if (type == "all") {
+    if(length(lnzero) > 1){
+      results[[paste0("p_", type, "_", a)]] <- avg_pred
+      # IIE
+      results[[paste0("IIE_", type, "_", a,
+                      " (p_trt_", lnzero, " - p_all_", lnzero, ")")]] =
+        results[[paste0("p_trt_", a)]] - avg_pred
+    } else {
+      results[[paste0("p_", type)]] <- avg_pred
+      # IIE
+      results[[paste0("IIE_", type, " (p_trt - p_", type, ")")]] <- results$p_trt - avg_pred
+    }
+  }
+  results
+}
+
+
+
+compute_assign_loop = function(dat2, fit, a, K, first, type, lnzero, results) {
+  if (type == "shift_k") {
+    if (first > 1) {
+      l = 1:(first - 1)
+      dat2[, paste0("M", l) :=  mget(med_outcome_name(a = a,
+                                                      l = l,
+                                                      K = K))]
+    }
+  }
+  # get index for loop
+  if (type == "shift_k") {
+    index = first:K
+    suffix = NULL
+  } else if (type == "shift_k_order"){
+    index = first:(K - 1)
+    suffix = "_prime"
+  }
+  for (MM in index) {
+    # prepare data
+    if (type == "shift_k") {
+      dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
+                                           strrep("m", K)))]
+      k = setdiff(first:K, MM)
+      dat2[, paste0("M", k) := mget(med_joint_other(k = k, a = a, MM = MM, K = K,
+                                                    ordering = FALSE))]
+    } else if (type == "shift_k_order") {
+      if (MM != 1) {
+        l = 1:(MM - 1)
+        dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
+                                                       l = l,
+                                                       K = K))]
+      }
+      dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
+                                           strrep("m", K)))]
+      if ((MM + 1) <= K) {
+        k = (MM + 1):K
+        dat2[, paste0("M", k) := mget(med_joint_other(k = k, a = a, MM = MM, K = K))]
+      }
+    }
+    y1 <- predict(fit, newdata = dat2, type = "response")
+    avg_pred = mean(y1)
+
+    if(length(lnzero) > 1){
+      results[[paste0("p_", MM - (first - 1), "_", a, suffix)]] <- avg_pred
+      # IIE
+      results[[paste0("IIE_", MM - (first - 1), "_", a, suffix,
+                      " (p_trt_", a, " - p_", MM - (first - 1), "_", a, suffix, ")")]] =
+        results[[paste0("p_trt_", a)]] - avg_pred
+    } else {
+      results[[paste0("p_", MM - (first - 1), suffix)]] <- avg_pred
+      # IIE
+      results[[paste0("IIE_", MM - (first - 1), " (p_trt - p_", MM - (first - 1), suffix, ")")]] <-
+        results$p_trt - avg_pred
+    }
+  }
+  results
+}
