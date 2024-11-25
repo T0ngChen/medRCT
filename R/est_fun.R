@@ -1,18 +1,18 @@
 #' Causal Mediation Analysis for Estimating Interventional Effects
 #'
-#' This function performs the actual causal mediation analysis to estimate interventional effects mapped to a hypothetical
-#' target trial.
+#' This function performs the actual causal mediation analysis to estimate interventional effects mapped to a
+#' hypothetical target trial.
 #'
 #' @param dat A \code{data.frame} containing the dataset for analysis.
 #' @param ind A \code{vector} of indices specifying the subset of \code{dat} to use for the analysis.
-#' Defaults to all rows of \code{dat}. This parameter is particularly useful when using this function within the
-#' \code{boot()} function from the \code{boot} package, as it enables resampling by specifying subsets of the data.
+#'  Defaults to all rows of \code{dat}. This parameter is particularly useful when using this function within the
+#'  \code{boot()} function from the \code{boot} package, as it enables resampling by specifying subsets of the data.
 #' @param first An \code{integer} specifying the index of the first mediator of interest in the combined list of
-#' intermediate confounders and mediators.
-#' @param K An \code{integer} specifying the total number of mediators included in the analysis.
-#' Mediators are considered sequentially based on their order.
-#' @param fam_type A \code{character} string specifying the family type to use for modeling mediators.
-#' Options typically include \code{"gaussian"} for continuous mediators or \code{"binomial"} for binary mediators, among others.
+#'  intermediate confounders and mediators.
+#' @param K An \code{integer} specifying the total number of mediators and intermediate confounders.
+#'  Mediators are considered sequentially based on their order.
+#' @param fam_type A \code{character} string specifying the family type for modeling. Options typically include
+#'  \code{"gaussian"} for continuous variables or \code{"binomial"} for binary variables.
 #' @param interactions_XC A \code{character} string specifying the exposure-confounder or confounder-confounder
 #'  interaction terms to include in the regression models for confounder adjustment. The default value, \code{"all"},
 #'  includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
@@ -44,7 +44,7 @@ medRCT.fun <- function(dat,
   # Take bootstrap sample
   data <- dat[ind, ]
 
-  # Set flag to capure bootstrap samples to reject
+  # Set flag to capture bootstrap samples to reject
   flag <- FALSE
 
   # Replicate dataset for simulations
@@ -62,71 +62,21 @@ medRCT.fun <- function(dat,
   lnzero = exposure_level[exposure_level!=0]
 
   # ESTIMATE DISTRIBUTIONS
-  # Joint of M1 to MK under X=0 and X=1 ...
+  # Joint of M1 to MK under X=0 and X!=0 ...
 
   for (k in 1:K) {
-
-    formula_str <- if (k == 1) {
-      paste0("M", k, "~ X +", interactions_XC)
-    } else {
-      paste0("M", k,
-             "~ (X +",
-             paste0(paste0("M", 1:(k - 1)), collapse = "+"),
-             ")^2 +",
-             interactions_XC)
-    }
-
-    fit <- glm(as.formula(formula_str), data = data, family = fam_type[[k]])
-
-    if ((!fit$converged) | any(is.na(fit$coefficients)))
-      flag <- TRUE
-
-    for(a in exposure_level) {
-
-      dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
-
-      if (k != 1) {
-        l = 1:(k - 1)
-        dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
-                                                       l = l,
-                                                       K = K))]
-      }
-
-
-      if(fam_type[[k]]$family == "binomial"){
-        dat2[, med_outcome_name(a, l = k, K) :=
-               stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
-      } else if (fam_type[[k]]$family == "gaussian") {
-        dat2[, med_outcome_name(a, l = k, K) :=
-               stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                            sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
-      }
-    }
+    dat2 = joint_dist(k = k, K = K, data = data, dat2 = dat2,
+                      fam_type = fam_type, interactions_XC = interactions_XC,
+                      exposure_level = exposure_level, n = n)
   }
 
   # Estimating the target quantities
   # Marginals under X=0
   for (k in first:K) {
-    fit <- glm(as.formula(paste0("M", k, "~ X +", interactions_XC)),
-               data = data, family = fam_type[[k]])
-
-    if ((!fit$converged) | any(is.na(fit$coefficients)))
-      flag <- TRUE
-
-    a <- 0
-
-    # covert X to the correct class
-    dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
-
-
-    if(fam_type[[k]]$family == "binomial"){
-      dat2[, paste0("m", k, "_", a, "_", strrep("m", K)) :=
-             stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
-    } else if (fam_type[[k]]$family == "gaussian") {
-      dat2[, paste0("m", k, "_", a, "_", strrep("m", K)) :=
-             stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                          sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
-    }
+    dat2 <- marg_dist(
+      k = k, first = first, K = K, data = data, dat2 = dat2,
+      fam_type = fam_type, interactions_XC = interactions_XC, n = n
+    )
   }
 
 
@@ -134,156 +84,27 @@ medRCT.fun <- function(dat,
   # Joint of others under X!=0
   if (any(intervention_type %in% c("all", "shift_k"))) {
     for (MM in first:K) {
-      for (k in setdiff(first:K, MM)) {
-        # without intermediate confounders
-        if (first == 1) {
-          if (MM == 1 & k == setdiff(first:K, MM)[1]) {
-            fit <- glm(as.formula(paste0("M", k, "~X+", interactions_XC)),
-                       data = data,
-                       family = fam_type[[k]])
-          } else if (!(MM != 1 & k == setdiff(first:K, MM)[1])) {
-            fit <- glm(as.formula(
-              paste0("M", k, "~(X+", paste0(paste0("M", setdiff(1:(k - 1), MM)), collapse = "+"),
-                     ")^2+", interactions_XC)),
-              data = data,
-              family = fam_type[[k]])
-          }
-          if ((!fit$converged) | any(is.na(fit$coefficients)))
-            flag <- TRUE
-
-          for(a in lnzero){
-
-            dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
-
-            if (k != setdiff(first:K, MM)[1]) {
-              l = setdiff(1:(k - 1), MM)
-              dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
-                                                             l = l,
-                                                             K = K))]
-            }
-
-            if(fam_type[[k]]$family == "binomial"){
-              dat2[, paste0("m", k, "_", a, "_", paste0(c(
-                rep(paste0(a), min(k - 1, MM - 1)),
-                "m",
-                rep(paste0(a), max(k - 1 - MM, 0)),
-                rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
-              ), collapse = "")) :=
-                stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
-            } else if (fam_type[[k]]$family == "gaussian") {
-              dat2[, paste0("m", k, "_", a, "_", paste0(c(
-                rep(paste0(a), min(k - 1, MM - 1)),
-                "m",
-                rep(paste0(a), max(k - 1 - MM, 0)),
-                rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
-              ), collapse = "")) :=
-                stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                             sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
-            }
-          }
-        } else {
-          # with intermediate confounders
-          fit <- glm(as.formula(
-            paste0("M", k, "~(X+",
-                   paste0(paste0("M", setdiff(1:(k - 1), MM)), collapse = "+"),
-                   ")^2+", interactions_XC)),
-            data = data,
-            family = fam_type[[k]])
-
-          if ((!fit$converged) | any(is.na(fit$coefficients)))
-            flag <- TRUE
-
-          for(a in lnzero){
-
-            dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
-
-            if(k!=1){
-              l = setdiff(1:(k - 1), MM)
-              dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
-                                                             l = l,
-                                                             K = K))]
-            }
-
-            if(fam_type[[k]]$family == "binomial"){
-              dat2[, paste0("m", k, "_", a, "_", paste0(c(
-                rep(paste0(a), min(k - 1, MM - 1)),
-                "m",
-                rep(paste0(a), max(k - 1 - MM, 0)),
-                rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
-              ), collapse = "")) :=
-                stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
-            } else if (fam_type[[k]]$family == "gaussian") {
-              dat2[, paste0("m", k, "_", a, "_", paste0(c(
-                rep(paste0(a), min(k - 1, MM - 1)),
-                "m",
-                rep(paste0(a), max(k - 1 - MM, 0)),
-                rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
-              ), collapse = "")) :=
-                stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                             sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
-            }
-          }
-        }
+      index = setdiff(first:K, MM)
+      for (k in index) {
+        dat2 <- joint_X_nonzero(
+          MM = MM, k = k, first = first, K = K, data = data,
+          dat2 = dat2, fam_type = fam_type, interactions_XC = interactions_XC,
+          lnzero = lnzero, n = n, index = index
+        )
       }
     }
   }
 
   # For p_first_prime,...., p_K_prime
-  # Conditionals under X=1
+  # Conditionals under X!=0
   if (any(intervention_type %in% c("all", "shift_k_order"))) {
     for (MM in first:(K - 1)) {
       for (k in (MM + 1):K) {
-        fit <- glm(as.formula(paste0(
-          "M", k, "~(X+", paste0(paste0("M", 1:(k - 1)), collapse = "+"),
-          ")^2+",
-          interactions_XC)),
-          data = data,
-          family = fam_type[[k]])
-
-        if ((!fit$converged) | any(is.na(fit$coefficients)))
-          flag <- TRUE
-
-        for(a in lnzero){
-
-          dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
-
-          if (MM != 1) {
-            l = 1:(MM - 1)
-            dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
-                                                           l = l,
-                                                           K = K))]
-          }
-
-          dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
-                                               strrep("m", K)))]
-
-          if (k > (MM + 1)) {
-            for (l in (MM + 1):(k - 1))
-              dat2[, paste0("M", l) := get(paste0("m", l, "_", a, "_", paste0(c(
-                rep(paste0(a), MM - 1),
-                0,
-                rep(paste0(a), max(l - 1 - MM, 0)),
-                rep("m", K - MM - max(l - 1 - MM, 0))
-              ), collapse = "")))]
-          }
-
-          if(fam_type[[k]]$family == "binomial"){
-            dat2[, paste0("m", k, "_", a, "_", paste0(c(
-              rep(paste0(a), MM - 1),
-              0,
-              rep(paste0(a), max(k - 1 - MM, 0)),
-              rep("m", K - MM - max(k - 1 - MM, 0))), collapse = "")) :=
-                stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
-          } else if (fam_type[[k]]$family == "gaussian") {
-            dat2[, paste0("m", k, "_", a, "_", paste0(c(
-              rep(paste0(a), MM - 1),
-              0,
-              rep(paste0(a), max(k - 1 - MM, 0)),
-              rep("m", K - MM - max(k - 1 - MM, 0))), collapse = "")) :=
-                stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                             sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
-          }
-        }
+        dat2 <- con_exposed(
+          MM = MM, k = k, K = K, data = data, dat2 = dat2,
+          fam_type = fam_type, interactions_XC = interactions_XC,
+          lnzero = lnzero, n = n
+        )
       }
     }
   }
@@ -294,40 +115,14 @@ medRCT.fun <- function(dat,
   # Joint of main ones under X=0
   if (any(intervention_type %in% c("all", "shift_all"))) {
     for (k in (first + 1):K) {
-      fit <- glm(as.formula(
-        paste0("M", k, "~(X+",
-               paste0(paste0("M", first:(k - 1)), collapse = "+"),
-               ")^2+",
-               interactions_XC)),
-        data = data,
-        family = fam_type[[k]])
-
-      if ((!fit$converged) | any(is.na(fit$coefficients)))
-        flag <- TRUE
-
-      a <- 0
-
-      dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
-
-      l = first:(k - 1)
-      dat2[, paste0("M", l) := mget(med_outcome_all(l = l,
-                                                    first = first,
-                                                    a = a,
-                                                    K = K))]
-
-      if(fam_type[[k]]$family == "binomial"){
-        dat2[, med_outcome_all(l = k, first = first, a = a,K = K) :=
-               stats::rbinom(n, 1, predict(fit, newdata = dat2, type = "response"))]
-      } else if (fam_type[[k]]$family == "gaussian") {
-        dat2[, med_outcome_all(l = k, first = first, a = a, K = K) :=
-               stats::rnorm(n, mean = predict(fit,newdata=dat2,type="response"),
-                            sd = sqrt(sum(fit$residuals^2)/stats::df.residual(fit)))]
-      }
+      dat2 <- joint_unexposed(
+        k = k, first = first, K = K, data = data, dat2 = dat2,
+        fam_type = fam_type, interactions_XC = interactions_XC, n = n
+      )
     }
   }
 
   # outcome
-  # Y
   outcome_type = family_type(data, "Y")
   fit <- glm(as.formula(paste0(
     "Y~(X+", paste0(paste0("M", 1:K), collapse = "+"), ")^2+",
@@ -428,15 +223,9 @@ medRCT.fun <- function(dat,
       for (MM in first:K) {
         dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
                                              strrep("m", K)))]
-
-        for (k in setdiff(first:K, MM)) {
-          dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste0(c(
-            rep(paste0(a), min(k - 1, MM - 1)),
-            "m",
-            rep(paste0(a), max(k - 1 - MM, 0)),
-            rep("m", K - 1 - min(k - 1, MM - 1) - max(k - 1 - MM, 0))
-          ), collapse = "")))]
-        }
+        k = setdiff(first:K, MM)
+        dat2[, paste0("M", k) := mget(med_joint_other(k = k, a = a, MM = MM, K = K,
+                                                      ordering = FALSE))]
 
         y0 <- predict(fit, newdata = dat2, type = "response")
 
@@ -473,14 +262,8 @@ medRCT.fun <- function(dat,
                                              strrep("m", K)))]
 
         if ((MM + 1) <= K) {
-          for (k in (MM + 1):K) {
-            dat2[, paste0("M", k) := get(paste0("m", k, "_", a, "_", paste0(c(
-              rep(paste0(a), MM - 1),
-              0,
-              rep(paste0(a), max(k - 1 - MM, 0)),
-              rep("m", K - MM - max(k - 1 - MM, 0))
-            ), collapse = "")))]
-          }
+          k = (MM + 1):K
+          dat2[, paste0("M", k) := mget(med_joint_other(k = k, a = a, MM = MM, K = K))]
         }
 
         y0 <- predict(fit, newdata = dat2, type = "response")
@@ -589,8 +372,10 @@ medRCT.fun <- function(dat,
   # TCE
   # p_trt & p_ctr
   if(length(lnzero) > 1){
-    res <- c(res, unlist(mget(paste0("TCE_", lnzero))), unlist(mget(paste0("p_trt_", lnzero))), p_ctr)
-    res_names <- c(res_names, paste0("TCE_", lnzero, " (p_trt_", lnzero, " - p_ctr)"), paste0("p_trt_", lnzero), "p_ctr")
+    res <- c(res, unlist(mget(paste0("TCE_", lnzero))),
+             unlist(mget(paste0("p_trt_", lnzero))), p_ctr)
+    res_names <- c(res_names, paste0("TCE_", lnzero, " (p_trt_", lnzero, " - p_ctr)"),
+                   paste0("p_trt_", lnzero), "p_ctr")
   } else {
     res <- c(res, TCE, p_trt, p_ctr)
     res_names <- c(res_names, "TCE (p_trt - p_ctr)", "p_trt", "p_ctr")

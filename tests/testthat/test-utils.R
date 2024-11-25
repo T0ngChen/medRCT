@@ -13,7 +13,7 @@ test_that("check faimly type", {
 
 
 
-test_that("set_exposure assigns values correctly", {
+test_that("test set_exposure", {
   dt <- data.table::data.table(id = 1:100, exposure = as.factor(sample(c(0,1,2), 100, replace=T)))
   fit = lm(rnorm(100)~dt$exposure)
 
@@ -22,7 +22,141 @@ test_that("set_exposure assigns values correctly", {
 
   # Check that the column has been updated correctly
   expect_equal(unique(as.numeric(result$exposure)), 1)
+  expect_equal(levels(result$exposure), "2")
 })
 
+
+test_that("test med_outcome_name", {
+  expect_equal(
+    med_outcome_name(l = 1, a = 0, K = 3),
+    "m1_0_mmm"
+  )
+
+  expect_equal(
+    med_outcome_name(l = 2, a = "1", K = 4),
+    "m2_1_1mmm"
+  )
+
+  expect_equal(
+    med_outcome_name(l = 1, a = 1, K = 1),
+    "m1_1_m"
+  )
+
+  expect_equal(
+    med_outcome_name(l = 3, a = 3, K = 5),
+    "m3_3_33mmm"
+  )
+})
+
+
+
+test_that("test med_outcome_all", {
+  expect_equal(
+    med_outcome_all(l = 2, first = 1, a = 1, K = 3),
+    "m2_1_1mm"
+  )
+
+  expect_equal(
+    med_outcome_all(l = 3, first = 2, a = 1, K = 4),
+    "m3_1_m1mm"
+  )
+
+  expect_equal(
+    med_outcome_all(l = 2, first = 2, a = 1, K = 4),
+    "m2_1_mmmm"
+  )
+
+  expect_equal(
+    med_outcome_all(l = 1, first = 1, a = 2, K = 1),
+    "m1_2_m"
+  )
+})
+
+
+
+test_that("test cf_predict", {
+
+  data <- data.table::data.table(x = rnorm(100))
+  fit_binomial <- glm(rbinom(100, 1, 0.1) ~ x, family = "binomial", data = data)
+
+  data <- cf_predict(fit = fit_binomial, data = data, var_name = "cf_binom", n = 100, family = "binomial")
+
+  expect_true("cf_binom" %in% colnames(data))
+  expect_true(all(data$cf_binomial %in% c(0, 1)))
+
+
+  fit_gaussian <- lm(rnorm(100) ~ x, data = data)
+
+  data <- cf_predict(fit = fit_gaussian, data = data, var_name = "cf_gaussian", n = 100, family = "gaussian")
+
+  expect_true("cf_gaussian" %in% colnames(data))
+  expect_true(is.numeric(data$cf_gaussian))
+
+})
+
+
+
+
+
+test_that("test gen_formula", {
+  result <- gen_formula(k = 1, interactions_XC = "X1:X2", marginal = TRUE)
+  expect_equal(result, "M1~ X +X1:X2")
+  result <- gen_formula(k = 3, interactions_XC = "X1:X2", marginal = TRUE)
+  expect_equal(result, "M3~ X +X1:X2")
+})
+
+test_that("test gen_formula with include_all = TRUE", {
+  result <- gen_formula(k = 3, K = 5, interactions_XC = "X1:X2", include_all = TRUE)
+  expect_equal(result, "M3~ (X +M1+M2)^2 +X1:X2")
+
+  result <- gen_formula(k = 4, first = 2, K = 5, interactions_XC = "X1:X2", include_all = TRUE)
+  expect_equal(result, "M4~(X+M2+M3)^2+X1:X2")
+})
+
+test_that("test gen_formula for cases involving MM", {
+  result <- gen_formula(k = 4, MM = 2, K = 5, interactions_XC = "X1:X2")
+  expect_equal(result, "M4~ (X +M1+M3)^2 +X1:X2")
+
+  result <- gen_formula(k = 4, first = 1, MM = 1, K = 5, interactions_XC = "X1:X2")
+  expect_equal(result, "M4~ (X +M2+M3)^2 +X1:X2")
+})
+
+test_that("test gen_formula for some special cases", {
+  result <- gen_formula(k = 1, interactions_XC = "X1:X2")
+  expect_equal(result, "M1~ X +X1:X2")
+
+  result <- gen_formula(k = 1, interactions_XC = "X1:X2", include_all = TRUE)
+  expect_equal(result, "M1~ X +X1:X2")
+
+  result <- gen_formula(k = 4, K = 5, interactions_XC = "X1:X2", include_all = TRUE)
+  expect_equal(result, "M4~ (X +M1+M2+M3)^2 +X1:X2")
+})
+
+
+
+test_that("test med_joint_other", {
+
+  k <- 4
+  a <- 1
+  MM <- 2
+  K <- 5
+  result <- med_joint_other(k = k, a = a, MM = MM, K = K)
+  expect_equal(result, "m4_1_101mm")
+
+  result <- med_joint_other(k = k, a = a, MM = MM, K = K, ordering = FALSE)
+  expect_equal(result, "m4_1_1m1mm")
+
+  k <- 3
+  result <- med_joint_other(k = k, a = a, MM = MM, K = K, ordering = TRUE)
+  expect_equal(result, "m3_1_10mmm")
+
+  MM <- 1
+  result <- med_joint_other(k = k, a = a, MM = MM, K = K, ordering = FALSE)
+  expect_equal(result, "m3_1_m1mmm")
+
+
+  K <- 1
+  expect_error(med_joint_other(k = k, a = a, MM = MM, K = K, ordering = TRUE), "invalid 'times' argument")
+})
 
 

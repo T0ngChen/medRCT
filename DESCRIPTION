@@ -1,6 +1,6 @@
 Package: medRCT
 Title: Causal Mediation Analysis Estimating Interventional Effects Mapped to a Target Trial
-Version: 0.0.0.9031
+Version: 0.0.0.9052
 Authors@R: c(
     person("Tong", "Chen", email = "tong.chen@mcri.edu.au", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2751-2412")),
