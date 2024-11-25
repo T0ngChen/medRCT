@@ -339,7 +339,7 @@ compute_assign = function(dat2, fit, a, K, first, type, lnzero, p_ctr, results) 
       results[[paste0("p_", type, "_", a)]] <- avg_pred
       # IIE
       results[[paste0("IIE_", type, "_", a,
-                      " (p_trt_", lnzero, " - p_all_", lnzero, ")")]] =
+                      " (p_trt_", a, " - p_all_", a, ")")]] =
         results[[paste0("p_trt_", a)]] - avg_pred
     } else {
       results[[paste0("p_", type)]] <- avg_pred
