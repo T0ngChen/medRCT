@@ -374,9 +374,11 @@ compute_assign_loop = function(dat2, fit, a, K, first, type, lnzero, results) {
     if (type == "shift_k") {
       dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
                                            strrep("m", K)))]
-      k = setdiff(first:K, MM)
-      dat2[, paste0("M", k) := mget(med_joint_other(k = k, a = a, MM = MM, K = K,
-                                                    ordering = FALSE))]
+      if (length(first:K) > 1){
+        k = setdiff(first:K, MM)
+        dat2[, paste0("M", k) := mget(med_joint_other(k = k, a = a, MM = MM, K = K,
+                                                      ordering = FALSE))]
+      }
     } else if (type == "shift_k_order") {
       if (MM != 1) {
         l = 1:(MM - 1)
