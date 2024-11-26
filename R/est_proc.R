@@ -32,12 +32,12 @@ joint_dist <- function(k, K, data, dat2, fam_type, mediators,
 
   # Check convergence and coefficients
   if(!fit$converged){
-    stop(paste0("Model did not converge when using variable", mediators[k] ,"as the response"))
+    stop(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
   }
   if(any(is.na(fit$coefficients))){
     na_coefs <- names(coef(fit))[is.na(coef(fit))]
-    stop(paste0("The following coefficients were NA:", paste(na_coefs, collapse = ", "),
-                "when using variable", mediators[k] ,"as the response"))
+    stop(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
+                "when using variable ", mediators[k], " as the response"))
   }
 
 
@@ -97,12 +97,12 @@ marg_dist <- function(k, first, K, data, dat2, fam_type, mediators,
 
   # Initialize a flag for convergence issues
   if(!fit$converged){
-    stop(paste0("Model did not converge when using variable", mediators[k] ,"as the response"))
+    stop(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
   }
   if(any(is.na(fit$coefficients))){
     na_coefs <- names(coef(fit))[is.na(coef(fit))]
-    stop(paste0("The following coefficients were NA:", paste(na_coefs, collapse = ", "),
-                "when using variable", mediators[k] ,"as the response"))
+    stop(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
+                "when using variable ", mediators[k], " as the response"))
   }
 
   # Set exposure to 0
@@ -173,12 +173,12 @@ joint_X_nonzero <- function(MM, k, first, K, data, dat2, fam_type,
 
   # Check model convergence and coefficients
   if(!fit$converged){
-    stop(paste0("Model did not converge when using variable", mediators[k] ,"as the response"))
+    stop(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
   }
   if(any(is.na(fit$coefficients))){
     na_coefs <- names(coef(fit))[is.na(coef(fit))]
-    stop(paste0("The following coefficients were NA:", paste(na_coefs, collapse = ", "),
-                "when using variable", mediators[k] ,"as the response"))
+    stop(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
+                "when using variable ", mediators[k], " as the response"))
   }
 
   # loop over exposure levels
@@ -238,12 +238,12 @@ con_exposed <- function(MM, k, K, data, dat2, fam_type, mediators,
 
   # Check for convergence or NA coefficients
   if(!fit$converged){
-    stop(paste0("Model did not converge when using variable", mediators[k] ,"as the response"))
+    stop(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
   }
   if(any(is.na(fit$coefficients))){
     na_coefs <- names(coef(fit))[is.na(coef(fit))]
-    stop(paste0("The following coefficients were NA:", paste(na_coefs, collapse = ", "),
-                "when using variable", mediators[k] ,"as the response"))
+    stop(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
+                "when using variable ", mediators[k], " as the response"))
   }
 
   # Iterate over exposure levels
@@ -314,12 +314,12 @@ joint_unexposed <- function(k, first, K, data, dat2, fam_type,
 
   # Check for convergence or NA coefficients
   if(!fit$converged){
-    stop(paste0("Model did not converge when using variable", mediators[k] ,"as the response"))
+    stop(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
   }
   if(any(is.na(fit$coefficients))){
     na_coefs <- names(coef(fit))[is.na(coef(fit))]
-    stop(paste0("The following coefficients were NA:", paste(na_coefs, collapse = ", "),
-                "when using variable", mediators[k] ,"as the response"))
+    stop(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
+                "when using variable ", mediators[k], " as the response"))
   }
 
   # Set exposure
@@ -418,9 +418,11 @@ compute_assign_loop = function(dat2, fit, a, K, first, type, lnzero, results) {
     if (type == "shift_k") {
       dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
                                            strrep("m", K)))]
-      k = setdiff(first:K, MM)
-      dat2[, paste0("M", k) := mget(med_joint_other(k = k, a = a, MM = MM, K = K,
-                                                    ordering = FALSE))]
+      if (length(first:K) > 1){
+        k = setdiff(first:K, MM)
+        dat2[, paste0("M", k) := mget(med_joint_other(k = k, a = a, MM = MM, K = K,
+                                                      ordering = FALSE))]
+      }
     } else if (type == "shift_k_order") {
       if (MM != 1) {
         l = 1:(MM - 1)

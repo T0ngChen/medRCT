@@ -138,7 +138,7 @@ medRCT.fun <- function(dat,
   }
   if(any(is.na(fit$coefficients))){
     na_coefs <- names(coef(fit))[is.na(coef(fit))]
-    stop(paste0("The following coefficients were NA:", paste(na_coefs, collapse = ", "),
+    stop(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
                 "when using the outcome Y as the response"))
   }
 
