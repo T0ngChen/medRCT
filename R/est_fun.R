@@ -138,298 +138,56 @@ medRCT.fun <- function(dat,
   # p_ctr
 
   a <- 0
-
   dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
-
   l = 1:K
   dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
                                                  l = l,
                                                  K = K))]
-
   y0 <- predict(fit, newdata = dat2, type = "response")
 
+  results = list()
   p_ctr <- mean(y0)
+  results[['p_ctr']] <- p_ctr
 
-
-  # p_trt
+  # estimate causal effects
   for(a in lnzero){
-
+    # TCE and p_trt
     dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
+    results = compute_assign(dat2= dat2, fit = fit, a = a, K=K, first = first,
+                             type = "trt", results = results, lnzero = lnzero, p_ctr = p_ctr)
 
-    dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
-                                                   l = l,
-                                                   K = K))]
-
-    y1 <- predict(fit, newdata = dat2, type = "response")
-
-    if(length(lnzero) > 1){
-      assign(paste0("p_trt_", a), mean(y1))
-      assign(paste0("TCE_",a), get(paste0("p_trt_", a)) - p_ctr)
-    } else {
-      p_trt <- mean(y1)
-      TCE <- p_trt - p_ctr
+    # p_all and IIE_all
+    if (any(intervention_type %in% c("all", "shift_all"))) {
+      results = compute_assign(dat2= dat2, fit = fit, a = a, K=K, first = first,
+                               type = "all", results = results, lnzero = lnzero, p_ctr = p_ctr)
+    }
+    # p_first....p_K and IIE_first .... IIE_K
+    if (any(intervention_type %in% c("all", "shift_k"))) {
+      results = compute_assign_loop(dat2= dat2, fit = fit, a = a, K=K, first = first,
+                                    type = "shift_k", results = results, lnzero = lnzero)
+    }
+    # p_first_prime....p_Kminus1_prime
+    if (any(intervention_type %in% c("all", "shift_k_order"))) {
+      results = compute_assign_loop(dat2= dat2, fit = fit, a = a, K=K, first = first,
+                                    type = "shift_k_order", results = results, lnzero = lnzero)
     }
   }
 
+  res = unlist(results)
+  sorted_names <- sort(names(res))
+  IIE_names = sorted_names[grep("IIE", sorted_names)]
+  IIE_names = IIE_names[order(nchar(IIE_names))]
+  p_names = sorted_names[!grepl("IIE|TCE", sorted_names)]
+  p_names = p_names[order(nchar(p_names))]
 
-  # p_all
-  if (any(intervention_type %in% c("all", "shift_all"))) {
-    for(a in lnzero){
+  # Move TCE-related names after IIE-related names
+  final_order <- c(
+    IIE_names,  # All IIE-related names
+    sorted_names[grep("TCE", sorted_names)],  # All TCE-related names
+    p_names  # Remaining names
+  )
+  res = res[final_order]
 
-      dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
-
-      if (first > 1) {
-        l = 1:(first - 1)
-        dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
-                                                       l = l,
-                                                       K = K))]
-      }
-
-      # all mediators of interest
-      k = first:K
-      dat2[, paste0("M", k) := mget(med_outcome_all(l=k,
-                                                    first = first,
-                                                    a = 0,
-                                                    K=K))]
-
-      y1 <- predict(fit, newdata = dat2, type = "response")
-
-      if(length(lnzero) > 1){
-        assign(paste0("p_all_",a), mean(y1))
-        # IIE
-        assign(paste0("IIE_all_",a), get(paste0("p_trt_", a))-get(paste0("p_all_", a)))
-      } else {
-        p_all <- mean(y1)
-        # IIE
-        IIE_all <- p_trt - p_all
-      }
-    }
-  }
-
-
-  # p_first....p_K
-  if (any(intervention_type %in% c("all", "shift_k"))) {
-    for(a in lnzero){
-
-      dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
-
-      if (first > 1) {
-        l = 1:(first - 1)
-        dat2[, paste0("M", l) :=  mget(med_outcome_name(a = a,
-                                                        l = l,
-                                                        K = K))]
-      }
-
-      for (MM in first:K) {
-        dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
-                                             strrep("m", K)))]
-        k = setdiff(first:K, MM)
-        dat2[, paste0("M", k) := mget(med_joint_other(k = k, a = a, MM = MM, K = K,
-                                                      ordering = FALSE))]
-
-        y0 <- predict(fit, newdata = dat2, type = "response")
-
-        if(length(lnzero) > 1){
-          assign(paste0("p_", MM, "_", a), mean(y0))
-          # IIE
-          assign(paste0("IIE_", MM, "_", a), get(paste0("p_trt_", a)) - get(paste0("p_", MM, "_", a)))
-        } else {
-          assign(paste0("p_", MM), mean(y0))
-          # IIE
-          assign(paste0("IIE_", MM), p_trt - get(paste0("p_", MM)))
-        }
-      }
-    }
-  }
-
-
-  # p_first_prime....p_Kminus1_prime
-  if (any(intervention_type %in% c("all", "shift_k_order"))) {
-    for(a in lnzero){
-
-      dat2 = set_exposure(data = dat2, column_name = "X", exp_val = a)
-
-      for (MM in first:(K - 1)) {
-        if (MM != 1) {
-          l = 1:(MM - 1)
-
-          dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
-                                                         l = l,
-                                                         K = K))]
-        }
-
-        dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
-                                             strrep("m", K)))]
-
-        if ((MM + 1) <= K) {
-          k = (MM + 1):K
-          dat2[, paste0("M", k) := mget(med_joint_other(k = k, a = a, MM = MM, K = K))]
-        }
-
-        y0 <- predict(fit, newdata = dat2, type = "response")
-
-        if(length(lnzero) > 1){
-          assign(paste0("p_", MM, "_prime", "_", a), mean(y0))
-          # IIE
-          assign(paste0("IIE_", MM,"_prime_", a), get(paste0("p_trt_", a)) - get(paste0("p_", MM, "_prime_", a)))
-        } else {
-          assign(paste0("p_", MM, "_prime"), mean(y0))
-          # IIE
-          assign(paste0("IIE_", MM, "_prime"), p_trt - get(paste0("p_", MM, "_prime")))
-        }
-      }
-    }
-  }
-
-
-
-
-  # Collect and return results
-  res <- vector()
-  res_names <- vector()
-
-
-  # save results for IIE_k
-  if (any(intervention_type %in% c("all", "shift_k"))) {
-    if(length(lnzero) > 1){
-      res <- c(res, unlist(mget(paste0("IIE_",
-                                       rep(first:K, length(lnzero)),
-                                       "_",
-                                       rep(lnzero, each = length(first:K))))))
-      res_names <- c(res_names,
-                     paste0(
-                       "IIE_",
-                       rep(first:K - (first - 1), length(lnzero)), "_",
-                       rep(lnzero, each = length(first:K)),
-                       " (p_trt_",
-                       rep(lnzero, each = length(first:K)),
-                       " - p_",
-                       rep(first:K - (first - 1), length(lnzero)), "_",
-                       rep(lnzero, each = length(first:K)),
-                       ")"
-                     ))
-    } else {
-      res <- c(res, unlist(mget(paste0("IIE_", first:K))))
-      res_names <- c(res_names,
-                     paste0(
-                       "IIE_",
-                       first:K - (first - 1),
-                       " (p_trt - p_",
-                       first:K - (first - 1),
-                       ")"
-                     ))
-    }
-  }
-
-  # save results for IIE_k_prime
-  if (any(intervention_type %in% c("all", "shift_k_order"))) {
-    if(length(lnzero) > 1){
-      res <- c(res, unlist(mget(paste0("IIE_",
-                                       rep(first:(K-1), length(lnzero)),
-                                       "_prime_",
-                                       rep(lnzero, each = length(first:(K-1)))))))
-      res_names <- c(res_names,
-                     paste0(
-                       "IIE_",
-                       rep(first:(K - 1) - (first - 1), length(lnzero)), "_",
-                       rep(lnzero, each = length(first:(K - 1))), "_prime",
-                       " (p_trt_",
-                       rep(lnzero, each = length(first:(K - 1))),
-                       " - p_",
-                       rep(first:(K - 1) - (first - 1), length(lnzero)), "_",
-                       rep(lnzero, each = length(first:(K - 1))),
-                       "_prime)"
-                     ))
-    } else {
-
-      res <- c(res, unlist(mget(paste0("IIE_", first:(K - 1), "_prime"))))
-      res_names <- c(res_names,
-                     paste0(
-                       "IIE_",
-                       first:(K - 1) - (first - 1),
-                       "_prime",
-                       " (p_trt - p_",
-                       first:(K - 1) - (first - 1),
-                       "_prime)"
-                     ))
-    }
-  }
-
-  # save results for IIE_k_all
-
-  if (any(intervention_type %in% c("all", "shift_all"))) {
-    if(length(lnzero) > 1){
-      res <- c(res, unlist(mget(paste0("IIE_all_", lnzero))))
-      res_names <- c(res_names, paste0("IIE_all_", lnzero,
-                                       " (p_trt_", lnzero, " - p_all_", lnzero, ")"))
-
-    } else {
-      res <- c(res, IIE_all)
-      res_names <- c(res_names, "IIE_all (p_trt - p_all)")
-    }
-  }
-
-  # TCE
-  # p_trt & p_ctr
-  if(length(lnzero) > 1){
-    res <- c(res, unlist(mget(paste0("TCE_", lnzero))),
-             unlist(mget(paste0("p_trt_", lnzero))), p_ctr)
-    res_names <- c(res_names, paste0("TCE_", lnzero, " (p_trt_", lnzero, " - p_ctr)"),
-                   paste0("p_trt_", lnzero), "p_ctr")
-  } else {
-    res <- c(res, TCE, p_trt, p_ctr)
-    res_names <- c(res_names, "TCE (p_trt - p_ctr)", "p_trt", "p_ctr")
-  }
-
-  # p_k
-  if (any(intervention_type %in% c("all", "shift_k"))) {
-    if(length(lnzero) > 1){
-      res <- c(res, unlist(mget(paste0("p_",
-                                       rep(first:K, length(lnzero)),
-                                       "_",
-                                       rep(lnzero, each = length(first:K))))))
-      res_names <- c(res_names,
-                     paste0("p_",
-                            rep(first:K - (first - 1), length(lnzero)),
-                            "_",
-                            rep(lnzero, each = length(first:K))))
-    } else {
-      res <- c(res, unlist(mget(paste0("p_", first:K))))
-      res_names <- c(res_names, paste0("p_", first:K - (first - 1)))
-    }
-  }
-
-  # p_k_prime
-  if (any(intervention_type %in% c("all", "shift_k_order"))) {
-    if(length(lnzero) > 1){
-      res <- c(res, unlist(mget(paste0("p_",
-                                       rep(first:(K-1), length(lnzero)),
-                                       "_prime_",
-                                       rep(lnzero, each = length(first:(K-1)))))))
-
-      res_names <- c(res_names,
-                     paste0("p_",
-                            rep(first:(K-1) - (first - 1), length(lnzero)),
-                            "_prime_",
-                            rep(lnzero, each = length(first:(K-1)))))
-
-    } else {
-      res <- c(res, unlist(mget(paste0("p_", first:(K - 1), "_prime"))))
-      res_names <- c(res_names, paste0("p_", first:(K - 1) - (first - 1), "_prime"))
-    }
-  }
-
-  # p_all
-  if (any(intervention_type %in% c("all", "shift_all"))) {
-    if(length(lnzero) > 1){
-      res <- c(res, unlist(mget(paste0("p_all_", lnzero))))
-      res_names <- c(res_names, paste0("p_all_", lnzero))
-    } else {
-      res <- c(res, p_all)
-      res_names <- c(res_names, "p_all")
-    }
-  }
-  names(res) = res_names
 
   if (!flag)
     return(res)
