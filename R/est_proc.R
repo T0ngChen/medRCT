@@ -150,13 +150,7 @@ marg_dist <- function(k, first, K, data, dat2, fam_type, mediators,
 joint_X_nonzero <- function(MM, k, first, K, data, dat2, fam_type,
                             mediators, interactions_XC, lnzero, n, index) {
   # Check for intermediate confounders
-  if (first == 1) {
-    if (MM == 1 && k == index[1]) {
-      fit <- glm(as.formula(gen_formula(k = k, MM = MM,
-                                        first = first, K = K,
-                                        interactions_XC = interactions_XC)),
-                 data = data, family = fam_type[[k]])
-    } else if (MM != 1 && k == index[1]) {
+  if (first == 1 && MM != 1 && k == index[1]) {
       return(dat2)
     } else {
       fit <- glm(as.formula(gen_formula(k = k, MM = MM,
@@ -164,12 +158,6 @@ joint_X_nonzero <- function(MM, k, first, K, data, dat2, fam_type,
                                         interactions_XC = interactions_XC)),
                  data = data, family = fam_type[[k]])
     }
-  } else {
-    fit <- glm(as.formula(gen_formula(k = k, MM = MM,
-                                      first = first, K = K,
-                                      interactions_XC = interactions_XC)),
-               data = data, family = fam_type[[k]])
-  }
 
   # Check model convergence and coefficients
   if(!fit$converged){
