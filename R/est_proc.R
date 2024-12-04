@@ -36,12 +36,12 @@ joint_dist <- function(k, K, data, dat2, fam_type, mediators,
 
   # Check convergence and coefficients
   if(!fit$converged){
-    stop(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
+    warning(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
   }
   if(any(is.na(fit$coefficients))){
     na_coefs <- names(stats::coef(fit))[is.na(stats::coef(fit))]
-    stop(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
-                "when using variable ", mediators[k], " as the response"))
+    warning(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
+                   "when using variable ", mediators[k], " as the response"))
   }
 
 
@@ -105,12 +105,12 @@ marg_dist <- function(k, first, K, data, dat2, fam_type, mediators,
 
   # Initialize a flag for convergence issues
   if(!fit$converged){
-    stop(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
+    warning(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
   }
   if(any(is.na(fit$coefficients))){
     na_coefs <- names(stats::coef(fit))[is.na(stats::coef(fit))]
-    stop(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
-                "when using variable ", mediators[k], " as the response"))
+    warning(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
+                   "when using variable ", mediators[k], " as the response"))
   }
 
   # Set exposure to 0
@@ -173,12 +173,12 @@ joint_X_nonzero <- function(MM, k, first, K, data, dat2, fam_type,
 
   # Check model convergence and coefficients
   if(!fit$converged){
-    stop(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
+    warning(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
   }
   if(any(is.na(fit$coefficients))){
     na_coefs <- names(stats::coef(fit))[is.na(stats::coef(fit))]
-    stop(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
-                "when using variable ", mediators[k], " as the response"))
+    warning(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
+                   "when using variable ", mediators[k], " as the response"))
   }
 
   # loop over exposure levels
@@ -242,11 +242,11 @@ con_exposed <- function(MM, k, K, data, dat2, fam_type, mediators,
 
   # Check for convergence or NA coefficients
   if(!fit$converged){
-    stop(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
+    warning(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
   }
   if(any(is.na(fit$coefficients))){
     na_coefs <- names(stats::coef(fit))[is.na(stats::coef(fit))]
-    stop(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
+    warning(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
                 "when using variable ", mediators[k], " as the response"))
   }
 
@@ -322,11 +322,11 @@ joint_unexposed <- function(k, first, K, data, dat2, fam_type,
 
   # Check for convergence or NA coefficients
   if(!fit$converged){
-    stop(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
+    warning(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
   }
   if(any(is.na(fit$coefficients))){
     na_coefs <- names(stats::coef(fit))[is.na(stats::coef(fit))]
-    stop(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
+    warning(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
                 "when using variable ", mediators[k], " as the response"))
   }
 

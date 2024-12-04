@@ -136,12 +136,12 @@ medRCT.fun <- function(dat,
     family = outcome_type[[1]])
 
   if(!fit$converged){
-    stop(paste0("Model did not converge when using the outcome Y as the response"))
+    warning(paste0("Model did not converge when using the outcome Y as the response"))
   }
   if(any(is.na(fit$coefficients))){
     na_coefs <- names(coef(fit))[is.na(coef(fit))]
-    stop(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
-                "when using the outcome Y as the response"))
+    warning(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
+                   "when using the outcome Y as the response"))
   }
 
 
