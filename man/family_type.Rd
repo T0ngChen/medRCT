@@ -24,3 +24,4 @@ A \code{list} where each element corresponds to a variable in
 Identifies the appropriate family type (\code{"binomial()"} or \code{"gaussian()"})
 for a set of variables.
 }
+\keyword{internal}

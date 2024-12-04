@@ -10,6 +10,7 @@ medRCT.fun(
   first = first,
   K = K,
   fam_type = fam_type,
+  mediators = mediators,
   interactions_XC = interactions_XC,
   intervention_type = intervention_type,
   mcsim
@@ -30,6 +31,9 @@ Mediators are considered sequentially based on their order.}
 
 \item{fam_type}{A \code{character} string specifying the family type for modeling. Options typically include
 \code{"gaussian"} for continuous variables or \code{"binomial"} for binary variables.}
+
+\item{mediators}{A \code{character} vector including the variable names for mediators (including intermediate
+confounders).}
 
 \item{interactions_XC}{A \code{character} string specifying the exposure-confounder or confounder-confounder
 interaction terms to include in the regression models for confounder adjustment. The default value, \code{"all"},
@@ -55,3 +59,4 @@ effects on its causal descendent mediators.
 This function performs the actual causal mediation analysis to estimate interventional effects mapped to a
 hypothetical target trial.
 }
+\keyword{internal}

@@ -4,7 +4,18 @@
 \alias{con_exposed}
 \title{Estimation of Conditionals of Mediators under Exposed}
 \usage{
-con_exposed(MM, k, K, data, dat2, fam_type, interactions_XC, lnzero, n)
+con_exposed(
+  MM,
+  k,
+  K,
+  data,
+  dat2,
+  fam_type,
+  mediators,
+  interactions_XC,
+  lnzero,
+  n
+)
 }
 \arguments{
 \item{MM}{An integer specifying the index of the mediator whose distribution
@@ -24,6 +35,9 @@ random draws.}
 Options typically include \code{"gaussian"} for continuous variables or \code{"binomial"}
 for binary variables.}
 
+\item{mediators}{A \code{character} vector including the variable names for mediators
+(including intermediate confounders).}
+
 \item{interactions_XC}{A \code{character} string specifying the exposure-confounder or
 confounder-confounder interaction terms to include in the regression models for
 confounder adjustment.}
@@ -35,3 +49,4 @@ confounder adjustment.}
 \description{
 Estimation of Conditionals of Mediators under Exposed
 }
+\keyword{internal}
