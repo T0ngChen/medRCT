@@ -19,6 +19,8 @@
 #' @param exposure_level A numeric vector specifying the levels of the exposure
 #'  (e.g., \code{c(0, 1)}) for which counterfactual predictions are performed.
 #' @param n An integer specifying the number of observations for `dat2`.
+#'
+#' @keywords internal
 joint_dist <- function(k, K, data, dat2, fam_type, mediators,
                        interactions_XC, exposure_level, n) {
   # Fit the model
@@ -84,6 +86,8 @@ joint_dist <- function(k, K, data, dat2, fam_type, mediators,
 #'  confounder-confounder interaction terms to include in the regression models for
 #'  confounder adjustment.
 #' @param n An integer specifying the number of observations for `dat2`.
+#'
+#' @keywords internal
 marg_dist <- function(k, first, K, data, dat2, fam_type, mediators,
                       interactions_XC, n) {
   # Fit the model
@@ -147,6 +151,8 @@ marg_dist <- function(k, first, K, data, dat2, fam_type, mediators,
 #' @param n An integer specifying the number of observations for `dat2`.
 #' @param index An integer vector specifying the indices of all mediators, excluding the mediator
 #'  specified by `MM`.
+#'
+#' @keywords internal
 joint_X_nonzero <- function(MM, k, first, K, data, dat2, fam_type,
                             mediators, interactions_XC, lnzero, n, index) {
   # Check for intermediate confounders
@@ -213,6 +219,8 @@ joint_X_nonzero <- function(MM, k, first, K, data, dat2, fam_type,
 #'  confounder adjustment.
 #' @param lnzero A numeric vector specifying the non-zero levels of the exposure.
 #' @param n An integer specifying the number of observations for `dat2`.
+#'
+#' @keywords internal
 con_exposed <- function(MM, k, K, data, dat2, fam_type, mediators,
                         interactions_XC, lnzero, n) {
   # Fit the model for the mediator k
@@ -290,6 +298,8 @@ con_exposed <- function(MM, k, K, data, dat2, fam_type, mediators,
 #'  confounder-confounder interaction terms to include in the regression models for
 #'  confounder adjustment.
 #' @param n An integer specifying the number of observations for `dat2`.
+#'
+#' @keywords internal
 joint_unexposed <- function(k, first, K, data, dat2, fam_type,
                             mediators, interactions_XC, n) {
   # Fit the model for the mediator k

@@ -65,7 +65,7 @@ summary.medRCT <- function(object, ...){
 #' \code{"binomial()"} for binary variables or \code{"gaussian()"} for continuous variables.
 #'
 #' @importFrom stats binomial gaussian
-#' @export
+#' @keywords internal
 family_type <- function(data, variable_names, unique_threshold = 10) {
   result <- lapply(variable_names, function(var) {
     unique_vals <- unique(data[[var]])
@@ -89,6 +89,8 @@ family_type <- function(data, variable_names, unique_threshold = 10) {
 #' @param exp_val The exposure value to assign to the column.
 #'
 #' @importFrom collapse qF
+#'
+#' @keywords internal
 set_exposure = function(data, column_name, exp_val) {
   # Convert column to numeric
   data[, (column_name) := as.numeric(get(column_name))]
@@ -110,6 +112,8 @@ set_exposure = function(data, column_name, exp_val) {
 #' @param n An integer specifying the number of observations in the dataset.
 #' @param family A character string specifying the distribution family to use for
 #'  generating random draws. Must be either `"binomial"` or `"gaussian"`.
+#'
+#' @keywords internal
 cf_predict = function(fit, data, var_name, n, family){
   # get predictions
   predictions <- predict(fit, newdata = data, type = "response")
@@ -152,6 +156,8 @@ cf_predict = function(fit, data, var_name, n, family){
 #'  for confounder adjustment.
 #' @param include_all Logical.
 #' @param marginal Logical. If `TRUE`, estimating marginals under `X=0`.
+#'
+#' @keywords internal
 gen_formula <- function(k, first=NULL, MM = NULL, K=NULL, interactions_XC,
                         include_all = FALSE, marginal = FALSE) {
   if ((k == 1 || marginal) && is.null(MM))  {

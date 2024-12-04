@@ -35,6 +35,8 @@
 #'
 #' @importFrom stats as.formula binomial glm predict rbinom rnorm df.residual
 #' @importFrom data.table as.data.table ":="
+#'
+#' @keywords internal
 medRCT.fun <- function(dat,
                        ind = 1:nrow(dat),
                        first = first,
