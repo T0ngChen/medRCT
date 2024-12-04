@@ -23,3 +23,4 @@ generating random draws. Must be either \code{"binomial"} or \code{"gaussian"}.}
 \description{
 Counterfactual Prediction and Random Draw
 }
+\keyword{internal}

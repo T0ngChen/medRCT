@@ -16,3 +16,4 @@ set_exposure(data, column_name, exp_val)
 \description{
 Set Exposure Column to a Specific Value and Convert to Factor
 }
+\keyword{internal}

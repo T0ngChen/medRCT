@@ -20,14 +20,16 @@
 #'  (e.g., \code{c(0, 1)}) for which counterfactual predictions are performed.
 #' @param n An integer specifying the number of observations for `dat2`.
 #'
+#' @importFrom stats coef as.formula
+#'
 #' @keywords internal
 joint_dist <- function(k, K, data, dat2, fam_type, mediators,
                        interactions_XC, exposure_level, n) {
   # Fit the model
   fit <- glm(
-    as.formula(gen_formula(k = k,
-                           interactions_XC = interactions_XC,
-                           include_all = TRUE)),
+    stats::as.formula(gen_formula(k = k,
+                                  interactions_XC = interactions_XC,
+                                  include_all = TRUE)),
     data = data,
     family = fam_type[[k]]
   )
@@ -37,7 +39,7 @@ joint_dist <- function(k, K, data, dat2, fam_type, mediators,
     stop(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
   }
   if(any(is.na(fit$coefficients))){
-    na_coefs <- names(coef(fit))[is.na(coef(fit))]
+    na_coefs <- names(stats::coef(fit))[is.na(stats::coef(fit))]
     stop(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
                 "when using variable ", mediators[k], " as the response"))
   }
@@ -87,14 +89,16 @@ joint_dist <- function(k, K, data, dat2, fam_type, mediators,
 #'  confounder adjustment.
 #' @param n An integer specifying the number of observations for `dat2`.
 #'
+#' @importFrom stats coef as.formula
+#'
 #' @keywords internal
 marg_dist <- function(k, first, K, data, dat2, fam_type, mediators,
                       interactions_XC, n) {
   # Fit the model
   fit <- glm(
-    as.formula(gen_formula(k = k,
-                           interactions_XC = interactions_XC,
-                           marginal = TRUE)),
+    stats::as.formula(gen_formula(k = k,
+                                  interactions_XC = interactions_XC,
+                                  marginal = TRUE)),
     data = data,
     family = fam_type[[k]]
   )
@@ -104,7 +108,7 @@ marg_dist <- function(k, first, K, data, dat2, fam_type, mediators,
     stop(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
   }
   if(any(is.na(fit$coefficients))){
-    na_coefs <- names(coef(fit))[is.na(coef(fit))]
+    na_coefs <- names(stats::coef(fit))[is.na(stats::coef(fit))]
     stop(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
                 "when using variable ", mediators[k], " as the response"))
   }
@@ -152,6 +156,8 @@ marg_dist <- function(k, first, K, data, dat2, fam_type, mediators,
 #' @param index An integer vector specifying the indices of all mediators, excluding the mediator
 #'  specified by `MM`.
 #'
+#' @importFrom stats coef as.formula
+#'
 #' @keywords internal
 joint_X_nonzero <- function(MM, k, first, K, data, dat2, fam_type,
                             mediators, interactions_XC, lnzero, n, index) {
@@ -159,9 +165,9 @@ joint_X_nonzero <- function(MM, k, first, K, data, dat2, fam_type,
   if (first == 1 && MM != 1 && k == index[1]) {
       return(dat2)
     } else {
-      fit <- glm(as.formula(gen_formula(k = k, MM = MM,
-                                        first = first, K = K,
-                                        interactions_XC = interactions_XC)),
+      fit <- glm(stats::as.formula(gen_formula(k = k, MM = MM,
+                                               first = first, K = K,
+                                               interactions_XC = interactions_XC)),
                  data = data, family = fam_type[[k]])
     }
 
@@ -170,7 +176,7 @@ joint_X_nonzero <- function(MM, k, first, K, data, dat2, fam_type,
     stop(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
   }
   if(any(is.na(fit$coefficients))){
-    na_coefs <- names(coef(fit))[is.na(coef(fit))]
+    na_coefs <- names(stats::coef(fit))[is.na(stats::coef(fit))]
     stop(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
                 "when using variable ", mediators[k], " as the response"))
   }
@@ -220,14 +226,16 @@ joint_X_nonzero <- function(MM, k, first, K, data, dat2, fam_type,
 #' @param lnzero A numeric vector specifying the non-zero levels of the exposure.
 #' @param n An integer specifying the number of observations for `dat2`.
 #'
+#' @importFrom stats coef as.formula
+#'
 #' @keywords internal
 con_exposed <- function(MM, k, K, data, dat2, fam_type, mediators,
                         interactions_XC, lnzero, n) {
   # Fit the model for the mediator k
   fit <- glm(
-    as.formula(gen_formula(k = k,
-                           interactions_XC = interactions_XC,
-                           include_all = TRUE)),
+    stats::as.formula(gen_formula(k = k,
+                                  interactions_XC = interactions_XC,
+                                  include_all = TRUE)),
     data = data,
     family = fam_type[[k]]
   )
@@ -237,7 +245,7 @@ con_exposed <- function(MM, k, K, data, dat2, fam_type, mediators,
     stop(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
   }
   if(any(is.na(fit$coefficients))){
-    na_coefs <- names(coef(fit))[is.na(coef(fit))]
+    na_coefs <- names(stats::coef(fit))[is.na(stats::coef(fit))]
     stop(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
                 "when using variable ", mediators[k], " as the response"))
   }
@@ -299,13 +307,15 @@ con_exposed <- function(MM, k, K, data, dat2, fam_type, mediators,
 #'  confounder adjustment.
 #' @param n An integer specifying the number of observations for `dat2`.
 #'
+#' @importFrom stats coef as.formula
+#'
 #' @keywords internal
 joint_unexposed <- function(k, first, K, data, dat2, fam_type,
                             mediators, interactions_XC, n) {
   # Fit the model for the mediator k
   fit <- glm(
-    as.formula(gen_formula(k = k, interactions_XC = interactions_XC,
-                           include_all = TRUE, first = first)),
+    stats::as.formula(gen_formula(k = k, interactions_XC = interactions_XC,
+                                  include_all = TRUE, first = first)),
     data = data,
     family = fam_type[[k]]
   )
@@ -315,7 +325,7 @@ joint_unexposed <- function(k, first, K, data, dat2, fam_type,
     stop(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
   }
   if(any(is.na(fit$coefficients))){
-    na_coefs <- names(coef(fit))[is.na(coef(fit))]
+    na_coefs <- names(stats::coef(fit))[is.na(stats::coef(fit))]
     stop(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
                 "when using variable ", mediators[k], " as the response"))
   }

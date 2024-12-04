@@ -65,6 +65,7 @@ summary.medRCT <- function(object, ...){
 #' \code{"binomial()"} for binary variables or \code{"gaussian()"} for continuous variables.
 #'
 #' @importFrom stats binomial gaussian
+#'
 #' @keywords internal
 family_type <- function(data, variable_names, unique_threshold = 10) {
   result <- lapply(variable_names, function(var) {

@@ -43,3 +43,4 @@ for confounder adjustment.}
 This function generates a model formula for mediator models based on
 the input parameters.
 }
+\keyword{internal}

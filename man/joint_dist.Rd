@@ -5,7 +5,17 @@
 \title{Estimation of Joint Distribution of Mediators and Intermediate Confounders under
 Exposed and Unexposed}
 \usage{
-joint_dist(k, K, data, dat2, fam_type, interactions_XC, exposure_level, n)
+joint_dist(
+  k,
+  K,
+  data,
+  dat2,
+  fam_type,
+  mediators,
+  interactions_XC,
+  exposure_level,
+  n
+)
 }
 \arguments{
 \item{k}{An integer specifying the index of the current mediator being processed.}
@@ -22,6 +32,9 @@ random draws.}
 Options typically include \code{"gaussian"} for continuous variables or \code{"binomial"}
 for binary variables.}
 
+\item{mediators}{A \code{character} vector including the variable names for mediators
+(including intermediate confounders).}
+
 \item{interactions_XC}{A \code{character} string specifying the exposure-confounder or
 confounder-confounder interaction terms to include in the regression models for
 confounder adjustment.}
@@ -35,3 +48,4 @@ confounder adjustment.}
 Estimation of Joint Distribution of Mediators and Intermediate Confounders under
 Exposed and Unexposed
 }
+\keyword{internal}

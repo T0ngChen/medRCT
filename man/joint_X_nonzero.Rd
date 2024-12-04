@@ -12,6 +12,7 @@ joint_X_nonzero(
   data,
   dat2,
   fam_type,
+  mediators,
   interactions_XC,
   lnzero,
   n,
@@ -38,6 +39,9 @@ random draws.}
 Options typically include \code{"gaussian"} for continuous variables or \code{"binomial"}
 for binary variables.}
 
+\item{mediators}{A \code{character} vector including the variable names for mediators
+(including intermediate confounders).}
+
 \item{interactions_XC}{A \code{character} string specifying the exposure-confounder or
 confounder-confounder interaction terms to include in the regression models for
 confounder adjustment.}
@@ -52,3 +56,4 @@ specified by \code{MM}.}
 \description{
 Estimation of Joint Distribution of All Other Mediators under Exposed
 }
+\keyword{internal}
