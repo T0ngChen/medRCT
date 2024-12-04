@@ -5,10 +5,14 @@
 <url><loc>https://t0ngchen.github.io/medRCT/authors.html</loc></url>
 <url><loc>https://t0ngchen.github.io/medRCT/index.html</loc></url>
 <url><loc>https://t0ngchen.github.io/medRCT/reference/LSACdata.html</loc></url>
+<url><loc>https://t0ngchen.github.io/medRCT/reference/catch_model_messages.html</loc></url>
 <url><loc>https://t0ngchen.github.io/medRCT/reference/cf_predict.html</loc></url>
+<url><loc>https://t0ngchen.github.io/medRCT/reference/clean_list.html</loc></url>
+<url><loc>https://t0ngchen.github.io/medRCT/reference/collect_models.html</loc></url>
 <url><loc>https://t0ngchen.github.io/medRCT/reference/con_exposed.html</loc></url>
 <url><loc>https://t0ngchen.github.io/medRCT/reference/family_type.html</loc></url>
 <url><loc>https://t0ngchen.github.io/medRCT/reference/gen_formula.html</loc></url>
+<url><loc>https://t0ngchen.github.io/medRCT/reference/gen_formula_shiny.html</loc></url>
 <url><loc>https://t0ngchen.github.io/medRCT/reference/index.html</loc></url>
 <url><loc>https://t0ngchen.github.io/medRCT/reference/joint_X_nonzero.html</loc></url>
 <url><loc>https://t0ngchen.github.io/medRCT/reference/joint_dist.html</loc></url>
@@ -16,6 +20,7 @@
 <url><loc>https://t0ngchen.github.io/medRCT/reference/marg_dist.html</loc></url>
 <url><loc>https://t0ngchen.github.io/medRCT/reference/medRCT.fun.html</loc></url>
 <url><loc>https://t0ngchen.github.io/medRCT/reference/medRCT.html</loc></url>
+<url><loc>https://t0ngchen.github.io/medRCT/reference/medRCT_shiny.html</loc></url>
 <url><loc>https://t0ngchen.github.io/medRCT/reference/set_exposure.html</loc></url>
 <url><loc>https://t0ngchen.github.io/medRCT/reference/summary.medRCT.html</loc></url>
 </urlset>

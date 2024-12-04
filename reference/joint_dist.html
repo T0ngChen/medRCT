@@ -9,7 +9,7 @@ Exposed and Unexposed"></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">medRCT</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9052</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9060</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,7 +40,17 @@ Exposed and Unexposed</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">joint_dist</span><span class="op">(</span><span class="va">k</span>, <span class="va">K</span>, <span class="va">data</span>, <span class="va">dat2</span>, <span class="va">fam_type</span>, <span class="va">interactions_XC</span>, <span class="va">exposure_level</span>, <span class="va">n</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">joint_dist</span><span class="op">(</span></span>
+<span>  <span class="va">k</span>,</span>
+<span>  <span class="va">K</span>,</span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">dat2</span>,</span>
+<span>  <span class="va">fam_type</span>,</span>
+<span>  <span class="va">mediators</span>,</span>
+<span>  <span class="va">interactions_XC</span>,</span>
+<span>  <span class="va">exposure_level</span>,</span>
+<span>  <span class="va">n</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -69,6 +79,11 @@ random draws.</p></dd>
 <dd><p>A <code>character</code> string specifying the family type for modeling.
 Options typically include <code>"gaussian"</code> for continuous variables or <code>"binomial"</code>
 for binary variables.</p></dd>
+
+
+<dt id="arg-mediators">mediators<a class="anchor" aria-label="anchor" href="#arg-mediators"></a></dt>
+<dd><p>A <code>character</code> vector including the variable names for mediators
+(including intermediate confounders).</p></dd>
 
 
 <dt id="arg-interactions-xc">interactions_XC<a class="anchor" aria-label="anchor" href="#arg-interactions-xc"></a></dt>
