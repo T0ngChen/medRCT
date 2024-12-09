@@ -1,5 +1,6 @@
 ---
 output: github_document
+bibliography: "inst/references.bib"
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -20,15 +21,76 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/T0ngChen/medRCT/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/T0ngChen/medRCT/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The `medRCT` R package provides facilities for the estimation of interventional effects that emulate a target trial.
+> Causal **Med**iation Analysis for Estimating Interventional Effects that Emulate a **R**andomised **C**ontrolled **T**rial
+
+The R package `medRCT` supports the estimation of interventional effects [@vanderweele2014effect] that are defined explicitly in terms of a target trial [@hernan2016using], where the treatment strategies are specified to reflect the hypothetical interventions, which are encoded by shifts in the joint distribution of the mediators [@Moreno2021Mediation]. `medRCT` can accommodates multiple mediators in the presence of exposure-induced mediator-outcome confounders.  
 
 ## Installation
 
-You can install the development version of medRCT from [GitHub](https://github.com/T0ngChen/medRCT) with:
+The `medRCT` package is not yet available on CRAN. You can install the latest stable version from [GitHub](https://github.com/T0ngChen/medRCT) using the following command:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("T0ngChen/medRCT")
+remotes::install_github("T0ngChen/medRCT")
 ```
 
+## Example
 
+We here illustrate how to use `medRCT` to estiamte interventional indirect effects that emulate a target trail. Specifically, we consider a hypothetical intervention that shifts the distribution of each mediator individually. It allows for the investigation of causal pathways and the quantification of indirect effects to directly address real-world research questions. Consider the following example using simulated data based on the Longitudinal Study of Australian Children [@Sanson2004GrowingUI]:
+
+
+```{r eg, warning=FALSE, message=FALSE}
+# Load the medRCT package
+library(medRCT)
+
+# Set a seed for reproducibility
+set.seed(2024)
+
+# Display the first few rows of the dataset
+head(LSACdata)
+
+# Define confounders for the analysis
+confounders <- c("child_sex", "child_atsi", "mat_cob", "mat_engl", "mat_age")
+
+# Estimate interventional indirect effects for a hypothetical intervention
+# that shifts the distribution of each mediator individually
+med_res <- medRCT(
+  dat = LSACdata,                      
+  exposure = "sep",                    
+  outcome = "child_mh",                
+  mediators = c("parent_mh", "preschool_att"), 
+  intermediate_confs = "fam_stress",  # intermediate confounders 
+  confounders = confounders,           
+  bootstrap = TRUE,                    
+  intervention_type = "shift_k",       
+  mcsim = 100                          
+)
+
+# Summarise the results
+summary(med_res)
+```
+
+For detailed guidance on using the package to handle more complex scenarios, please refer to the [vignette](https://t0ngchen.github.io/medRCT/).
+
+## Citation
+
+For work involving the `medRCT` R package, please cite the following:
+
+    @software{Chen2024medRCT,
+       author = {Tong Chen and Margarita Moreno-Betancur and Ghazaleh Dashti},
+       title = {`r gsub("\n", " ", paste0("medRCT: ", utils::packageDescription("medRCT", fields = "Title")))`},
+       year  = {`r format(Sys.Date(), "%Y")`},
+       url = {https://t0ngchen.github.io/medRCT/},
+       note = {R package version `r utils::packageDescription("medRCT", fields = "Version")`}
+       }
+    @article{Moreno2021Mediation,
+       author = {Margarita Moreno-Betancur and Paul Moran and Denise Becker and George C Patton and John B Carlin},
+       title = {Mediation effects that emulate a target randomised trial: Simulation-based evaluation of ill-defined interventions on multiple mediators},
+       journal = {Statistical Methods in Medical Research},
+       volume = {30},
+       number = {6},
+       pages = {1395-1412},
+       year = {2021}
+       }    
+
+
+## References

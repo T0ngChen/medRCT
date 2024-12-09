@@ -2,7 +2,7 @@
 % Please edit documentation in R/medRCT.R
 \name{medRCT}
 \alias{medRCT}
-\title{Causal mediation analysis for estimating the interventional effect}
+\title{Causal mediation analysis using interventional effects that map to a target trial}
 \usage{
 medRCT(
   dat,
@@ -55,7 +55,7 @@ mediators in the exposed to match the level in the unexposed.
 mediator (\code{k}) in the exposed to match the level in the unexposed.
 \item \code{"shift_k_order"}: Estimates the interventional indirect effect of shifting the distribution of a
 specific mediator (\code{k}) in the exposed to match the level in the unexposed while accounting for the flow-on
-effects on its causally descendent mediators.
+effects on its causally descendant mediators.
 }}
 
 \item{mcsim}{An \code{integer} specifying the number of Monte Carlo simulations to perform.}
@@ -73,7 +73,7 @@ effects on its causally descendent mediators.
 \item{...}{Additional arguments passed to the \code{boot} function from the \code{boot} package.}
 }
 \description{
-'medRCT' is used to estimate interventional effects by mapping observational data to a hypothetical target trial.
+'medRCT' is used to estimate interventional effects that map to a target trial evaluating hypothetical mediator interventions of interest.
 It can handle multiple mediators, including some not of primary interest but that are exposure-induced
 mediator-outcome confounders.
 }
