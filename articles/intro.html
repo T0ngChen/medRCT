@@ -159,7 +159,7 @@ Johnstone 2004)</span>:</p>
 <span></span>
 <span><span class="co"># Set a seed for reproducibility</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2024</span><span class="op">)</span></span>
-<span><span class="va">LSACdata</span> <span class="op">=</span> <span class="va">LSACdata</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">LSACdata</span><span class="op">)</span>, <span class="fl">500</span><span class="op">)</span>,<span class="op">]</span></span>
+<span><span class="va">LSACdata</span> <span class="op">=</span> <span class="va">LSACdata</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">LSACdata</span><span class="op">)</span>, <span class="fl">800</span><span class="op">)</span>,<span class="op">]</span></span>
 <span><span class="co"># Display the first few rows of the dataset</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">LSACdata</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      child_sex child_atsi mat_cob mat_engl mat_age sep fam_stress parent_mh</span></span>
@@ -198,70 +198,30 @@ Johnstone 2004)</span>:</p>
 <span>  mcsim <span class="op">=</span> <span class="fl">100</span>                          </span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Conducting complete case analysis, 0 observations were excluded due to missing data.</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
-<span><span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span></span>
 <span></span>
 <span><span class="co"># Summarise the results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">med_res</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Estimated interventional effect: </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                           Estimate Std. Error CI Lower CI Upper p-value</span></span>
-<span><span class="co">#&gt; IIE_1 (p_trt - p_1)        0.00347    0.00913 -0.01497  0.02080    0.70</span></span>
-<span><span class="co">#&gt; IIE_2 (p_trt - p_2)        0.00188    0.00595 -0.00932  0.01401    0.75</span></span>
-<span><span class="co">#&gt; IIE_all (p_trt - p_all)    0.00467    0.01086 -0.01649  0.02608    0.67</span></span>
-<span><span class="co">#&gt; IIE_1 (p_trt - p_1_prime)  0.00197    0.00986 -0.01722  0.02145    0.84</span></span>
-<span><span class="co">#&gt; TCE (p_trt - p_ctr)        0.05074    0.04075 -0.03243  0.12731    0.21</span></span>
+<span><span class="co">#&gt;                            Estimate Std. Error  CI Lower  CI Upper p-value</span></span>
+<span><span class="co">#&gt; IIE_1 (p_trt - p_1)        0.002191   0.005509 -0.008803  0.012794    0.69</span></span>
+<span><span class="co">#&gt; IIE_2 (p_trt - p_2)       -0.001571   0.004164 -0.009702  0.006621    0.71</span></span>
+<span><span class="co">#&gt; IIE_all (p_trt - p_all)    0.000479   0.007119 -0.013790  0.014117    0.95</span></span>
+<span><span class="co">#&gt; IIE_1 (p_trt - p_1_prime)  0.001079   0.005881 -0.010825  0.012228    0.85</span></span>
+<span><span class="co">#&gt; TCE (p_trt - p_ctr)        0.053700   0.035970 -0.021936  0.119065    0.14</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Estimated expected outcome in each trial arm:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;           Estimate Std. Error CI Lower CI Upper p-value</span></span>
-<span><span class="co">#&gt; p_1         0.3108     0.0373   0.2368   0.3830 &lt; 2e-16</span></span>
-<span><span class="co">#&gt; p_2         0.3124     0.0354   0.2411   0.3799 &lt; 2e-16</span></span>
-<span><span class="co">#&gt; p_all       0.3096     0.0369   0.2358   0.3803 &lt; 2e-16</span></span>
-<span><span class="co">#&gt; p_ctr       0.2635     0.0269   0.2127   0.3181 &lt; 2e-16</span></span>
-<span><span class="co">#&gt; p_trt       0.3142     0.0359   0.2425   0.3832 &lt; 2e-16</span></span>
-<span><span class="co">#&gt; p_1_prime   0.3123     0.0379   0.2365   0.3849 2.2e-16</span></span>
+<span><span class="co">#&gt; p_1         0.3117     0.0335   0.2425   0.3737  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_2         0.3155     0.0332   0.2466   0.3767  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_all       0.3134     0.0338   0.2436   0.3763  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_ctr       0.2602     0.0179   0.2265   0.2966  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_trt       0.3139     0.0327   0.2459   0.3742  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_1_prime   0.3128     0.0336   0.2436   0.3752  &lt;2e-16</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Sample Size: 500 </span></span>
+<span><span class="co">#&gt; Sample Size: 800 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Simulations: 100</span></span></code></pre></div>
 </div>
