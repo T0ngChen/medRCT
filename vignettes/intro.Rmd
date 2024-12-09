@@ -48,7 +48,7 @@ library(medRCT)
 
 # Set a seed for reproducibility
 set.seed(2024)
-LSACdata = LSACdata[sample(1:nrow(LSACdata), 500),]
+LSACdata = LSACdata[sample(1:nrow(LSACdata), 800),]
 # Display the first few rows of the dataset
 head(LSACdata)
 
