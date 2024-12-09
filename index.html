@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">medRCT</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9060</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9070</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,12 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="articles/intro.html">Estimating Mediation Effects that Emulate a Target Randomised Controlled Trial</a></li>
+  </ul>
+</li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -49,14 +55,123 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>The <code>medRCT</code> R package provides facilities for the estimation of interventional effects that emulate a target trial.</p>
+<blockquote>
+<p>Causal <strong>Med</strong>iation Analysis for Estimating Interventional Effects that Emulate a <strong>R</strong>andomised <strong>C</strong>ontrolled <strong>T</strong>rial</p>
+</blockquote>
+<p>The R package <code>medRCT</code> supports the estimation of interventional effects (VanderWeele, Vansteelandt, and Robins 2014) that are defined explicitly in terms of a target trial (Hernán and Robins 2016), where the treatment strategies are specified to reflect the hypothetical interventions, which are encoded by shifts in the joint distribution of the mediators (Moreno-Betancur et al. 2021). <code>medRCT</code> can accommodates multiple mediators in the presence of exposure-induced mediator-outcome confounders.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of medRCT from <a href="https://github.com/T0ngChen/medRCT" class="external-link">GitHub</a> with:</p>
+<p>The <code>medRCT</code> package is not yet available on CRAN. You can install the latest stable version from <a href="https://github.com/T0ngChen/medRCT" class="external-link">GitHub</a> using the following command:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"T0ngChen/medRCT"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"T0ngChen/medRCT"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+</h2>
+<p>We here illustrate how to use <code>medRCT</code> to estiamte interventional indirect effects that emulate a target trail. Specifically, we consider a hypothetical intervention that shifts the distribution of each mediator individually. It allows for the investigation of causal pathways and the quantification of indirect effects to directly address real-world research questions. Consider the following example using simulated data based on the Longitudinal Study of Australian Children (Sanson and Johnstone 2004):</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load the medRCT package</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://t0ngchen.github.io/medRCT/">medRCT</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Set a seed for reproducibility</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2024</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the first few rows of the dataset</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">LSACdata</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   child_sex child_atsi mat_cob mat_engl mat_age sep fam_stress parent_mh</span></span>
+<span><span class="co">#&gt; 1         1          0       0        0       1   1          0         0</span></span>
+<span><span class="co">#&gt; 2         0          0       0        0       0   0          0         0</span></span>
+<span><span class="co">#&gt; 3         1          0       1        1       0   0          0         1</span></span>
+<span><span class="co">#&gt; 4         0          0       0        0       0   0          0         0</span></span>
+<span><span class="co">#&gt; 5         0          0       0        0       0   0          0         0</span></span>
+<span><span class="co">#&gt; 6         0          0       0        0       0   1          0         0</span></span>
+<span><span class="co">#&gt;   preschool_att child_mh</span></span>
+<span><span class="co">#&gt; 1             1        0</span></span>
+<span><span class="co">#&gt; 2             1        0</span></span>
+<span><span class="co">#&gt; 3             0        0</span></span>
+<span><span class="co">#&gt; 4             1        0</span></span>
+<span><span class="co">#&gt; 5             0        0</span></span>
+<span><span class="co">#&gt; 6             0        0</span></span>
+<span></span>
+<span><span class="co"># Define confounders for the analysis</span></span>
+<span><span class="va">confounders</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"child_sex"</span>, <span class="st">"child_atsi"</span>, <span class="st">"mat_cob"</span>, <span class="st">"mat_engl"</span>, <span class="st">"mat_age"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Estimate interventional indirect effects for a hypothetical intervention</span></span>
+<span><span class="co"># that shifts the distribution of each mediator individually</span></span>
+<span><span class="va">med_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/medRCT.html">medRCT</a></span><span class="op">(</span></span>
+<span>  dat <span class="op">=</span> <span class="va">LSACdata</span>,                      </span>
+<span>  exposure <span class="op">=</span> <span class="st">"sep"</span>,                    </span>
+<span>  outcome <span class="op">=</span> <span class="st">"child_mh"</span>,                </span>
+<span>  mediators <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"parent_mh"</span>, <span class="st">"preschool_att"</span><span class="op">)</span>, </span>
+<span>  intermediate_confs <span class="op">=</span> <span class="st">"fam_stress"</span>,  <span class="co"># intermediate confounders </span></span>
+<span>  confounders <span class="op">=</span> <span class="va">confounders</span>,           </span>
+<span>  bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,                    </span>
+<span>  intervention_type <span class="op">=</span> <span class="st">"shift_k"</span>,       </span>
+<span>  mcsim <span class="op">=</span> <span class="fl">100</span>                          </span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Summarise the results</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">med_res</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Estimated interventional effect: </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;                      Estimate Std. Error  CI Lower  CI Upper p-value</span></span>
+<span><span class="co">#&gt; IIE_1 (p_trt - p_1)  0.010075   0.002731  0.005061  0.015409 0.00022</span></span>
+<span><span class="co">#&gt; IIE_2 (p_trt - p_2)  0.000549   0.001733 -0.002301  0.004548 0.75129</span></span>
+<span><span class="co">#&gt; TCE (p_trt - p_ctr)  0.106266   0.016395  0.076784  0.141251 9.1e-11</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Estimated expected outcome in each trial arm:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;       Estimate Std. Error CI Lower CI Upper p-value</span></span>
+<span><span class="co">#&gt; p_trt  0.33345    0.01406  0.31244  0.36755  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_ctr  0.22719    0.00765  0.21490  0.24367  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_1    0.32338    0.01412  0.30067  0.35502  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_2    0.33290    0.01423  0.31124  0.36460  &lt;2e-16</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Sample Size: 5107 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Simulations: 100</span></span></code></pre></div>
+<p>For detailed guidance on using the package to handle more complex scenarios, please refer to the <a href="https://t0ngchen.github.io/medRCT/">vignette</a>.</p>
+</div>
+<div class="section level2">
+<h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
+</h2>
+<p>For work involving the <code>medRCT</code> R package, please cite the following:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="sc">@</span>software{Chen2024medRCT,</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>   author <span class="ot">=</span> {Tong Chen and Margarita Moreno<span class="sc">-</span>Betancur and Ghazaleh Dashti},</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>   title <span class="ot">=</span> {medRCT<span class="sc">:</span> Causal Mediation Analysis Estimating Interventional Effects Mapped to a Target Trial},</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>   year  <span class="ot">=</span> {<span class="dv">2024</span>},</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>   url <span class="ot">=</span> {https<span class="sc">:</span><span class="er">//</span>t0ngchen.github.io<span class="sc">/</span>medRCT<span class="sc">/</span>},</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>   note <span class="ot">=</span> {R package version <span class="dv">0</span>.<span class="dv">0</span>.<span class="fl">0.9020</span>}</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>   }</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="sc">@</span>article{Moreno2021Mediation,</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>   author <span class="ot">=</span> {Margarita Moreno<span class="sc">-</span>Betancur and Paul Moran and Denise Becker and George C Patton and John B Carlin},</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>   title <span class="ot">=</span> {Mediation effects that emulate a target randomised trial<span class="sc">:</span> Simulation<span class="sc">-</span>based evaluation of ill<span class="sc">-</span>defined interventions on multiple mediators},</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>   journal <span class="ot">=</span> {Statistical Methods <span class="cf">in</span> Medical Research},</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>   volume <span class="ot">=</span> {<span class="dv">30</span>},</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>   number <span class="ot">=</span> {<span class="dv">6</span>},</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>   pages <span class="ot">=</span> {<span class="dv">1395-1412</span>},</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>   year <span class="ot">=</span> {<span class="dv">2021</span>}</span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>   }    </span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-hernan2016using" class="csl-entry">
+Hernán, Miguel A, and James M Robins. 2016. “Using Big Data to Emulate a Target Trial When a Randomized Trial Is Not Available.” <em>American Journal of Epidemiology</em> 183 (8): 758–64.
+</div>
+<div id="ref-Moreno2021Mediation" class="csl-entry">
+Moreno-Betancur, Margarita, Paul Moran, Denise Becker, George C Patton, and John B Carlin. 2021. “Mediation Effects That Emulate a Target Randomised Trial: Simulation-Based Evaluation of Ill-Defined Interventions on Multiple Mediators.” <em>Statistical Methods in Medical Research</em> 30 (6): 1395–1412.
+</div>
+<div id="ref-Sanson2004GrowingUI" class="csl-entry">
+Sanson, Ann V., and Robert E Johnstone. 2004. “Growing up in Australia Takes Its First Steps.” <em>Family Matters</em> 67: 46–53.
+</div>
+<div id="ref-vanderweele2014effect" class="csl-entry">
+VanderWeele, Tyler J, Stijn Vansteelandt, and James M Robins. 2014. “Effect Decomposition in the Presence of an Exposure-Induced Mediator-Outcome Confounder.” <em>Epidemiology</em> 25 (2): 300–306.
+</div>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
