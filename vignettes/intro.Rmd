@@ -1,0 +1,140 @@
+---
+title: "Estimating Mediation Effects that Emulate a Target Randomised Controlled Trial"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Estimating Mediation Effects that Emulate a Target Randomised Controlled Trial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: "../inst/references.bib"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Background
+
+Causal mediation analysis methods are commonly used in research studies to explore the causal pathways linking exposures to outcomes. These methods aim to disentangle the total effect of an exposure into direct and indirect components. Traditional mediation analysis primarily focuses on identifying mechanistic causal pathways by assuming a pre-existing notion of mediation, where indirect effects are defined accordingly to detect and quantify such mechanisms. However, the ultimate goal of these studies is often to elucidate the extent to which hypothetical interventions targeting mediators could reduce or mitigate the adverse effects of an exposure on the outcome in the exposed. This shifts the focus from merely understanding underlying mechanisms to evaluating hypothetical interventions that could inform future policy development.
+
+Interventional effects [@vanderweele2014effect] are mediation estimands that address key identifiability challenges associated with natural effects [@Robins1992]. They have been shown to implicitly emulate effects estimated in target trials [@hernan2016using] designed to assess the impact of distributional shifts in mediators [@MorenoBetancur2018]. Building on this, @Moreno2021Mediation redefine interventional effects in terms of the hypothetical mediator interventions of specific interest, by mapping them to a target trial, making them particularly useful for policy-relevant evaluations in applied research.
+
+## Define interventional effects and estimation methods
+
+@Moreno2021Mediation defined several target estimands based on hypothetical mediator interventions. In this vignette, we describe these estimands and their corresponding mediator interventions, as implemented in the `medRCT` R package. The type of mediator intervention can be specified using the argument `intervention_type`. By default, `intervention_type = "all"` estimates all three types of interventional effects. Other available options are:
+ 
+ - **`shift_all`**:  
+  This estimand corresponds to an intervention that shifts the **joint distribution of all mediators** in the exposed to match the level in the unexposed.
+ - **`shift_k`**:  
+  This estimand corresponds to an intervention that shifts the **distribution of a specific mediator** in the exposed to match the level in the unexposed, **without considering flow-on effects** on other mediators.
+
+ - **`shift_k_order`**:  
+  This estimand corresponds to an intervention that shifts the **distribution of a specific mediator** in the exposed to match the level in the unexposed, **while considering flow-on effects** on its causally descendant mediators.
+
+`medRCT` estimates interventional effects using a Monte Carlo simulation-based g-computation approach, as described by @Vansteelandt2017. The number of Monte Carlo simulations can be specified using the argument `mcsim`, allowing users to balance computational efficiency and estimation accuracy. Additionally, `medRCT` automatically removes missing values from the dataset, performing a complete-case analysis.
+
+
+## Getting started with `medRCT`: Estimating interventional effects
+
+The `medRCT` package is designed to handle complex mediation settings involving **multiple mediators** and **intermediate confounders** (exposure-induced mediator-outcome confounders). It supports a range of variable types. Specifically, it supports **categorical exposures** with two or more levels (Levels $\geq$ 2). For the **outcome variable**, `medRCT` supports both **binary** and **continuous** outcomes. Additionally, each **mediator** and **intermediate confounder** can be either **binary** or **continuous**. This makes the package suitable for a broad range of real-world applications in epidemiology, public health, and social science research. 
+
+We begin by illustrating how to estimate three different types of interventional effects in the presence of multiple mediators and intermediate confounders. Such intermediate confounders can be specified using the argument `intermediate_confs`. Consider the following example using simulated data inspired by the Longitudinal Study of Australian Children (LSAC) [@Sanson2004GrowingUI]:
+
+
+```{r}
+library(medRCT)
+
+# Set a seed for reproducibility
+set.seed(2024)
+LSACdata = LSACdata[sample(1:nrow(LSACdata), 500),]
+# Display the first few rows of the dataset
+head(LSACdata)
+
+# Define confounders for the analysis
+confounders <- c("child_sex", "child_atsi", "mat_cob", "mat_engl", "mat_age")
+
+# Define intermediate confounders
+intermediate_confs <- "fam_stress"
+
+# Estimate interventional indirect effects
+med_res <- medRCT(
+  dat = LSACdata,                      
+  exposure = "sep",                    
+  outcome = "child_mh",                
+  mediators = c("parent_mh", "preschool_att"), 
+  intermediate_confs = intermediate_confs, 
+  confounders = confounders,
+  interactions_XC = "all",
+  intervention_type = "all",
+  bootstrap = TRUE,
+  boot_args = list(R = 100, stype = "i", ci.type = "norm"),
+  mcsim = 100                          
+)
+
+# Summarise the results
+summary(med_res)
+```
+
+
+## Specifying interactions with `interactions_XC`
+
+The argument `interactions_XC` in `medRCT` allows users to specify the exposure-confounder and confounder-confounder interactions. Of note, the algorithm automatically includes all two-way interactions among the exposure, mediators, and intermediate confounders. These interaction terms are fixed and cannot be modified by the user.
+
+#### Default option:  
+- By default, `interactions_XC = "all"` includes **all two-way interactions** between the exposure and confounders, while **confounder-confounder interactions are excluded**.
+
+#### Removing interactions:  
+- Setting `interactions_XC = "none"` **removes all two-way interactions** involving the exposure and confounders.  
+
+#### Custom interactions:  
+- **Custom specification:** Users can manually specify interaction terms by providing the model formula in the format `interactions_XC = "exposure:confounder1 + exposure:confounder2"`. This option provides full control over interaction terms between the exposure and confounders in the model, enabling customisation for specific research questions.  
+
+## Special cases
+
+#### Analysis without intermediate confounders
+
+If there are **no intermediate confounders** in the analysis, set the argument **`intermediate_confs = NULL`** when calling the `medRCT` function, as highlighted in the following example:
+
+```{r, echo=FALSE, results='asis'}
+cat('<pre><code class="r">',
+"med_res <- medRCT(",
+"  dat = LSACdata,",
+"  exposure = \"sep\",",
+"  outcome = \"child_mh\",",
+"  mediators = c(\"parent_mh\", \"preschool_att\"),",
+"  intermediate_confs = intermediate_confs,",
+"  confounders = confounders,",
+"  interactions_XC = \"all\",",
+"  <mark>intervention_type = NULL,</mark>",
+"  bootstrap = TRUE,",
+"  boot_args = list(R = 100, stype = \"i\", ci.type = \"norm\"),",
+"  mcsim = 100",
+")",
+"</code></pre>",
+sep="\n")
+```
+
+#### Single mediator case:  
+If there is only **one mediator**, only the `intervention_type` **`shift_k`** can be estimated, as the other options (`shift_all` and `shift_k_order`) require **multiple mediators** to define meaningful interventional effects.
+
+#### Causal ordering for the estimation of the estimand `shift_k_order`:  
+When estimating the estimand `shift_k_order`, the **order of mediators** specified in the argument **`mediators`** is important, as it defines the **causal ordering** among the mediators. This ordering determines the **causal descendants** for the mediator of interest, providing essential information for **accounting for flow-on effects** after the hypothetical intervention. Specifying an incorrect mediator ordering may result in **biased estimates** for the estimand `shift_k_order`. 
+
+#### Model diagnostics
+
+We have developed a **Shiny** application for convenient model diagnostics, which can be launched using the command:  
+
+```r
+medRCT_shiny(dat = data)
+```
+Within the Shiny app, after specifying the relevant arguments and clicking the `Run medRCT models` button, the app will fit all regression models required by the `medRCT` algorithm and generate detailed summaries for each models. These summaries provide valuable insights for model diagnostics, enabling users to evaluate model performance and detect potential issues. 
+
+Additionally, any **warnings** or **error messages** encountered during the model fitting process are highlighted in the app. By offering a user-friendly interface and diagnostic tool, our Shiny app streamlines the model diagnostics process for the `medRCT` algorithm, enabling transparent and comprehensive model assessment.
+
+
+<!-- others:
+interpret, mi
+-->
+## References

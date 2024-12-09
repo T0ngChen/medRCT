@@ -35,7 +35,7 @@ utils::globalVariables(".SD")
 #'    mediator (\code{k}) in the exposed to match the level in the unexposed.
 #'   \item \code{"shift_k_order"}: Estimates the interventional indirect effect of shifting the distribution of a
 #'    specific mediator (\code{k}) in the exposed to match the level in the unexposed while accounting for the flow-on
-#'    effects on its causally descendent mediators.
+#'    effects on its causally descendant mediators.
 #' }
 #' @param mcsim An \code{integer} specifying the number of Monte Carlo simulations to perform.
 #' @param bootstrap A \code{logical} value indicating whether bootstrapping should be performed. If \code{TRUE}
