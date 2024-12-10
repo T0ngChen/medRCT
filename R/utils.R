@@ -163,30 +163,30 @@ gen_formula <- function(k, first=NULL, MM = NULL, K=NULL, interactions_XC,
                         include_all = FALSE, marginal = FALSE) {
   if ((k == 1 || marginal) && is.null(MM))  {
     # Formula does not include other mediators
-    return(paste0("M", k, "~ X +", interactions_XC))
+    return(paste0("M", k, "~X+", interactions_XC))
   } else if (include_all) {
     # Formula including all mediators up to (k - 1)
     if (is.null(first)){
       return(paste0(
-        "M", k, "~ (X +",
-        paste0(paste0("M", 1:(k - 1)), collapse = "+"),
-        ")^2 +", interactions_XC
+        "M", k, "~(X+",
+        paste0("M", 1:(k - 1), collapse = "+"),
+        ")^2+", interactions_XC
       ))
     } else {
-      paste0("M", k, "~(X+",
-             paste0(paste0("M", first:(k - 1)), collapse = "+"),
-             ")^2+",
-             interactions_XC)
+      return(paste0("M", k, "~(X+",
+                    paste0("M", first:(k - 1), collapse = "+"),
+                    ")^2+",
+                    interactions_XC))
     }
   } else if (!is.null(MM)) {
     # Formula for cases involving MM
     if (first == 1 && MM == 1 && k == setdiff(first:K, MM)[1]) {
-      return(paste0("M", k, "~ X +", interactions_XC))
+      return(paste0("M", k, "~X+", interactions_XC))
     } else {
       return(paste0(
-        "M", k, "~ (X +",
-        paste0(paste0("M", setdiff(1:(k - 1), MM)), collapse = "+"),
-        ")^2 +", interactions_XC
+        "M", k, "~(X+",
+        paste0("M", setdiff(1:(k - 1), MM), collapse = "+"),
+        ")^2+", interactions_XC
       ))
     }
   }
@@ -195,29 +195,24 @@ gen_formula <- function(k, first=NULL, MM = NULL, K=NULL, interactions_XC,
 
 
 med_outcome_name = function(l, a, K) {
-  paste0("m", l, "_", a, "_", paste0(
+  paste0("m", l, "_", a, "_",
     strrep(a, (l - 1)), strrep("m", K - (l - 1))
-  ))
+  )
 }
 
 med_outcome_all = function(l, first, a, K){
-  paste0("m", l, "_", a, "_", paste0(
-    strrep("m", first - 1), strrep(a, (l - first)), strrep("m", K - l + 1)))
+  paste0("m", l, "_", a, "_",
+    strrep("m", first - 1), strrep(a, (l - first)), strrep("m", K - l + 1))
 }
 
 
 med_joint_other <- function(k, a, MM, K, ordering = TRUE) {
   re = if (ordering == TRUE) MM - 1 else min(k - 1, MM - 1)
-  paste0("m", k, "_", a, "_", paste0(c(
-    rep(paste0(a), re),
-    if(ordering == T) 0 else "m",
-    rep(paste0(a), max(k - 1 - MM, 0)),
-    rep("m", K - re - 1  - max(k - 1 - MM, 0))
-  ), collapse = ""))
+  paste0("m", k, "_", a, "_",
+         strrep(a, re),
+         if(ordering) 0 else "m",
+         strrep(a, max(k - 1 - MM, 0)),
+         strrep("m", K - re - 1  - max(k - 1 - MM, 0))
+         , collapse = "")
 }
-
-
-
-
-
 
