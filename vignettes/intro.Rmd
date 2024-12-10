@@ -122,7 +122,7 @@ If there is only **one mediator**, only the `intervention_type` **`shift_k`** ca
 #### Causal ordering for the estimation of the estimand `shift_k_order`:  
 When estimating the estimand `shift_k_order`, the **order of mediators** specified in the argument **`mediators`** is important, as it defines the **causal ordering** among the mediators. This ordering determines the **causal descendants** for the mediator of interest, providing essential information for **accounting for flow-on effects** after the hypothetical intervention. Specifying an incorrect mediator ordering may result in **biased estimates** for the estimand `shift_k_order`. 
 
-#### Model diagnostics
+## Model diagnostics
 
 We have developed a **Shiny** application for convenient model diagnostics, which can be launched using the command:  
 

@@ -1,0 +1,25 @@
+citHeader("Please cite the following article when using the 'medRCT' package:")
+
+note = sprintf("R package version %s", utils::packageDescription("medRCT", fields = "Version"))
+
+bibentry(
+  bibtype = "Manual",
+  title = gsub("\n", " ", paste0("medRCT: ", utils::packageDescription("medRCT", fields = "Title"))),
+  author = c(person("Tong", "Chen"),
+             person("Margarita", "Moreno-Betancur"),
+             person("Ghazaleh", "Dashti")),
+  year = format(Sys.Date(), "%Y"),
+  url = "https://t0ngchen.github.io/medRCT/",
+  note = note
+)
+
+
+bibentry(bibtype = "Article",
+         title = "Mediation effects that emulate a target randomised trial: Simulation-based evaluation of ill-defined interventions on multiple mediators",
+         author = c(person("Margarita", "Moreno-Betancur"),
+                    person("Paul", "Moran"),
+                    person("Denise", "Becker"),
+                    person("George", "Patton"),
+                    person("John", "Carlin")),
+         journal = "Statistical Methods in Medical Research",
+         year = "2021")

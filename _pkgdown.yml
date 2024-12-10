@@ -1,4 +1,15 @@
 url: https://t0ngchen.github.io/medRCT/
 template:
   bootstrap: 5
+  bslib:
+    base_font: {google: "Roboto"}
+    heading_font: {google: "Roboto Slab"}
 
+
+authors:
+  Tong Chen:
+    href: https://tongchen.netlify.app/
+  Margarita Moreno-Betancur:
+    href: https://www.mcri.edu.au/researcher-details/margarita-moreno-betancur
+  Ghazaleh Dashti:
+    href: https://www.mcri.edu.au/researcher-details/ghazaleh-dashti
