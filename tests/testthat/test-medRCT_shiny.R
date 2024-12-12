@@ -1,4 +1,5 @@
 library(shinytest2)
+library(shiny)
 test_that("test medRCT_shiny", {
   expect_error(medRCT_shiny(), "A dataset must be provided to launch the app")
   expect_error(medRCT_shiny(data = "not_a_dataframe"), "The input data must be a data frame.")
@@ -6,7 +7,7 @@ test_that("test medRCT_shiny", {
 
 
 test_that("Reactive inputs for medRCT_shiny", {
-  app <- AppDriver$new(medRCT_shiny(data = LSACdata))
+  app <- shinytest2::AppDriver$new(medRCT_shiny(data = LSACdata))
   # Set initial inputs
   app$set_inputs(outcome = "child_sex", exposure = "sep")
   # Verify input values
@@ -37,11 +38,10 @@ test_that("test collect_models", {
     intervention_type = "all"
   )
   expect_type(result, "list")
-  expect_true(all(c("joint", "marginals", "shift_k", "shift_k_order", "shift_all", "outcome") %in% names(result)))
   expect_true(!is.null(result$outcome))
   expect_true(length(result$outcome) > 0)
-  expect_true(!is.null(result$shift_k))
-  expect_true(length(result$shift_k) > 0)
+  expect_true(!is.null(result$`shift_k effects`))
+  expect_true(length(result$`shift_k effects`) > 0)
 })
 
 

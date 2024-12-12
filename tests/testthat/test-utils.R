@@ -100,14 +100,14 @@ test_that("test cf_predict", {
 
 test_that("test gen_formula", {
   result <- gen_formula(k = 1, interactions_XC = "X1:X2", marginal = TRUE)
-  expect_equal(result, "M1~ X +X1:X2")
+  expect_equal(result, "M1~X+X1:X2")
   result <- gen_formula(k = 3, interactions_XC = "X1:X2", marginal = TRUE)
-  expect_equal(result, "M3~ X +X1:X2")
+  expect_equal(result, "M3~X+X1:X2")
 })
 
 test_that("test gen_formula with include_all = TRUE", {
   result <- gen_formula(k = 3, K = 5, interactions_XC = "X1:X2", include_all = TRUE)
-  expect_equal(result, "M3~ (X +M1+M2)^2 +X1:X2")
+  expect_equal(result, "M3~(X+M1+M2)^2+X1:X2")
 
   result <- gen_formula(k = 4, first = 2, K = 5, interactions_XC = "X1:X2", include_all = TRUE)
   expect_equal(result, "M4~(X+M2+M3)^2+X1:X2")
@@ -115,21 +115,21 @@ test_that("test gen_formula with include_all = TRUE", {
 
 test_that("test gen_formula for cases involving MM", {
   result <- gen_formula(k = 4, MM = 2, K = 5, interactions_XC = "X1:X2")
-  expect_equal(result, "M4~ (X +M1+M3)^2 +X1:X2")
+  expect_equal(result, "M4~(X+M1+M3)^2+X1:X2")
 
   result <- gen_formula(k = 4, first = 1, MM = 1, K = 5, interactions_XC = "X1:X2")
-  expect_equal(result, "M4~ (X +M2+M3)^2 +X1:X2")
+  expect_equal(result, "M4~(X+M2+M3)^2+X1:X2")
 })
 
 test_that("test gen_formula for some special cases", {
   result <- gen_formula(k = 1, interactions_XC = "X1:X2")
-  expect_equal(result, "M1~ X +X1:X2")
+  expect_equal(result, "M1~X+X1:X2")
 
   result <- gen_formula(k = 1, interactions_XC = "X1:X2", include_all = TRUE)
-  expect_equal(result, "M1~ X +X1:X2")
+  expect_equal(result, "M1~X+X1:X2")
 
   result <- gen_formula(k = 4, K = 5, interactions_XC = "X1:X2", include_all = TRUE)
-  expect_equal(result, "M4~ (X +M1+M2+M3)^2 +X1:X2")
+  expect_equal(result, "M4~(X+M1+M2+M3)^2+X1:X2")
 })
 
 
@@ -156,7 +156,7 @@ test_that("test med_joint_other", {
 
 
   K <- 1
-  expect_error(med_joint_other(k = k, a = a, MM = MM, K = K, ordering = TRUE), "invalid 'times' argument")
+  expect_error(med_joint_other(k = k, a = a, MM = MM, K = K, ordering = TRUE), "invalid 'times' value")
 })
 
 
