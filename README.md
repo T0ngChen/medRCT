@@ -109,7 +109,7 @@ summary(med_res)
 
 For detailed guidance on using the package to handle more complex
 scenarios, please refer to the
-[vignette](https://t0ngchen.github.io/medRCT/).
+[vignette](https://t0ngchen.github.io/medRCT/articles/intro.html).
 
 ## Citation
 
