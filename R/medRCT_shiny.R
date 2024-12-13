@@ -9,12 +9,17 @@
 #'
 #' @param data A \code{data.frame} containing the dataset for analysis. It should include variables for the exposure,
 #'  outcome, mediators, confounders, and exposure-induced mediator-outcome confounders specified in the analysis.
-#' @param ... additional arguments for Shiny
+#' @param ... additional arguments for shiny
 #'
 #' @importFrom stats formula
 #' @import shiny
 #'
 #' @export
+#'
+#' @examples
+#' if (interactive()) {
+#'    medRCT_shiny(data=LSACdata)
+#' }
 medRCT_shiny <- function(data, ...){
   if (!requireNamespace("shiny", quietly = TRUE)) {
     stop("Please install shiny: install.packages('shiny')",

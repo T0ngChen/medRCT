@@ -77,3 +77,24 @@ effects on its causally descendant mediators.
 It can handle multiple mediators, including some not of primary interest but that are exposure-induced
 mediator-outcome confounders.
 }
+\examples{
+\dontrun{
+# Estimate interventional indirect effects for various
+# hypothetical interventions
+med_res <- medRCT(
+  dat = LSACdata,
+  exposure = "sep",
+  outcome = "child_mh",
+  mediators = c("parent_mh", "preschool_att"),
+  intermediate_confs = intermediate_confs,
+  confounders = confounders,
+  interactions_XC = "all",
+  intervention_type = "all",
+  bootstrap = TRUE,
+  boot_args = list(R = 100, stype = "i", ci.type = "norm"),
+  mcsim = 100
+)
+# Summarise the results
+summary(med_res)
+}
+}
