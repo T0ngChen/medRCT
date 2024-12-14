@@ -40,7 +40,7 @@ Interventional effects [@vanderweele2014effect] are mediation estimands that add
 
 The `medRCT` package is designed to handle complex mediation settings involving **multiple mediators** and **intermediate confounders** (exposure-induced mediator-outcome confounders). It supports a range of variable types. Specifically, it supports **categorical exposures** with two or more levels (Levels $\geq$ 2). For the **outcome variable**, `medRCT` supports both **binary** and **continuous** outcomes. Additionally, each **mediator** and **intermediate confounder** can be either **binary** or **continuous**. This makes the package suitable for a broad range of real-world applications in epidemiology, public health, and social science research. 
 
-We begin by illustrating how to estimate three different types of interventional effects in the presence of multiple mediators and intermediate confounders. Such intermediate confounders can be specified using the argument `intermediate_confs`. Consider the following example using simulated data inspired by the Longitudinal Study of Australian Children (LSAC) [@Sanson2004GrowingUI]:
+We begin by illustrating how to estimate three different types of interventional effects in the presence of multiple mediators and intermediate confounders. Such intermediate confounders can be specified using the argument `intermediate_confs`. Consider the following example using simulated data inspired by the Longitudinal Study of Australian Children (LSAC):
 
 
 ```{r}

@@ -35,7 +35,7 @@ remotes::install_github("T0ngChen/medRCT")
 
 ## Example
 
-We here illustrate how to use `medRCT` to estiamte interventional indirect effects that emulate a target trail. Specifically, we consider a hypothetical intervention that shifts the distribution of each mediator individually. It allows for the investigation of causal pathways and the quantification of indirect effects to directly address real-world research questions. Consider the following example using simulated data based on the Longitudinal Study of Australian Children [@Sanson2004GrowingUI]:
+We here illustrate how to use `medRCT` to estiamte interventional indirect effects that emulate a target trail. Specifically, we consider a hypothetical intervention that shifts the distribution of each mediator individually. It allows for the investigation of causal pathways and the quantification of indirect effects to directly address real-world research questions. Consider the following example using simulated data based on the Longitudinal Study of Australian Children:
 
 
 ```{r eg, warning=FALSE, message=FALSE}
@@ -83,13 +83,16 @@ For work involving the `medRCT` R package, please cite the following:
        note = {R package version `r utils::packageDescription("medRCT", fields = "Version")`}
        }
     @article{Moreno2021Mediation,
-       author = {Margarita Moreno-Betancur and Paul Moran and Denise Becker and George C Patton and John B Carlin},
-       title = {Mediation effects that emulate a target randomised trial: Simulation-based evaluation of ill-defined interventions on multiple mediators},
-       journal = {Statistical Methods in Medical Research},
-       volume = {30},
-       number = {6},
-       pages = {1395-1412},
-       year = {2021}
+       author={Margarita Moreno-Betancur and Paul Moran and Denise Becker and George C Patton and John B Carlin},
+       title={Mediation effects that emulate a target randomised trial: Simulation-based evaluation of ill-defined interventions on multiple mediators},
+       journal={Statistical Methods in Medical Research},
+       volume={30},
+       number={6},
+       pages={1395--1412},
+       year={2021},
+       URL={https://doi.org/10.1177/0962280221998409},
+       doi={10.1177/0962280221998409},
+       publisher={SAGE Publications Ltd}
        }    
 
 

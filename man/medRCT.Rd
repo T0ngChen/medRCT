@@ -2,7 +2,7 @@
 % Please edit documentation in R/medRCT.R
 \name{medRCT}
 \alias{medRCT}
-\title{Causal mediation analysis using interventional effects that map to a target trial}
+\title{Causal Mediation Analysis Using Interventional Effects that Map to A Target Trial}
 \usage{
 medRCT(
   dat,
@@ -73,12 +73,18 @@ effects on its causally descendant mediators.
 \item{...}{Additional arguments passed to the \code{boot} function from the \code{boot} package.}
 }
 \description{
-'medRCT' is used to estimate interventional effects that map to a target trial evaluating hypothetical mediator interventions of interest.
-It can handle multiple mediators, including some not of primary interest but that are exposure-induced
-mediator-outcome confounders.
+\code{medRCT} is used to estimate interventional effects that map to a target trial evaluating hypothetical mediator interventions
+of interest. It can handle multiple mediators, including some not of primary interest but that are intermediate confounders
+(exposure-induced mediator-outcome confounders).
 }
 \examples{
 \dontrun{
+# Define confounders for the analysis
+confounders <- c("child_sex", "child_atsi", "mat_cob", "mat_engl", "mat_age")
+
+# Define intermediate confounders
+intermediate_confs <- "fam_stress"
+
 # Estimate interventional indirect effects for various
 # hypothetical interventions
 med_res <- medRCT(
