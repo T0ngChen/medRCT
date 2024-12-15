@@ -10,6 +10,7 @@ test_that("test for medRCT", {
   predB = predict(fit, data, type = "response")
   tce = mean(predB)-mean(predA)
 
+  set.seed(2024)
   result <- medRCT(
     dat = LSACdata,
     exposure = "sep",
@@ -24,6 +25,7 @@ test_that("test for medRCT", {
   )
 
   expect_type(result$est, "double")
-
+  dif = result$est["TCE (p_trt - p_ctr)"] - tce
+  expect_lt(dif, 0.01)
 })
 
