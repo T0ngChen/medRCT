@@ -46,6 +46,8 @@ medRCT_shiny <- function(data, ...){
     sidebarLayout(
       # Sidebar panel for inputs
       sidebarPanel(
+        helpText(HTML("For detailed guidance on specifying these arguments,
+                      refer to the <a href='https://t0ngchen.github.io/medRCT/articles/intro.html' target='_blank'>medRCT vignette</a>.")),
         #select outcome
         selectInput("outcome", "Select the Outcome Variable:",
                     choices = c("", colnames(data))),
@@ -71,6 +73,8 @@ medRCT_shiny <- function(data, ...){
           multiple = FALSE,
           options = list(create = TRUE) # Enable free text input
         ),
+        helpText(HTML("Note: For <code>interaction terms</code>, you can choose <code>all</code> or <code>none</code>.
+                      If you want to specify custom interaction terms, <b>you must type them manually</b>.")),
         selectInput(
           inputId = "intervention_type",
           label = "Select Intervention Type:",
