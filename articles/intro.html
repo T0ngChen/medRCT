@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">medRCT</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9070</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9075</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -152,8 +152,7 @@ interventional effects in the presence of multiple mediators and
 intermediate confounders. Such intermediate confounders can be specified
 using the argument <code>intermediate_confs</code>. Consider the
 following example using simulated data inspired by the Longitudinal
-Study of Australian Children (LSAC) <span class="citation">(Sanson and
-Johnstone 2004)</span>:</p>
+Study of Australian Children (LSAC):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://t0ngchen.github.io/medRCT/">medRCT</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; medRCT: Causal Mediation Analysis Estimating Interventional Effects Mapped to a Target Trial</span></span>
@@ -206,12 +205,18 @@ Johnstone 2004)</span>:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Estimated interventional effect: </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                            Estimate Std. Error  CI Lower  CI Upper p-value</span></span>
-<span><span class="co">#&gt; IIE_1 (p_trt - p_1)        0.002191   0.005509 -0.008803  0.012794    0.69</span></span>
-<span><span class="co">#&gt; IIE_2 (p_trt - p_2)       -0.001571   0.004164 -0.009702  0.006621    0.71</span></span>
-<span><span class="co">#&gt; IIE_all (p_trt - p_all)    0.000479   0.007119 -0.013790  0.014117    0.95</span></span>
-<span><span class="co">#&gt; IIE_1 (p_trt - p_1_prime)  0.001079   0.005881 -0.010825  0.012228    0.85</span></span>
-<span><span class="co">#&gt; TCE (p_trt - p_ctr)        0.053700   0.035970 -0.021936  0.119065    0.14</span></span>
+<span><span class="co">#&gt;                                   Estimate Std. Error  CI Lower  CI Upper</span></span>
+<span><span class="co">#&gt; IIE_1_ (p_trt - p_1)              0.002191   0.005509 -0.008803  0.012794</span></span>
+<span><span class="co">#&gt; IIE_2_ (p_trt - p_2)             -0.001571   0.004164 -0.009702  0.006621</span></span>
+<span><span class="co">#&gt; IIE_all (p_trt - p_all)           0.000479   0.007119 -0.013790  0.014117</span></span>
+<span><span class="co">#&gt; IIE_1__prime (p_trt - p_1_prime)  0.001079   0.005881 -0.010825  0.012228</span></span>
+<span><span class="co">#&gt; TCE (p_trt - p_ctr)               0.053700   0.035970 -0.021936  0.119065</span></span>
+<span><span class="co">#&gt;                                  p-value</span></span>
+<span><span class="co">#&gt; IIE_1_ (p_trt - p_1)                0.69</span></span>
+<span><span class="co">#&gt; IIE_2_ (p_trt - p_2)                0.71</span></span>
+<span><span class="co">#&gt; IIE_all (p_trt - p_all)             0.95</span></span>
+<span><span class="co">#&gt; IIE_1__prime (p_trt - p_1_prime)    0.85</span></span>
+<span><span class="co">#&gt; TCE (p_trt - p_ctr)                 0.14</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Estimated expected outcome in each trial arm:</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -226,6 +231,20 @@ Johnstone 2004)</span>:</p>
 <span><span class="co">#&gt; Sample Size: 800 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Simulations: 100</span></span></code></pre></div>
+<p>In the summary table:</p>
+<ul>
+<li><p><code>IIE_all</code> is the estimated interventional indirect
+effect when applying the hypothetical intervention specified by
+<code>shift_all</code>.</p></li>
+<li><p><code>IIE_k</code> is the estimated interventional indirect
+effect when applying the hypothetical intervention described by
+<code>shift_k</code> to a specific mediator <code>k</code>.</p></li>
+<li><p><code>IIE_k_prime</code> is the estimated interventional indirect
+effect for a specific mediator <code>k</code>, accounting for the
+flow-on effects on its descendant mediators under the hypothetical
+intervention described by <code>shift_k_order</code>.</p></li>
+<li><p><code>TCE</code> is the estimated total causal effect.</p></li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="specifying-interactions-with-interactions_xc">Specifying interactions with <code>interactions_XC</code><a class="anchor" aria-label="anchor" href="#specifying-interactions-with-interactions_xc"></a>
@@ -319,21 +338,18 @@ estimates</strong> for the estimand <code>shift_k_order</code>.</p>
 model diagnostics, which can be launched using the command:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/medRCT_shiny.html">medRCT_shiny</a></span><span class="op">(</span>dat <span class="op">=</span> <span class="va">data</span><span class="op">)</span></span></code></pre></div>
-<p>Within the Shiny app, after specifying the relevant arguments and
+<p>In the Shiny application, after specifying the relevant arguments and
 clicking the <code>Run medRCT models</code> button, the app will fit all
 regression models required by the <code>medRCT</code> algorithm and
-generate detailed summaries for each models. These summaries provide
-valuable insights for model diagnostics, enabling users to evaluate
-model performance and detect potential issues.</p>
+generate detailed summaries for each model. These summaries support
+model diagnostics by allowing users to evaluate performance and identify
+potential issues.</p>
 <p>Additionally, any <strong>warnings</strong> or <strong>error
 messages</strong> encountered during the model fitting process are
 highlighted in the app. By offering a user-friendly interface and
 diagnostic tool, our Shiny app streamlines the model diagnostics process
-for the <code>medRCT</code> algorithm, enabling transparent and
+for the <code>medRCT</code> algorithm, facilitating transparent and
 comprehensive model assessment.</p>
-<!-- others:
-interpret, mi
--->
 </div>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -342,40 +358,35 @@ interpret, mi
 <div id="ref-hernan2016using" class="csl-entry">
 Hernán, Miguel A, and James M Robins. 2016. <span>“Using Big Data to
 Emulate a Target Trial When a Randomized Trial Is Not Available.”</span>
-<em>American Journal of Epidemiology</em> 183 (8): 758–64.
+<em>American Journal of Epidemiology</em> 183 (8): 758–64. <a href="https://doi.org/10.1093/aje/kwv254" class="external-link">https://doi.org/10.1093/aje/kwv254</a>.
 </div>
 <div id="ref-MorenoBetancur2018" class="csl-entry">
 Moreno-Betancur, Margarita, and John B. Carlin. 2018.
 <span>“Understanding Interventional Effects: A More Natural Approach to
-Mediation Analysis.”</span> <em>Epidemiology</em> 29: 614–17.
+Mediation Analysis.”</span> <em>Epidemiology</em> 29 (5): 614–17. <a href="https://doi.org/10.1097/EDE.0000000000000866" class="external-link">https://doi.org/10.1097/EDE.0000000000000866</a>.
 </div>
 <div id="ref-Moreno2021Mediation" class="csl-entry">
 Moreno-Betancur, Margarita, Paul Moran, Denise Becker, George C Patton,
 and John B Carlin. 2021. <span>“Mediation Effects That Emulate a Target
 Randomised Trial: Simulation-Based Evaluation of Ill-Defined
 Interventions on Multiple Mediators.”</span> <em>Statistical Methods in
-Medical Research</em> 30 (6): 1395–1412.
+Medical Research</em> 30 (6): 1395–1412. <a href="https://doi.org/10.1177/0962280221998409" class="external-link">https://doi.org/10.1177/0962280221998409</a>.
 </div>
 <div id="ref-Robins1992" class="csl-entry">
 Robins, James M., and Sander Greenland. 1992. <span>“Identifiability and
 Exchangeability for Direct and Indirect Effects.”</span>
-<em>Epidemiology</em> 3: 143–55.
-</div>
-<div id="ref-Sanson2004GrowingUI" class="csl-entry">
-Sanson, Ann V., and Robert E Johnstone. 2004. <span>“Growing up in
-<span>A</span>ustralia Takes Its First Steps.”</span> <em>Family
-Matters</em> 67: 46–53.
+<em>Epidemiology</em> 3 (2): 143–55. <a href="https://doi.org/10.1097/00001648-199203000-00013" class="external-link">https://doi.org/10.1097/00001648-199203000-00013</a>.
 </div>
 <div id="ref-vanderweele2014effect" class="csl-entry">
 VanderWeele, Tyler J, Stijn Vansteelandt, and James M Robins. 2014.
 <span>“Effect Decomposition in the Presence of an Exposure-Induced
 Mediator-Outcome Confounder.”</span> <em>Epidemiology</em> 25 (2):
-300–306.
+300–306. <a href="https://doi.org/10.1097/EDE.0000000000000034" class="external-link">https://doi.org/10.1097/EDE.0000000000000034</a>.
 </div>
 <div id="ref-Vansteelandt2017" class="csl-entry">
 Vansteelandt, Stijn, and Rhian M. Daniel. 2017. <span>“Interventional
 Effects for Mediation Analysis with Multiple Mediators.”</span>
-<em>Epidemiology</em> 28: 258–65.
+<em>Epidemiology</em> 28 (2): 258–65. <a href="https://doi.org/10.1097/EDE.0000000000000596" class="external-link">https://doi.org/10.1097/EDE.0000000000000596</a>.
 </div>
 </div>
 </div>

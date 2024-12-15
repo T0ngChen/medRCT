@@ -24,7 +24,7 @@
 
     <a class="navbar-brand me-2" href="index.html">medRCT</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9070</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9075</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +71,7 @@
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>We here illustrate how to use <code>medRCT</code> to estiamte interventional indirect effects that emulate a target trail. Specifically, we consider a hypothetical intervention that shifts the distribution of each mediator individually. It allows for the investigation of causal pathways and the quantification of indirect effects to directly address real-world research questions. Consider the following example using simulated data based on the Longitudinal Study of Australian Children (Sanson and Johnstone 2004):</p>
+<p>We here illustrate how to use <code>medRCT</code> to estiamte interventional indirect effects that emulate a target trail. Specifically, we consider a hypothetical intervention that shifts the distribution of each mediator individually. It allows for the investigation of causal pathways and the quantification of indirect effects to directly address real-world research questions. Consider the following example using simulated data based on the Longitudinal Study of Australian Children:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load the medRCT package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://t0ngchen.github.io/medRCT/">medRCT</a></span><span class="op">)</span></span>
@@ -134,7 +134,7 @@
 <span><span class="co">#&gt; Sample Size: 5107 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Simulations: 100</span></span></code></pre></div>
-<p>For detailed guidance on using the package to handle more complex scenarios, please refer to the <a href="https://t0ngchen.github.io/medRCT/">vignette</a>.</p>
+<p>For detailed guidance on using the package to handle more complex scenarios, please refer to the <a href="https://t0ngchen.github.io/medRCT/articles/intro.html">vignette</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
@@ -148,30 +148,30 @@
 <span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>   note <span class="ot">=</span> {R package version <span class="dv">0</span>.<span class="dv">0</span>.<span class="fl">0.9020</span>}</span>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>   }</span>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="sc">@</span>article{Moreno2021Mediation,</span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>   author <span class="ot">=</span> {Margarita Moreno<span class="sc">-</span>Betancur and Paul Moran and Denise Becker and George C Patton and John B Carlin},</span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>   title <span class="ot">=</span> {Mediation effects that emulate a target randomised trial<span class="sc">:</span> Simulation<span class="sc">-</span>based evaluation of ill<span class="sc">-</span>defined interventions on multiple mediators},</span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>   journal <span class="ot">=</span> {Statistical Methods <span class="cf">in</span> Medical Research},</span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>   volume <span class="ot">=</span> {<span class="dv">30</span>},</span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>   number <span class="ot">=</span> {<span class="dv">6</span>},</span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>   pages <span class="ot">=</span> {<span class="dv">1395-1412</span>},</span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>   year <span class="ot">=</span> {<span class="dv">2021</span>}</span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>   }    </span></code></pre></div>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>   author<span class="ot">=</span>{Margarita Moreno<span class="sc">-</span>Betancur and Paul Moran and Denise Becker and George C Patton and John B Carlin},</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>   title<span class="ot">=</span>{Mediation effects that emulate a target randomised trial<span class="sc">:</span> Simulation<span class="sc">-</span>based evaluation of ill<span class="sc">-</span>defined interventions on multiple mediators},</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>   journal<span class="ot">=</span>{Statistical Methods <span class="cf">in</span> Medical Research},</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>   volume<span class="ot">=</span>{<span class="dv">30</span>},</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>   number<span class="ot">=</span>{<span class="dv">6</span>},</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>   pages<span class="ot">=</span>{<span class="dv">1395</span><span class="sc">--</span><span class="dv">1412</span>},</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>   year<span class="ot">=</span>{<span class="dv">2021</span>},</span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>   URL<span class="ot">=</span>{https<span class="sc">:</span><span class="er">//</span>doi.org<span class="sc">/</span><span class="fl">10.1177</span><span class="sc">/</span><span class="dv">0962280221998409</span>},</span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>   doi<span class="ot">=</span>{<span class="fl">10.1177</span><span class="sc">/</span><span class="dv">0962280221998409</span>},</span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>   publisher<span class="ot">=</span>{SAGE Publications Ltd}</span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>   }    </span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-hernan2016using" class="csl-entry">
-Hernán, Miguel A, and James M Robins. 2016. “Using Big Data to Emulate a Target Trial When a Randomized Trial Is Not Available.” <em>American Journal of Epidemiology</em> 183 (8): 758–64.
+Hernán, Miguel A, and James M Robins. 2016. “Using Big Data to Emulate a Target Trial When a Randomized Trial Is Not Available.” <em>American Journal of Epidemiology</em> 183 (8): 758–64. <a href="https://doi.org/10.1093/aje/kwv254" class="external-link uri">https://doi.org/10.1093/aje/kwv254</a>.
 </div>
 <div id="ref-Moreno2021Mediation" class="csl-entry">
-Moreno-Betancur, Margarita, Paul Moran, Denise Becker, George C Patton, and John B Carlin. 2021. “Mediation Effects That Emulate a Target Randomised Trial: Simulation-Based Evaluation of Ill-Defined Interventions on Multiple Mediators.” <em>Statistical Methods in Medical Research</em> 30 (6): 1395–1412.
-</div>
-<div id="ref-Sanson2004GrowingUI" class="csl-entry">
-Sanson, Ann V., and Robert E Johnstone. 2004. “Growing up in Australia Takes Its First Steps.” <em>Family Matters</em> 67: 46–53.
+Moreno-Betancur, Margarita, Paul Moran, Denise Becker, George C Patton, and John B Carlin. 2021. “Mediation Effects That Emulate a Target Randomised Trial: Simulation-Based Evaluation of Ill-Defined Interventions on Multiple Mediators.” <em>Statistical Methods in Medical Research</em> 30 (6): 1395–1412. <a href="https://doi.org/10.1177/0962280221998409" class="external-link uri">https://doi.org/10.1177/0962280221998409</a>.
 </div>
 <div id="ref-vanderweele2014effect" class="csl-entry">
-VanderWeele, Tyler J, Stijn Vansteelandt, and James M Robins. 2014. “Effect Decomposition in the Presence of an Exposure-Induced Mediator-Outcome Confounder.” <em>Epidemiology</em> 25 (2): 300–306.
+VanderWeele, Tyler J, Stijn Vansteelandt, and James M Robins. 2014. “Effect Decomposition in the Presence of an Exposure-Induced Mediator-Outcome Confounder.” <em>Epidemiology</em> 25 (2): 300–306. <a href="https://doi.org/10.1097/EDE.0000000000000034" class="external-link uri">https://doi.org/10.1097/EDE.0000000000000034</a>.
 </div>
 </div>
 </div>
@@ -184,6 +184,13 @@ VanderWeele, Tyler J, Stijn Vansteelandt, and James M Robins. 2014. “Effect De
 </ul>
 </div>
 
+<div class="community">
+<h2 data-toc-skip>Community</h2>
+<ul class="list-unstyled">
+<li><a href="CONTRIBUTING.html">Contributing guide</a></li>
+<li><a href="CODE_OF_CONDUCT.html">Code of conduct</a></li>
+</ul>
+</div>
 
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
