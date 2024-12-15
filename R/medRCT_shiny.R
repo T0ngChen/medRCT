@@ -9,16 +9,23 @@
 #'
 #' @param data A \code{data.frame} containing the dataset for analysis. It should include variables for the exposure,
 #'  outcome, mediators, confounders, and exposure-induced mediator-outcome confounders specified in the analysis.
-#' @param ... additional arguments for Shiny
+#' @param ... additional arguments for shiny
 #'
 #' @importFrom stats formula
 #' @import shiny
 #'
 #' @export
+#'
+#' @examples
+#' if (interactive()) {
+#'    medRCT_shiny(data=LSACdata)
+#' }
 medRCT_shiny <- function(data, ...){
+  if (!requireNamespace("shiny", quietly = TRUE)) {
+    stop("Please install shiny: install.packages('shiny')",
+         call. = FALSE)}
 
-  if (missing(data)) stop("A dataset must be provided to launch the app.
-                          Please pass a valid dataset as an argument.")
+  if (missing(data)) stop("A dataset must be provided to launch the app.")
   # Ensure the dataset is a data.frame
   if (!is.data.frame(data)) stop("The input data must be a data frame.")
 
@@ -39,6 +46,8 @@ medRCT_shiny <- function(data, ...){
     sidebarLayout(
       # Sidebar panel for inputs
       sidebarPanel(
+        helpText(HTML("For detailed guidance on specifying these arguments,
+                      refer to the <a href='https://t0ngchen.github.io/medRCT/articles/intro.html' target='_blank'>medRCT vignette</a>.")),
         #select outcome
         selectInput("outcome", "Select the Outcome Variable:",
                     choices = c("", colnames(data))),
@@ -64,6 +73,8 @@ medRCT_shiny <- function(data, ...){
           multiple = FALSE,
           options = list(create = TRUE) # Enable free text input
         ),
+        helpText(HTML("Note: For <code>interaction terms</code>, you can choose <code>all</code> or <code>none</code>.
+                      If you want to specify custom interaction terms, <b>you must type them manually</b>.")),
         selectInput(
           inputId = "intervention_type",
           label = "Select Intervention Type:",
@@ -297,42 +308,48 @@ medRCT_shiny <- function(data, ...){
     # main panel
     output$model_panels <- renderUI({
       req(model.list$model)
-      # Create tabs dynamically based on first-level keys in the list
-      do.call(tabsetPanel, lapply(names(model.list$model), function(group_name) {
-        tabPanel(
-          title = group_name,
-          # Add dynamic sub-tabs for each model in the group
-          do.call(tabsetPanel, lapply(names(model.list$model[[group_name]]), function(model_name) {
-            model <- model.list$model[[group_name]][[model_name]]
-
-            # Build the tabPanel inline
+      req(input$med_button)
+      isolate({
+        tagList(
+          h3("Models needed to estimate the interventional effect:"),
+          # Create tabs dynamically based on first-level keys in the list
+          do.call(tabsetPanel, lapply(names(model.list$model), function(group_name) {
             tabPanel(
-              title = model_name,
-              h4("Model Formula"),
-              verbatimTextOutput(outputId = paste0(group_name, "_", model_name, "_formula")),
-              h4("Model Summary"),
-              verbatimTextOutput(outputId = paste0(group_name, "_", model_name, "_summary")),
-              # Conditionally add warnings section
-              if (!is.null(model[['warnings']]) && length(model[['warnings']]) > 0) {
-                tagList(
-                  h4("Warnings"),
-                  div(class = "warn",
-                      verbatimTextOutput(outputId = paste0(group_name, "_", model_name, "_warnings")))
+              title = group_name,
+              # Add dynamic sub-tabs for each model in the group
+              do.call(tabsetPanel, lapply(names(model.list$model[[group_name]]), function(model_name) {
+                model <- model.list$model[[group_name]][[model_name]]
+
+                # Build the tabPanel inline
+                tabPanel(
+                  title = model_name,
+                  h4("Model Formula"),
+                  verbatimTextOutput(outputId = paste0(group_name, "_", model_name, "_formula")),
+                  # Conditionally add warnings section
+                  if (!is.null(model[['warnings']]) && length(model[['warnings']]) > 0) {
+                    tagList(
+                      h4("Warnings"),
+                      div(class = "warn",
+                          verbatimTextOutput(outputId = paste0(group_name, "_", model_name, "_warnings")))
+                    )
+                  },
+                  # Conditionally add errors section
+                  if (!is.null(model[['errors']]) && length(model[['errors']]) > 0) {
+                    tagList(
+                      h4("Errors"),
+                      div(class = "warn",
+                          verbatimTextOutput(outputId = paste0(group_name, "_", model_name, "_errors")))
+                    )
+                  },
+                  h4("Model Summary"),
+                  verbatimTextOutput(outputId = paste0(group_name, "_", model_name, "_summary")),
+                  tags$div(style = "height: 100px;")
                 )
-              },
-              # Conditionally add errors section
-              if (!is.null(model[['errors']]) && length(model[['errors']]) > 0) {
-                tagList(
-                  h4("Errors"),
-                  div(class = "warn",
-                      verbatimTextOutput(outputId = paste0(group_name, "_", model_name, "_errors")))
-                )
-              },
-              tags$div(style = "height: 100px;")
+              }))
             )
           }))
         )
-      }))
+      })
     })
 
 
@@ -457,11 +474,11 @@ collect_models <- function(data,
   lnzero = exposure_level[exposure_level!=0]
   res = list()
   res[1:6] <- list(list())
-  names(res) = c("joint", "marginals", "shift_k", "shift_k_order", "shift_all", "outcome")
+  names(res) = c("all mediator effects", "individual mediator effect", "shift_k effects", "shift_k_order effects", "shift_all effects", "outcome regression")
 
   # Joint of M1 to MK under X=0 and X!=0 ...
   for (k in 1:K) {
-    res[["joint"]][[k]] <- catch_model_messages(as.formula(
+    res[[names(res)[1]]][[k]] <- catch_model_messages(as.formula(
       gen_formula_shiny(mediators = mediators,
                         exposure = exposure,
                         k = k,
@@ -472,7 +489,7 @@ collect_models <- function(data,
     }
   # Marginals under X=0
   for (k in first:K) {
-    res[["marginals"]][[k]] <- catch_model_messages(as.formula(
+    res[[names(res)[2]]][[k]] <- catch_model_messages(as.formula(
       gen_formula_shiny(mediators = mediators,
                         exposure = exposure,
                         k = k,
@@ -487,7 +504,7 @@ collect_models <- function(data,
       index = setdiff(first:K, MM)
       for (k in index) {
         if (!(first == 1 && MM != 1 && k == index[1])) {
-          res[["shift_k"]][[paste(MM, k, sep = "_")]] <- catch_model_messages(as.formula(
+          res[[names(res)[3]]][[paste(MM, k, sep = "_")]] <- catch_model_messages(as.formula(
             gen_formula_shiny(mediators = mediators,
                               exposure = exposure,
                               k = k,
@@ -507,7 +524,7 @@ collect_models <- function(data,
   if (any(intervention_type %in% c("all", "shift_k_order"))) {
     for (MM in first:(K - 1)) {
       for (k in (MM + 1):K) {
-        res[["shift_k_order"]][[paste(MM, k, sep = "_")]] <- catch_model_messages(as.formula(
+        res[[names(res)[4]]][[paste(MM, k, sep = "_")]] <- catch_model_messages(as.formula(
           gen_formula_shiny(mediators = mediators,
                             exposure = exposure,
                             k = k,
@@ -522,7 +539,7 @@ collect_models <- function(data,
   # Joint of main ones under X=0
   if (any(intervention_type %in% c("all", "shift_all"))) {
     for (k in (first + 1):K) {
-      res[["shift_all"]][[k]] <- catch_model_messages(as.formula(
+      res[[names(res)[5]]][[k]] <- catch_model_messages(as.formula(
         gen_formula_shiny(mediators = mediators,
                           exposure = exposure,
                           k = k,
@@ -536,7 +553,7 @@ collect_models <- function(data,
 
   # outcome
   outcome_type = family_type(data, outcome)
-  res[["outcome"]][[1]] <- catch_model_messages(as.formula(paste0(
+  res[[names(res)[6]]][[1]] <- catch_model_messages(as.formula(paste0(
     outcome, " ~ (", exposure, " + ", paste0(mediators[1:K], collapse = "+"), ")^2+",
     interactions_XC)),
     data = data,

@@ -457,7 +457,7 @@ compute_assign_loop = function(dat2, fit, a, K, first, type, lnzero, results) {
     } else {
       results[[paste0("p_", MM - (first - 1), suffix)]] <- avg_pred
       # IIE
-      results[[paste0("IIE_", MM - (first - 1), " (p_trt - p_", MM - (first - 1), suffix, ")")]] <-
+      results[[paste0("IIE_", MM - (first - 1), "_", suffix, " (p_trt - p_", MM - (first - 1), suffix, ")")]] <-
         results$p_trt - avg_pred
     }
   }

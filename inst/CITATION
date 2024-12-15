@@ -9,7 +9,7 @@ bibentry(
              person("Margarita", "Moreno-Betancur"),
              person("Ghazaleh", "Dashti")),
   year = format(Sys.Date(), "%Y"),
-  url = "https://t0ngchen.github.io/medRCT/",
+  url = "https://github.com/T0ngChen/medRCT",
   note = note
 )
 
@@ -22,4 +22,6 @@ bibentry(bibtype = "Article",
                     person("George", "Patton"),
                     person("John", "Carlin")),
          journal = "Statistical Methods in Medical Research",
-         year = "2021")
+         year = "2021",
+         doi = "10.1177/0962280221998409",
+         url = "https://doi.org/10.1177/0962280221998409")

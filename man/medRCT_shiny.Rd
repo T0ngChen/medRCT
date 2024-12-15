@@ -10,11 +10,16 @@ medRCT_shiny(data, ...)
 \item{data}{A \code{data.frame} containing the dataset for analysis. It should include variables for the exposure,
 outcome, mediators, confounders, and exposure-induced mediator-outcome confounders specified in the analysis.}
 
-\item{...}{additional arguments for Shiny}
+\item{...}{additional arguments for shiny}
 }
 \description{
 \code{medRCT_shiny} launches a Shiny application to provide model summaries
 of all models fitted by the algorithm. The app serves as a user-friendly
 interface for diagnosing potential issues with the models and facilitates adjustments
 to improve model fit.
+}
+\examples{
+if (interactive()) {
+   medRCT_shiny(data=LSACdata)
+}
 }

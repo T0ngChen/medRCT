@@ -40,8 +40,7 @@ a hypothetical intervention that shifts the distribution of each
 mediator individually. It allows for the investigation of causal
 pathways and the quantification of indirect effects to directly address
 real-world research questions. Consider the following example using
-simulated data based on the Longitudinal Study of Australian Children
-(Sanson and Johnstone 2004):
+simulated data based on the Longitudinal Study of Australian Children:
 
 ``` r
 # Load the medRCT package
@@ -109,7 +108,7 @@ summary(med_res)
 
 For detailed guidance on using the package to handle more complex
 scenarios, please refer to the
-[vignette](https://t0ngchen.github.io/medRCT/).
+[vignette](https://t0ngchen.github.io/medRCT/articles/intro.html).
 
 ## Citation
 
@@ -123,13 +122,16 @@ For work involving the `medRCT` R package, please cite the following:
        note = {R package version 0.0.0.9020}
        }
     @article{Moreno2021Mediation,
-       author = {Margarita Moreno-Betancur and Paul Moran and Denise Becker and George C Patton and John B Carlin},
-       title = {Mediation effects that emulate a target randomised trial: Simulation-based evaluation of ill-defined interventions on multiple mediators},
-       journal = {Statistical Methods in Medical Research},
-       volume = {30},
-       number = {6},
-       pages = {1395-1412},
-       year = {2021}
+       author={Margarita Moreno-Betancur and Paul Moran and Denise Becker and George C Patton and John B Carlin},
+       title={Mediation effects that emulate a target randomised trial: Simulation-based evaluation of ill-defined interventions on multiple mediators},
+       journal={Statistical Methods in Medical Research},
+       volume={30},
+       number={6},
+       pages={1395--1412},
+       year={2021},
+       URL={https://doi.org/10.1177/0962280221998409},
+       doi={10.1177/0962280221998409},
+       publisher={SAGE Publications Ltd}
        }    
 
 ## References
@@ -142,6 +144,7 @@ entry-spacing="0">
 Hernán, Miguel A, and James M Robins. 2016. “Using Big Data to Emulate a
 Target Trial When a Randomized Trial Is Not Available.” *American
 Journal of Epidemiology* 183 (8): 758–64.
+<https://doi.org/10.1093/aje/kwv254>.
 
 </div>
 
@@ -151,14 +154,7 @@ Moreno-Betancur, Margarita, Paul Moran, Denise Becker, George C Patton,
 and John B Carlin. 2021. “Mediation Effects That Emulate a Target
 Randomised Trial: Simulation-Based Evaluation of Ill-Defined
 Interventions on Multiple Mediators.” *Statistical Methods in Medical
-Research* 30 (6): 1395–1412.
-
-</div>
-
-<div id="ref-Sanson2004GrowingUI" class="csl-entry">
-
-Sanson, Ann V., and Robert E Johnstone. 2004. “Growing up in Australia
-Takes Its First Steps.” *Family Matters* 67: 46–53.
+Research* 30 (6): 1395–1412. <https://doi.org/10.1177/0962280221998409>.
 
 </div>
 
@@ -167,6 +163,7 @@ Takes Its First Steps.” *Family Matters* 67: 46–53.
 VanderWeele, Tyler J, Stijn Vansteelandt, and James M Robins. 2014.
 “Effect Decomposition in the Presence of an Exposure-Induced
 Mediator-Outcome Confounder.” *Epidemiology* 25 (2): 300–306.
+<https://doi.org/10.1097/EDE.0000000000000034>.
 
 </div>
 
