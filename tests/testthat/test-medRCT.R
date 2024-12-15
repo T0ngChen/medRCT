@@ -1,0 +1,29 @@
+test_that("test for medRCT", {
+  # estimate TCE using g-comp
+  fit = glm(child_mh ~ (sep + fam_stress + parent_mh + preschool_att)^2 +
+              sep * child_sex + sep * child_atsi + sep * mat_cob + sep *
+              mat_engl + sep * mat_age, data=medRCT::LSACdata, family = binomial)
+  data = LSACdata
+  data$sep = 0
+  predA = predict(fit, data, type = "response")
+  data$sep = 1
+  predB = predict(fit, data, type = "response")
+  tce = mean(predB)-mean(predA)
+
+  result <- medRCT(
+    dat = LSACdata,
+    exposure = "sep",
+    outcome = "child_mh",
+    mediators = c("parent_mh", "preschool_att"),
+    intermediate_confs = "fam_stress",
+    confounders = c("child_sex", "child_atsi", "mat_cob", "mat_engl", "mat_age"),
+    interactions_XC = "all",
+    intervention_type = "all",
+    mcsim = 50,
+    bootstrap = F
+  )
+
+  expect_type(result$est, "double")
+
+})
+

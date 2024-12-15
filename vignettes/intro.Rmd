@@ -77,6 +77,16 @@ med_res <- medRCT(
 summary(med_res)
 ```
 
+In the summary table:  
+
+- `IIE_all` is the estimated interventional indirect effect when applying the hypothetical intervention specified by `shift_all`.
+
+- `IIE_k` is the estimated interventional indirect effect when applying the hypothetical intervention described by `shift_k` to a specific mediator `k`.  
+
+- `IIE_k_prime` is the estimated interventional indirect effect for a specific mediator `k`, accounting for the flow-on effects on its descendant mediators under the hypothetical intervention described by `shift_k_order`.  
+
+- `TCE` is the estimated total causal effect.
+
 
 ## Specifying interactions with `interactions_XC`
 
@@ -129,12 +139,9 @@ We have developed a **Shiny** application for convenient model diagnostics, whic
 ```r
 medRCT_shiny(dat = data)
 ```
-Within the Shiny app, after specifying the relevant arguments and clicking the `Run medRCT models` button, the app will fit all regression models required by the `medRCT` algorithm and generate detailed summaries for each models. These summaries provide valuable insights for model diagnostics, enabling users to evaluate model performance and detect potential issues. 
+In the Shiny application, after specifying the relevant arguments and clicking the `Run medRCT models` button, the app will fit all regression models required by the `medRCT` algorithm and generate detailed summaries for each model. These summaries support model diagnostics by allowing users to evaluate performance and identify potential issues.
 
-Additionally, any **warnings** or **error messages** encountered during the model fitting process are highlighted in the app. By offering a user-friendly interface and diagnostic tool, our Shiny app streamlines the model diagnostics process for the `medRCT` algorithm, enabling transparent and comprehensive model assessment.
+Additionally, any **warnings** or **error messages** encountered during the model fitting process are highlighted in the app. By offering a user-friendly interface and diagnostic tool, our Shiny app streamlines the model diagnostics process for the `medRCT` algorithm, facilitating transparent and comprehensive model assessment.
 
 
-<!-- others:
-interpret, mi
--->
 ## References
