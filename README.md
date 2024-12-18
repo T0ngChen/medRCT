@@ -34,8 +34,8 @@ remotes::install_github("T0ngChen/medRCT")
 
 ## Example
 
-We here illustrate how to use `medRCT` to estiamte interventional
-indirect effects that emulate a target trail. Specifically, we consider
+We here illustrate how to use `medRCT` to estimate interventional
+indirect effects that emulate a target trial. Specifically, we consider
 a hypothetical intervention that shifts the distribution of each
 mediator individually. It allows for the investigation of causal
 pathways and the quantification of indirect effects to directly address
