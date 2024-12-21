@@ -119,7 +119,12 @@ test_that("test gen_formula for cases involving MM", {
 
   result <- gen_formula(k = 4, first = 1, MM = 1, K = 5, interactions_XC = "X1:X2")
   expect_equal(result, "M4~(X+M2+M3)^2+X1:X2")
+
+  result <- gen_formula(k = 2, first = 1, MM = 1, K = 5, interactions_XC = "X1:X2")
+  expect_equal(result, "M2~X+X1:X2")
 })
+
+
 
 test_that("test gen_formula for some special cases", {
   result <- gen_formula(k = 1, interactions_XC = "X1:X2")
@@ -160,3 +165,51 @@ test_that("test med_joint_other", {
 })
 
 
+
+
+test_that("test med_joint_other", {
+  # set mcsim and R to be very small for testing summary function
+  set.seed(2024)
+  result <- medRCT(
+    dat = LSACdata,
+    exposure = "sep",
+    outcome = "child_mh",
+    mediators = c("parent_mh", "preschool_att"),
+    intermediate_confs = "fam_stress",
+    confounders = c("child_sex", "child_atsi", "mat_cob", "mat_engl", "mat_age"),
+    interactions_XC = "all",
+    intervention_type = "all",
+    mcsim = 10,
+    bootstrap = T,
+    boot_args = list(R = 10, stype = "i", ci.type = "norm")
+  )
+  output <- capture.output({
+    results <- summary(result)
+  })
+  expect_true("IIE" %in% names(results))
+  expect_true("expected_outcome" %in% names(results))
+  expect_equal(results$sample_size, nrow(LSACdata))
+  expect_equal(results$n.sim, 10)
+
+  result_non_boot <- medRCT(
+    dat = LSACdata,
+    exposure = "sep",
+    outcome = "child_mh",
+    mediators = c("parent_mh", "preschool_att"),
+    intermediate_confs = "fam_stress",
+    confounders = c("child_sex", "child_atsi", "mat_cob", "mat_engl", "mat_age"),
+    interactions_XC = "all",
+    intervention_type = "all",
+    mcsim = 10,
+    bootstrap = F
+  )
+  output <- capture.output({
+    result <- summary.medRCT(result_non_boot)
+  })
+  expect_false(is.null(names(result)))
+  expect_length(result, 11)
+
+  # Ensure no bootstrap-related output appears
+  expect_false(any(grepl("Estimated interventional effect:", output)))
+  expect_false(any(grepl("Simulations:", output)))
+})
