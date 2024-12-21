@@ -54,5 +54,5 @@ jobs:
       - name: Upload to codecov
         if: runner.os == 'Linux'
         run: |
-          install.packages(c("covr", "sessioninfo"))
-          covr::codecov()
+          Rscript -e "install.packages(c("covr", "sessioninfo"))"
+          Rscript -e "covr::codecov()"
