@@ -27,5 +27,22 @@ test_that("test for medRCT", {
   expect_type(result$est, "double")
   dif = result$est["TCE (p_trt - p_ctr)"] - tce
   expect_lt(dif, 0.01)
+
+  expect_message(
+    result <- medRCT(
+      dat = LSACdata,
+      exposure = "sep",
+      outcome = "child_mh",
+      mediators = c("parent_mh"),
+      intermediate_confs = "fam_stress",
+      confounders = c("child_sex", "child_atsi", "mat_cob", "mat_engl", "mat_age"),
+      interactions_XC = "all",
+      intervention_type = "all",
+      mcsim = 10,
+      bootstrap = F
+    ),
+    "Only able to estimate the effect type 'shift_k' with a single mediator."
+  )
+
 })
 

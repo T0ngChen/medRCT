@@ -42,6 +42,22 @@ test_that("test collect_models", {
   expect_true(length(result$outcome) > 0)
   expect_true(!is.null(result$`shift_k effects`))
   expect_true(length(result$`shift_k effects`) > 0)
+
+
+  expect_message(
+    result <- collect_models(
+      data = test_data,
+      exposure = "exposure",
+      outcome = "outcome",
+      mediators = c("mediator1"),
+      intermediate_confs = c("confounder1"),
+      confounders = c("confounder2"),
+      interactions_XC = "all",
+      intervention_type = "all"
+    ),
+    "Only able to estimate the effect type 'shift_k' with a single mediator."
+  )
+
 })
 
 
@@ -113,6 +129,28 @@ test_that("testing clean_list removes NULL elements", {
   input <- list(a = list(1, NULL, 3), b = list(), c = list(4, 5), d=list())
   expected <- list(a = list(1, 3), c = list(4, 5))
   expect_equal(clean_list(input), expected)
+  x <- list(
+    list(a = 1, b = NULL, c = 3),
+    list(d = NULL, e = 5),
+    "non-list element",
+    list()
+  )
+
+  # Expected output
+  expected <- list(
+    list(a = 1, c = 3), # NULL removed
+    list(e = 5),        # NULL removed
+    "non-list element", # Non-list elements unchanged
+    list()              # Empty list unchanged
+  )
+
+  # Apply the specific part of the function
+  result <- lapply(x, function(y) {
+    if (is.list(y)) Filter(Negate(is.null), y) else y
+  })
+
+  # Compare result to expected output
+  expect_equal(result, expected)
 })
 
 
@@ -134,3 +172,42 @@ test_that("catch_model_messages captures warnings", {
 
 
 
+
+test_that("Server logic of medRCT_shiny works as expected", {
+  # Test data
+  test_data <- data.frame(
+    treatment = rbinom(100, 1, 0.5),
+    response = rnorm(100),
+    mediator1 = rnorm(100),
+    mediator2 = rnorm(100),
+    conf1 = rnorm(100),
+    conf2 = rbinom(100, 1, 0.5)
+  )
+
+  # Test server
+  testServer(medRCT_shiny(test_data),{
+    # Set inputs
+    session$setInputs(
+      exposure = "treatment",
+      outcome = "response",
+      mediators = c("mediator1", "mediator2"),
+      confounders = c("conf2"),
+      int_confs = "conf1",
+      interactions_XC = "all",
+      intervention_type = "all",
+      med_button = 1
+    )
+
+    # Test reactive `var_names`
+    expect_equal(var_names(), c("treatment", "response"))
+    expect_true("mediator1" %in% input$mediators)
+    expect_true("conf1" %in% input$int_confs)
+    expect_true(!is.null(model.list$model))
+    expect_named(model.list$model,
+                 c('all mediator effects', 'individual mediator effect',
+                   'shift_k effects', 'shift_k_order effects',
+                   'shift_all effects', 'outcome regression'))
+    expect_named(model.list$model$`all mediator effects`,
+                 c("Model_1", "Model_2", "Model_3"))
+  })
+})

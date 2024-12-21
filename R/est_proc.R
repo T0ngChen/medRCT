@@ -268,8 +268,8 @@ con_exposed <- function(MM, k, K, data, dat2, fam_type, mediators,
 
     # Handle mediators between MM and k
     if (k > (MM + 1)) {
-    l = (MM + 1):(k - 1)
-    dat2[, paste0("M", l) := mget(med_joint_other(k = l, a = a, MM = MM, K = K))]
+      l = (MM + 1):(k - 1)
+      dat2[, paste0("M", l) := mget(med_joint_other(k = l, a = a, MM = MM, K = K))]
     }
 
     # Perform counterfactual prediction
