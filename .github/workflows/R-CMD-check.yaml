@@ -50,9 +50,3 @@ jobs:
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
-
-      - name: Upload to codecov
-        if: runner.os == 'Linux'
-        run: |
-          Rscript -e "install.packages(c("covr", "sessioninfo"))"
-          Rscript -e "covr::codecov()"

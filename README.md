@@ -8,6 +8,8 @@
 [![MIT
 license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 [![R-CMD-check](https://github.com/T0ngChen/medRCT/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/T0ngChen/medRCT/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/T0ngChen/medRCT/graph/badge.svg)](https://app.codecov.io/gh/T0ngChen/medRCT)
 <!-- badges: end -->
 
 > Causal **Med**iation Analysis for Estimating Interventional Effects
