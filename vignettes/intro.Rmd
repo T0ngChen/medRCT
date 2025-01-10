@@ -23,24 +23,24 @@ Interventional effects [@vanderweele2014effect] are mediation estimands that are
 
 ## Define interventional effects and estimation methods
 
-@Moreno2021Mediation defined several target estimands based on hypothetical mediator interventions. In this vignette, we describe these estimands and their corresponding mediator interventions, as implemented in the `medRCT` R package. The type of mediator intervention can be specified using the argument `intervention_type`. By default, `intervention_type = "all"` estimates all three types of interventional effects. Other available options are:
+@Moreno2021Mediation provided definitions for interventional effects based on three types of hypothetical mediator interventions. In this vignette, we describe these estimands and their corresponding mediator interventions, as implemented in the `medRCT` R package. The type of mediator intervention can be specified using the argument `intervention_type`. By default, `intervention_type = "all"` estimates all three types of interventional effects. Other available options are:
  
  - **`shift_all`**:  
-  This estimand corresponds to an intervention that shifts the **joint distribution of all mediators** in the exposed to match the level in the unexposed.
+  This estimand corresponds to an intervention that shifts the **joint distribution of all mediators** in the exposed to match the corresponding distribution in the unexposed.
  - **`shift_k`**:  
-  This estimand corresponds to an intervention that shifts the **distribution of a specific mediator** in the exposed to match the level in the unexposed, **without considering flow-on effects** on other mediators.
+  This estimand corresponds to an intervention that shifts the **distribution of a specific mediator** in the exposed to match the corresponding distribution in the unexposed, **without considering flow-on effects** on other mediators.
 
  - **`shift_k_order`**:  
-  This estimand corresponds to an intervention that shifts the **distribution of a specific mediator** in the exposed to match the level in the unexposed, **while considering flow-on effects** on its causally descendant mediators.
+  This estimand corresponds to an intervention that shifts the **distribution of a specific mediator** in the exposed to match the corresponding distribution in the unexposed, **while considering flow-on effects** on causally descendant mediators.
 
-`medRCT` estimates interventional effects using a Monte Carlo simulation-based g-computation approach, as described by @Vansteelandt2017. The number of Monte Carlo simulations can be specified using the argument `mcsim`, allowing users to balance computational efficiency and estimation accuracy. Additionally, `medRCT` automatically removes missing values from the dataset, performing a complete-case analysis.
+`medRCT` estimates interventional effects based on these interventions using a Monte Carlo simulation-based g-computation approach, as described by @Vansteelandt2017. The number of Monte Carlo simulations can be specified using the argument `mcsim`, allowing users to balance computational efficiency and estimation accuracy. Additionally, `medRCT` automatically removes missing values from the dataset, performing a complete-case analysis.
 
 
 ## Getting started with `medRCT`: Estimating interventional effects
 
-The `medRCT` package is designed to handle complex mediation settings involving **multiple mediators** and **intermediate confounders** (exposure-induced mediator-outcome confounders). It supports a range of variable types. Specifically, it supports **categorical exposures** with two or more levels (Levels $\geq$ 2). For the **outcome variable**, `medRCT` supports both **binary** and **continuous** outcomes. Additionally, each **mediator** and **intermediate confounder** can be either **binary** or **continuous**. This makes the package suitable for a broad range of real-world applications in epidemiology, public health, and social science research. 
+The `medRCT` package is designed to handle complex mediation settings involving **multiple interrelated mediators** and **intermediate confounders** (exposure-induced mediator-outcome confounders). It supports a range of variable types. Specifically, it supports **categorical exposures** with two or more levels (Levels $\geq$ 2). For the **outcome variable**, `medRCT` supports both **binary** and **continuous** outcomes. Additionally, it supports any number of mediators and each **mediator**, including those that are not of primary interest but **intermediate confounders**, can be either **binary** or **continuous**. Any number of **baseline confounders** of any type are supported. This makes the package suitable for a broad range of real-world applications in epidemiology, public health, and social science research. 
 
-We begin by illustrating how to estimate three different types of interventional effects in the presence of multiple mediators and intermediate confounders. Such intermediate confounders can be specified using the argument `intermediate_confs`. Consider the following example using simulated data inspired by the Longitudinal Study of Australian Children (LSAC):
+We begin by illustrating how to estimate the three different types of interventional effects in the presence of multiple mediators and intermediate confounders. Such intermediate confounders can be specified using the argument `intermediate_confs`. Consider the following example using simulated data inspired by a case study within the Longitudinal Study of Australian Children (LSAC) [REF]. 
 
 
 ```{r}
@@ -87,19 +87,18 @@ In the summary table:
 
 - `TCE` is the estimated total causal effect.
 
-
 ## Specifying interactions with `interactions_XC`
 
-The argument `interactions_XC` in `medRCT` allows users to specify the exposure-confounder and confounder-confounder interactions. Of note, the algorithm automatically includes all two-way interactions among the exposure, mediators, and intermediate confounders. These interaction terms are fixed and cannot be modified by the user.
+The argument `interactions_XC` in `medRCT` allows users to specify two-way interactions amongst exposure and baseline confounders. Of note, the algorithm automatically includes all two-way interactions among the exposure, mediators, and intermediate confounders. These interaction terms are fixed and cannot be modified by the user.
 
 #### Default option:  
-- By default, `interactions_XC = "all"` includes **all two-way interactions** between the exposure and confounders, while **confounder-confounder interactions are excluded**.
+- By default, `interactions_XC = "all"` includes **all two-way interactions** between the exposure and baseline confounders, while **baseline confounder-baseline confounder interactions are excluded**.
 
 #### Removing interactions:  
-- Setting `interactions_XC = "none"` **removes all two-way interactions** involving the exposure and confounders.  
+- Setting `interactions_XC = "none"` **removes all two-way interactions** involving the exposure and baseline confounders.  
 
 #### Custom interactions:  
-- **Custom specification:** Users can manually specify interaction terms by providing the model formula in the format `interactions_XC = "exposure:confounder1 + exposure:confounder2"`. This option provides full control over interaction terms between the exposure and confounders in the model, enabling customisation for specific research questions.  
+- **Custom specification:** Users can manually specify interaction terms by providing the model formula in the format `interactions_XC = "exposure:confounder1 + exposure:confounder2"`. This option provides full control over interaction terms between the exposure and baseline confounders in the model, enabling customisation for specific research questions.  
 
 ## Special cases
 
@@ -139,7 +138,7 @@ We have developed a **Shiny** application for convenient model diagnostics, whic
 ```r
 medRCT_shiny(dat = data)
 ```
-In the Shiny application, after specifying the relevant arguments and clicking the `Run medRCT models` button, the app will fit all regression models required by the `medRCT` algorithm and generate detailed summaries for each model. These summaries support model diagnostics by allowing users to evaluate performance and identify potential issues.
+In the Shiny application, after specifying the relevant arguments and clicking the `Run medRCT models` button, the app will fit all regression models required by the `medRCT` algorithm and generate detailed summaries for each model. These summaries support model assessment, allowing users to identify potential issues with fitting what are usually richly-specified models.
 
 Additionally, any **warnings** or **error messages** encountered during the model fitting process are highlighted in the app. By offering a user-friendly interface and diagnostic tool, our Shiny app streamlines the model diagnostics process for the `medRCT` algorithm, facilitating transparent and comprehensive model assessment.
 
