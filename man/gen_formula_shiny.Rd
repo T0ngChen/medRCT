@@ -17,13 +17,13 @@ gen_formula_shiny(
 )
 }
 \arguments{
-\item{mediators}{A \code{character} vector specifying the names of mediator variables in the dataset. The mediators
-can be specified as either binary or continuous. When estimating the effect type \code{"shift_k_order"},
-the order of mediators in the vector is important, as it determines the causal sequence of mediators.}
+\item{mediators}{A \code{character} vector specifying the names of the variables in the dataset corresponding to the mediators of interest. The mediators
+can be either binary or continuous. When estimating the effect type \code{"shift_k_order"},
+the order of mediators in the vector is important, as it interpreted as the assumed causal ordering of the mediators.}
 
 \item{exposure}{A \code{character} string specifying the name of the exposure variable in the dataset.
-The exposure variable can be categorical, with \code{0} explicitly denoting the unexposed (or control) group.
-Other values represent different exposure categories.}
+The exposure variable must be categorical, with \code{0} explicitly denoting the unexposed (or control) group, which is taken as the reference group.
+Other values represent different, non-reference exposure categories.}
 
 \item{k}{An integer specifying the index of the mediator for which the formula is being generated.}
 
@@ -38,10 +38,10 @@ this parameter.}
 Defaults to \code{NULL}, indicating that the function will generate formulas without explicitly considering this
 parameter.}
 
-\item{interactions_XC}{A \code{character} string specifying the exposure-confounder or confounder-confounder
-interaction terms to include in the regression models for confounder adjustment. The default value, \code{"all"},
+\item{interactions_XC}{A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
+to include in the regression models in the estimation procedure. The default value, \code{"all"},
 includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
-Specify \code{"none"} to exclude all two-way exposure-confounder and confounder-confounder interactions.}
+Specify \code{"none"} to exclude all two-way interactions amongst exposure and baseline confounders.}
 
 \item{include_all}{Logical.}
 

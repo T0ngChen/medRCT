@@ -31,9 +31,10 @@ this parameter.}
 intermediate confounders. Defaults to \code{NULL}, indicating that the function will
 generate formulas without explicitly considering this parameter.}
 
-\item{interactions_XC}{A \code{character} string specifying the exposure-confounder
-or confounder-confounder interaction terms to include in the regression models
-for confounder adjustment.}
+\item{interactions_XC}{A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
+to include in the regression models in the estimation procedure. The default value, \code{"all"},
+includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
+Specify \code{"none"} to exclude all two-way interactions amongst exposure and baseline confounders.}
 
 \item{include_all}{Logical.}
 

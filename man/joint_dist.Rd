@@ -35,9 +35,8 @@ for binary variables.}
 \item{mediators}{A \code{character} vector including the variable names for mediators
 (including intermediate confounders).}
 
-\item{interactions_XC}{A \code{character} string specifying the exposure-confounder or
-confounder-confounder interaction terms to include in the regression models for
-confounder adjustment.}
+\item{interactions_XC}{A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
+to include in the regression models in the estimation procedure.}
 
 \item{exposure_level}{A numeric vector specifying the levels of the exposure
 (e.g., \code{c(0, 1)}) for which counterfactual predictions are performed.}
