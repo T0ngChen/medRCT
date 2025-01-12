@@ -35,22 +35,22 @@ Mediators are considered sequentially based on their order.}
 \item{mediators}{A \code{character} vector including the variable names for mediators (including intermediate
 confounders).}
 
-\item{interactions_XC}{A \code{character} string specifying the exposure-confounder or confounder-confounder
-interaction terms to include in the regression models for confounder adjustment. The default value, \code{"all"},
+\item{interactions_XC}{A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
+to include in the regression models in the estimation procedure. The default value, \code{"all"},
 includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
-Specify \code{"none"} to exclude all two-way exposure-confounder and confounder-confounder interactions.}
+Specify \code{"none"} to exclude all two-way interactions amongst exposure and baseline confounders.}
 
 \item{intervention_type}{A \code{character} string indicating the type of interventional effect to be estimated.
 Options include:
 \itemize{
 \item \code{"all"} (default): Estimates all types of interventional indirect effects.
-\item \code{"shift_all"}: Estimates the interventional indirect effect of shifting the joint distribution of all
-mediators in the exposed to match the level in the unexposed.
-\item \code{"shift_k"}: Estimates the interventional indirect effect of shifting the distribution of a specific
-mediator (\code{k}) in the exposed to match the level in the unexposed.
-\item \code{"shift_k_order"}: Estimates the interventional indirect effect of shifting the distribution of a
-specific mediator (\code{k}) in the exposed to match the level in the unexposed while accounting for the flow-on
-effects on its causal descendent mediators.
+\item \code{"shift_all"}: Estimates an interventional indirect effect mapped to a target trial assessing the impact of shifting the joint distribution of all
+mediators in the exposed to match the corresponding distribution in the unexposed.
+\item \code{"shift_k"}: Estimates an interventional indirect effect mapped to a target trial assessing the impact of shifting the distribution of a specific
+mediator (\code{k}) in the exposed to match the corresponding distribution in the unexposed.
+\item \code{"shift_k_order"}: Estimates an interventional indirect effect mapped to a target trial assessing the impact of shifting the distribution of a
+specific mediator (\code{k}) in the exposed to match the corresponding distribution in the unexposed while accounting for the flow-on
+effects on causally descendant mediators.
 }}
 
 \item{mcsim}{An \code{integer} specifying the number of Monte Carlo simulations to perform.}

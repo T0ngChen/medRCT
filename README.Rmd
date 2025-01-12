@@ -22,9 +22,9 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/T0ngChen/medRCT/graph/badge.svg)](https://app.codecov.io/gh/T0ngChen/medRCT)
 <!-- badges: end -->
 
-> Causal **Med**iation Analysis for Estimating Interventional Effects that Emulate a **R**andomised **C**ontrolled **T**rial
+> Causal Mediation Analysis Estimating Interventional Effects Mapped to A Target Trial
 
-The R package `medRCT` for causal mediation analysis supports the estimation of interventional effects [@vanderweele2014effect], specifically interventional effects that are defined explicitly in terms of a "target trial" [@hernan2016using], as proposed recently [@Moreno2021Mediation]. In the target trial, the treatment strategies are specified to reflect hypothetical interventions targeting and thus shifting the joint distribution of the mediators. `medRCT` can accommodate any number of multiple mediators, potentially correlated, including mediators that are not of primary interest but that are intermediate (exposure-induced) mediator-outcome confounders.  
+The R package `medRCT` for causal mediation analysis supports the estimation of interventional effects [@vanderweele2014effect], specifically interventional effects that are defined explicitly in terms of a "target trial" [@hernan2016using], as proposed recently by @Moreno2021Mediation. In the target trial, the treatment strategies are specified to reflect hypothetical interventions targeting and thus shifting the joint distribution of the mediators. `medRCT` can accommodate any number of potentially correlated mediators, including mediators that are not of primary interest but that are intermediate (exposure-induced) mediator-outcome confounders.  
 
 ## Installation
 
@@ -36,7 +36,7 @@ remotes::install_github("T0ngChen/medRCT")
 
 ## Example
 
-Here we illustrate how to use `medRCT` to estimate interventional indirect effects that emulate a target trial using a simulated dataset based on a published case study from the Longitudinal Study of Australian Children [REF]. Specifically, we aim to estimate the difference in expected outcome (risk of mental health problems) under exposure (low socioeconomic position) with versus without a hypothetical intervention that individually shifts the distribution of each mediator (parental mental health and preschool attendance) to the levels in the unexposed, while accounting for baseline confounders, an intermediate (exposure-induced) mediator-outcome confounder and correlations amongst mediators. 
+Here we illustrate how to use `medRCT` to estimate interventional indirect effects that emulate a target trial using a simulated dataset based on a published case study from the Longitudinal Study of Australian Children [@Goldfeld2023]. Specifically, we aim to estimate the difference in expected outcome (risk of mental health problems) under exposure (low socioeconomic position) with versus without a hypothetical intervention that individually shifts the distribution of each mediator (parental mental health and preschool attendance) to the levels in the unexposed, while accounting for baseline confounders, an intermediate (exposure-induced) mediator-outcome confounder and correlations amongst mediators. 
 
 
 ```{r eg, warning=FALSE, message=FALSE}
@@ -69,6 +69,7 @@ med_res <- medRCT(
 # Summarise the results
 summary(med_res)
 ```
+
 Based on the estimated interventional effect (IIE_1), a hypothetical intervention improving the mental health of parents of children in low socioeconomic position to the levels in those with high socioeconomic position could potentially prevent 1 per 100 cases of child mental health problems. Meanwhile, the effect of a hypothetical intervention on preschool attendance (IIE_2) is negligible. 
 
 For detailed guidance on using the package to handle more complex scenarios, please refer to the [vignette](https://t0ngchen.github.io/medRCT/articles/intro.html).
@@ -78,7 +79,7 @@ For detailed guidance on using the package to handle more complex scenarios, ple
 For work involving the `medRCT` R package, please cite the following works:
 
     @software{Chen2024medRCT,
-       author = {Tong Chen and Margarita Moreno-Betancur and Ghazaleh Dashti},
+       author = {Tong Chen and Margarita Moreno-Betancur and S. Ghazaleh Dashti},
        title = {`r gsub("\n", " ", paste0("medRCT: ", utils::packageDescription("medRCT", fields = "Title")))`},
        year  = {`r format(Sys.Date(), "%Y")`},
        url = {https://t0ngchen.github.io/medRCT/},

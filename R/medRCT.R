@@ -4,7 +4,8 @@ utils::globalVariables(".SD")
 #' Causal Mediation Analysis Estimating Interventional Effects Mapped to A Target Trial
 #'
 #' `medRCT` is used to estimate interventional effects that map to a target trial evaluating hypothetical mediator interventions
-#' of interest. It can handle any number of multiple mediators, potentially correlated, including mediators that are not of primary interest but that are intermediate (exposure-induced) mediator-outcome confounders.
+#' of interest. It can handle any number of potentially correlated mediators, including mediators that are not of primary
+#' interest but that are intermediate (exposure-induced) mediator-outcome confounders.
 #'
 #' @param dat A \code{data.frame} containing the dataset for analysis. It should include variables for the exposure,
 #'  outcome, mediators, (baseline) confounders, and intermediate (exposure-induced) mediator-outcome confounders specified in the analysis.

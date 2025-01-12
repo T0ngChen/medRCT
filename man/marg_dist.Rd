@@ -26,9 +26,8 @@ for binary variables.}
 \item{mediators}{A \code{character} vector including the variable names for mediators
 (including intermediate confounders).}
 
-\item{interactions_XC}{A \code{character} string specifying the exposure-confounder or
-confounder-confounder interaction terms to include in the regression models for
-confounder adjustment.}
+\item{interactions_XC}{A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
+to include in the regression models in the estimation procedure.}
 
 \item{n}{An integer specifying the number of observations for \code{dat2}.}
 }

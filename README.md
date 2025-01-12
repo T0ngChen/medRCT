@@ -12,17 +12,19 @@ license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://openso
 coverage](https://codecov.io/gh/T0ngChen/medRCT/graph/badge.svg)](https://app.codecov.io/gh/T0ngChen/medRCT)
 <!-- badges: end -->
 
-> Causal **Med**iation Analysis for Estimating Interventional Effects
-> that Emulate a **R**andomised **C**ontrolled **T**rial
+> Causal Mediation Analysis Estimating Interventional Effects Mapped to
+> A Target Trial
 
-The R package `medRCT` supports the estimation of interventional effects
-(VanderWeele, Vansteelandt, and Robins 2014) that are defined explicitly
-in terms of a target trial (Hernán and Robins 2016), where the treatment
-strategies are specified to reflect the hypothetical interventions,
-which are encoded by shifts in the joint distribution of the mediators
-(Moreno-Betancur et al. 2021). `medRCT` can accommodates multiple
-mediators in the presence of exposure-induced mediator-outcome
-confounders.
+The R package `medRCT` for causal mediation analysis supports the
+estimation of interventional effects (VanderWeele, Vansteelandt, and
+Robins 2014), specifically interventional effects that are defined
+explicitly in terms of a “target trial” (Hernán and Robins 2016), as
+proposed recently by Moreno-Betancur et al. (2021). In the target trial,
+the treatment strategies are specified to reflect hypothetical
+interventions targeting and thus shifting the joint distribution of the
+mediators. `medRCT` can accommodate any number of potentially correlated
+mediators, including mediators that are not of primary interest but that
+are intermediate (exposure-induced) mediator-outcome confounders.
 
 ## Installation
 
@@ -36,13 +38,17 @@ remotes::install_github("T0ngChen/medRCT")
 
 ## Example
 
-We here illustrate how to use `medRCT` to estimate interventional
-indirect effects that emulate a target trial. Specifically, we consider
-a hypothetical intervention that shifts the distribution of each
-mediator individually. It allows for the investigation of causal
-pathways and the quantification of indirect effects to directly address
-real-world research questions. Consider the following example using
-simulated data based on the Longitudinal Study of Australian Children:
+Here we illustrate how to use `medRCT` to estimate interventional
+indirect effects that emulate a target trial using a simulated dataset
+based on a published case study from the Longitudinal Study of
+Australian Children (Goldfeld et al. 2023). Specifically, we aim to
+estimate the difference in expected outcome (risk of mental health
+problems) under exposure (low socioeconomic position) with versus
+without a hypothetical intervention that individually shifts the
+distribution of each mediator (parental mental health and preschool
+attendance) to the levels in the unexposed, while accounting for
+baseline confounders, an intermediate (exposure-induced)
+mediator-outcome confounder and correlations amongst mediators.
 
 ``` r
 # Load the medRCT package
@@ -53,20 +59,15 @@ set.seed(2024)
 
 # Display the first few rows of the dataset
 head(LSACdata)
-#>   child_sex child_atsi mat_cob mat_engl mat_age sep fam_stress parent_mh
-#> 1         1          0       0        0       1   1          0         0
-#> 2         0          0       0        0       0   0          0         0
-#> 3         1          0       1        1       0   0          0         1
-#> 4         0          0       0        0       0   0          0         0
-#> 5         0          0       0        0       0   0          0         0
-#> 6         0          0       0        0       0   1          0         0
-#>   preschool_att child_mh
-#> 1             1        0
-#> 2             1        0
-#> 3             0        0
-#> 4             1        0
-#> 5             0        0
-#> 6             0        0
+#> # A tibble: 6 × 10
+#>   child_sex child_atsi mat_cob mat_engl mat_age   sep fam_stress parent_mh preschool_att child_mh
+#>       <dbl>      <dbl>   <dbl>    <dbl>   <dbl> <dbl>      <dbl>     <dbl>         <dbl>    <dbl>
+#> 1         1          0       0        0       1     1          0         0             1        0
+#> 2         0          0       0        0       0     0          0         0             1        0
+#> 3         1          0       1        1       0     0          0         1             0        0
+#> 4         0          0       0        0       0     0          0         0             1        0
+#> 5         0          0       0        0       0     0          0         0             0        0
+#> 6         0          0       0        0       0     1          0         0             0        0
 
 # Define confounders for the analysis
 confounders <- c("child_sex", "child_atsi", "mat_cob", "mat_engl", "mat_age")
@@ -91,22 +92,29 @@ summary(med_res)
 #> Estimated interventional effect: 
 #> 
 #>                      Estimate Std. Error  CI Lower  CI Upper p-value
-#> IIE_1 (p_trt - p_1)  0.010075   0.002731  0.005061  0.015409 0.00022
-#> IIE_2 (p_trt - p_2)  0.000549   0.001733 -0.002301  0.004548 0.75129
-#> TCE (p_trt - p_ctr)  0.106266   0.016395  0.076784  0.141251 9.1e-11
+#> IIE_1 (p_trt - p_1)  0.010075   0.002731  0.004813  0.015517 0.00022
+#> IIE_2 (p_trt - p_2)  0.000549   0.001733 -0.002863  0.003930 0.75129
+#> TCE (p_trt - p_ctr)  0.106266   0.016395  0.073678  0.137945 9.1e-11
 #> 
 #> Estimated expected outcome in each trial arm:
 #> 
 #>       Estimate Std. Error CI Lower CI Upper p-value
-#> p_trt  0.33345    0.01406  0.31244  0.36755  <2e-16
-#> p_ctr  0.22719    0.00765  0.21490  0.24367  <2e-16
-#> p_1    0.32338    0.01412  0.30067  0.35502  <2e-16
-#> p_2    0.33290    0.01423  0.31124  0.36460  <2e-16
+#> p_1    0.32338    0.01412  0.29483  0.35017  <2e-16
+#> p_2    0.33290    0.01423  0.30425  0.36001  <2e-16
+#> p_ctr  0.22719    0.00765  0.21187  0.24184  <2e-16
+#> p_trt  0.33345    0.01406  0.30510  0.36023  <2e-16
 #> 
 #> Sample Size: 5107 
 #> 
 #> Simulations: 100
 ```
+
+Based on the estimated interventional effect (IIE_1), a hypothetical
+intervention improving the mental health of parents of children in low
+socioeconomic position to the levels in those with high socioeconomic
+position could potentially prevent 1 per 100 cases of child mental
+health problems. Meanwhile, the effect of a hypothetical intervention on
+preschool attendance (IIE_2) is negligible.
 
 For detailed guidance on using the package to handle more complex
 scenarios, please refer to the
@@ -114,14 +122,15 @@ scenarios, please refer to the
 
 ## Citation
 
-For work involving the `medRCT` R package, please cite the following:
+For work involving the `medRCT` R package, please cite the following
+works:
 
     @software{Chen2024medRCT,
-       author = {Tong Chen and Margarita Moreno-Betancur and Ghazaleh Dashti},
+       author = {Tong Chen and Margarita Moreno-Betancur and S. Ghazaleh Dashti},
        title = {medRCT: Causal Mediation Analysis Estimating Interventional Effects Mapped to a Target Trial},
-       year  = {2024},
+       year  = {2025},
        url = {https://t0ngchen.github.io/medRCT/},
-       note = {R package version 0.0.0.9020}
+       note = {R package version 0.0.0.9080}
        }
     @article{Moreno2021Mediation,
        author={Margarita Moreno-Betancur and Paul Moran and Denise Becker and George C Patton and John B Carlin},
@@ -140,6 +149,16 @@ For work involving the `medRCT` R package, please cite the following:
 
 <div id="refs" class="references csl-bib-body hanging-indent"
 entry-spacing="0">
+
+<div id="ref-Goldfeld2023" class="csl-entry">
+
+Goldfeld, Sharon, Margarita Moreno-Betancur, Sarah Gray, Shuaijun Guo,
+Marnie Downes, Elodie O’Connor, Francisco Azpitarte, et al. 2023.
+“Addressing Child Mental Health Inequities Through Parental Mental
+Health and Preschool Attendance.” *Pediatrics* 151 (5): e2022057101.
+<https://doi.org/10.1542/peds.2022-057101>.
+
+</div>
 
 <div id="ref-hernan2016using" class="csl-entry">
 

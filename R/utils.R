@@ -152,9 +152,10 @@ cf_predict = function(fit, data, var_name, n, family){
 #' @param K An integer (optional) specifying the total number of mediators and
 #'  intermediate confounders. Defaults to `NULL`, indicating that the function will
 #'  generate formulas without explicitly considering this parameter.
-#' @param interactions_XC A \code{character} string specifying the exposure-confounder
-#'  or confounder-confounder interaction terms to include in the regression models
-#'  for confounder adjustment.
+#' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
+#'  to include in the regression models in the estimation procedure. The default value, \code{"all"},
+#'  includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
+#'  Specify \code{"none"} to exclude all two-way interactions amongst exposure and baseline confounders.
 #' @param include_all Logical.
 #' @param marginal Logical. If `TRUE`, estimating marginals under `X=0`.
 #'

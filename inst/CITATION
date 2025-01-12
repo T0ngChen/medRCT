@@ -7,7 +7,7 @@ bibentry(
   title = gsub("\n", " ", paste0("medRCT: ", utils::packageDescription("medRCT", fields = "Title"))),
   author = c(person("Tong", "Chen"),
              person("Margarita", "Moreno-Betancur"),
-             person("Ghazaleh", "Dashti")),
+             person("S. Ghazaleh", "Dashti")),
   year = format(Sys.Date(), "%Y"),
   url = "https://github.com/T0ngChen/medRCT",
   note = note
