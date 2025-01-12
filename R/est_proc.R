@@ -13,9 +13,8 @@
 #'  for binary variables.
 #' @param mediators A \code{character} vector including the variable names for mediators
 #' (including intermediate confounders).
-#' @param interactions_XC  A \code{character} string specifying the exposure-confounder or
-#'  confounder-confounder interaction terms to include in the regression models for
-#'  confounder adjustment.
+#' @param interactions_XC  A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
+#'  to include in the regression models in the estimation procedure.
 #' @param exposure_level A numeric vector specifying the levels of the exposure
 #'  (e.g., \code{c(0, 1)}) for which counterfactual predictions are performed.
 #' @param n An integer specifying the number of observations for `dat2`.
@@ -84,9 +83,8 @@ joint_dist <- function(k, K, data, dat2, fam_type, mediators,
 #'  for binary variables.
 #' @param mediators A \code{character} vector including the variable names for mediators
 #'  (including intermediate confounders).
-#' @param interactions_XC A \code{character} string specifying the exposure-confounder or
-#'  confounder-confounder interaction terms to include in the regression models for
-#'  confounder adjustment.
+#' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
+#'  to include in the regression models in the estimation procedure.
 #' @param n An integer specifying the number of observations for `dat2`.
 #'
 #' @importFrom stats coef as.formula
@@ -148,9 +146,8 @@ marg_dist <- function(k, first, K, data, dat2, fam_type, mediators,
 #'  for binary variables.
 #' @param mediators A \code{character} vector including the variable names for mediators
 #'  (including intermediate confounders).
-#' @param interactions_XC A \code{character} string specifying the exposure-confounder or
-#'  confounder-confounder interaction terms to include in the regression models for
-#'  confounder adjustment.
+#' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
+#'  to include in the regression models in the estimation procedure.
 #' @param lnzero A numeric vector specifying the non-zero levels of the exposure.
 #' @param n An integer specifying the number of observations for `dat2`.
 #' @param index An integer vector specifying the indices of all mediators, excluding the mediator
@@ -220,9 +217,8 @@ joint_X_nonzero <- function(MM, k, first, K, data, dat2, fam_type,
 #'  for binary variables.
 #' @param mediators A \code{character} vector including the variable names for mediators
 #'  (including intermediate confounders).
-#' @param interactions_XC A \code{character} string specifying the exposure-confounder or
-#'  confounder-confounder interaction terms to include in the regression models for
-#'  confounder adjustment.
+#' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
+#'  to include in the regression models in the estimation procedure.
 #' @param lnzero A numeric vector specifying the non-zero levels of the exposure.
 #' @param n An integer specifying the number of observations for `dat2`.
 #'
@@ -302,9 +298,8 @@ con_exposed <- function(MM, k, K, data, dat2, fam_type, mediators,
 #'  for binary variables.
 #' @param mediators A \code{character} vector including the variable names for mediators
 #'  (including intermediate confounders).
-#' @param interactions_XC A \code{character} string specifying the exposure-confounder or
-#'  confounder-confounder interaction terms to include in the regression models for
-#'  confounder adjustment.
+#' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
+#'  to include in the regression models in the estimation procedure.
 #' @param n An integer specifying the number of observations for `dat2`.
 #'
 #' @importFrom stats coef as.formula
@@ -457,7 +452,7 @@ compute_assign_loop = function(dat2, fit, a, K, first, type, lnzero, results) {
     } else {
       results[[paste0("p_", MM - (first - 1), suffix)]] <- avg_pred
       # IIE
-      results[[paste0("IIE_", MM - (first - 1), "_", suffix, " (p_trt - p_", MM - (first - 1), suffix, ")")]] <-
+      results[[paste0("IIE_", MM - (first - 1), suffix, " (p_trt - p_", MM - (first - 1), suffix, ")")]] <-
         results$p_trt - avg_pred
     }
   }
