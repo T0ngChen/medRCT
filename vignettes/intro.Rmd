@@ -17,9 +17,9 @@ knitr::opts_chunk$set(
 
 ## Background
 
-Causal mediation analysis methods are commonly used in research studies to explore the causal pathways linking exposures to outcomes. Traditional mediation analysis aims to decompose the total effect of an exposure into natural direct and indirect effects, with natural indirect effects capturing the exposure effect acting through the mediator. However, the ultimate goal of research studies, especially in health and medical research, is often to elucidate the extent to which hypothetical interventions targeting mediators could counter exposure effects. This suggests that a shift in focus is warranted, from effect decomposition to explicity evaluating hypothetical mediator interventions that may inform future policy, practice and intervention development.
+Causal mediation analysis methods are commonly used in research studies to explore the causal pathways linking exposures to outcomes. Traditional mediation analysis aims to decompose the total effect of an exposure into natural direct and indirect effects, with natural indirect effects capturing the exposure effect acting through the mediator. However, the ultimate goal of research studies, especially in health and medical research, is often to elucidate the extent to which hypothetical interventions targeting mediators could counter exposure effects. This suggests that a shift in focus is warranted, from effect decomposition to explicitly evaluating hypothetical mediator interventions that may inform future policy, practice and intervention development.
 
-Interventional effects [@vanderweele2014effect] are mediation estimands that are more aligned with this interventional focus while addressing key identifiability challenges associated with natural effects [@Robins1992]. Indeed, interventional effects have been shown to implicitly emulate effects in target trials [@hernan2016using] assessing the impact of distributional shifts in mediators [@MorenoBetancur2018]. Based on this concept, @Moreno2021Mediation proposed definitions of interventional effects that map explicitly to a target trial assesing hypothetical mediator interventions of specifi interest, making them particularly useful for policy-relevant evaluations in applied research as illustrated in several published examples [e.g. REFs].
+Interventional effects [@vanderweele2014effect] are mediation estimands that are more aligned with this interventional focus while addressing key identifiability challenges associated with natural effects [@Robins1992]. Indeed, interventional effects have been shown to implicitly emulate effects in target trials [@hernan2016using] assessing the impact of distributional shifts in mediators [@MorenoBetancur2018]. Based on this concept, @Moreno2021Mediation proposed definitions of interventional effects that map explicitly to a target trial assessing hypothetical mediator interventions of specific interest, making them particularly useful for policy-relevant evaluations in applied research as illustrated in several published examples [@Dashti2022; @Goldfeld2023; @Afshar2024].
 
 ## Define interventional effects and estimation methods
 
@@ -40,7 +40,7 @@ Interventional effects [@vanderweele2014effect] are mediation estimands that are
 
 The `medRCT` package is designed to handle complex mediation settings involving **multiple interrelated mediators** and **intermediate confounders** (exposure-induced mediator-outcome confounders). It supports a range of variable types. Specifically, it supports **categorical exposures** with two or more levels (Levels $\geq$ 2). For the **outcome variable**, `medRCT` supports both **binary** and **continuous** outcomes. Additionally, it supports any number of mediators and each **mediator**, including those that are not of primary interest but **intermediate confounders**, can be either **binary** or **continuous**. Any number of **baseline confounders** of any type are supported. This makes the package suitable for a broad range of real-world applications in epidemiology, public health, and social science research. 
 
-We begin by illustrating how to estimate the three different types of interventional effects in the presence of multiple mediators and intermediate confounders. Such intermediate confounders can be specified using the argument `intermediate_confs`. Consider the following example using simulated data inspired by a case study within the Longitudinal Study of Australian Children (LSAC) [REF]. 
+We begin by illustrating how to estimate the three different types of interventional effects in the presence of multiple mediators and intermediate confounders. Such intermediate confounders can be specified using the argument `intermediate_confs`. Consider the following example using simulated data inspired by a case study within the Longitudinal Study of Australian Children (LSAC) [@Goldfeld2023]. Specifically, we aim to estimate the difference in expected outcome (risk of mental health problems) under exposure (low socioeconomic position) with versus without a hypothetical intervention that individually shifts the distribution of each mediator (parental mental health and preschool attendance) to the levels in the unexposed, while accounting for baseline confounders, an intermediate (exposure-induced) mediator-outcome confounder and correlations amongst mediators.
 
 
 ```{r}
@@ -48,7 +48,6 @@ library(medRCT)
 
 # Set a seed for reproducibility
 set.seed(2024)
-LSACdata = LSACdata[sample(1:nrow(LSACdata), 800),]
 # Display the first few rows of the dataset
 head(LSACdata)
 
@@ -79,13 +78,14 @@ summary(med_res)
 
 In the summary table:  
 
-- `IIE_all` is the estimated interventional indirect effect when applying the hypothetical intervention specified by `shift_all`.
+- `IIE_all` is the estimated interventional indirect effect when applying the hypothetical intervention specified by `shift_all`. A hypothetical intervention improving both the mental health of parents of children and preschool attendance in low socioeconomic position to the levels in those with high socioeconomic position could potentially prevent 1 per 100 cases of child mental health problems.
 
-- `IIE_k` is the estimated interventional indirect effect when applying the hypothetical intervention described by `shift_k` to a specific mediator `k`.  
+- `IIE_k` is the estimated interventional indirect effect when applying the hypothetical intervention described by `shift_k` to a specific mediator `k`. A hypothetical intervention improving the mental health of parents of children (IIE_1) in low socioeconomic position to the levels in those with high socioeconomic position could potentially prevent 1 per 100 cases of child mental health problems. Meanwhile, the effect of a hypothetical intervention on preschool attendance (IIE_2) is negligible.
 
-- `IIE_k_prime` is the estimated interventional indirect effect for a specific mediator `k`, accounting for the flow-on effects on its descendant mediators under the hypothetical intervention described by `shift_k_order`.  
+- `IIE_k_prime` is the estimated interventional indirect effect for a specific mediator `k`, accounting for the flow-on effects on its descendant mediators under the hypothetical intervention described by `shift_k_order`. A hypothetical intervention improving the mental health of parents of children (IIE_1_prime) in low socioeconomic position to the levels in those with high socioeconomic position, while accounting for flow-on effects on preschool attendance, could potentially prevent 1 per 100 cases of child mental health problems. 
 
 - `TCE` is the estimated total causal effect.
+
 
 ## Specifying interactions with `interactions_XC`
 
@@ -104,26 +104,25 @@ The argument `interactions_XC` in `medRCT` allows users to specify two-way inter
 
 #### Analysis without intermediate confounders
 
-If there are **no intermediate confounders** in the analysis, set the argument **`intermediate_confs = NULL`** when calling the `medRCT` function, as highlighted in the following example:
+If there are **no intermediate confounders** in the analysis, set the argument **`intermediate_confs = NULL`** when calling the `medRCT` function, as described in the following example:
 
-```{r, echo=FALSE, results='asis'}
-cat('<pre><code class="r">',
-"med_res <- medRCT(",
-"  dat = LSACdata,",
-"  exposure = \"sep\",",
-"  outcome = \"child_mh\",",
-"  mediators = c(\"parent_mh\", \"preschool_att\"),",
-"  intermediate_confs = intermediate_confs,",
-"  confounders = confounders,",
-"  interactions_XC = \"all\",",
-"  <mark>intervention_type = NULL,</mark>",
-"  bootstrap = TRUE,",
-"  boot_args = list(R = 100, stype = \"i\", ci.type = \"norm\"),",
-"  mcsim = 100",
-")",
-"</code></pre>",
-sep="\n")
-```
+<pre><code class="r">
+med_res <- medRCT(
+  dat = LSACdata,
+  exposure = "sep",
+  outcome = "child_mh",
+  mediators = c("parent_mh", "preschool_att"),
+  intermediate_confs = intermediate_confs,
+  confounders = confounders,
+  interactions_XC = "all",
+  intervention_type = "all",
+  intermediate_confs = NULL,
+  bootstrap = TRUE,
+  boot_args = list(R = 100, stype = "i", ci.type = "norm"),
+  mcsim = 100
+)
+</code></pre>
+
 
 #### Single mediator case:  
 If there is only **one mediator**, only the `intervention_type` **`shift_k`** can be estimated, as the other options (`shift_all` and `shift_k_order`) require **multiple mediators** to define meaningful interventional effects.
