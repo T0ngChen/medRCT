@@ -106,7 +106,7 @@ The argument `interactions_XC` in `medRCT` allows users to specify two-way inter
 
 If there are **no intermediate confounders** in the analysis, set the argument **`intermediate_confs = NULL`** when calling the `medRCT` function, as described in the following example:
 
-<pre><code class="r">
+```{r eval=FALSE}
 med_res <- medRCT(
   dat = LSACdata,
   exposure = "sep",
@@ -121,7 +121,7 @@ med_res <- medRCT(
   boot_args = list(R = 100, stype = "i", ci.type = "norm"),
   mcsim = 100
 )
-</code></pre>
+```
 
 
 #### Single mediator case:  
