@@ -323,8 +323,21 @@ for specific research questions.</li>
 analysis, set the argument
 <strong><code>intermediate_confs = NULL</code></strong> when calling the
 <code>medRCT</code> function, as described in the following example:</p>
-<pre><code class="r"><span></span>
-<span><span class="va">med_res</span> </span></code></pre>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">med_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/medRCT.html">medRCT</a></span><span class="op">(</span></span>
+<span>  dat <span class="op">=</span> <span class="va">LSACdata</span>,</span>
+<span>  exposure <span class="op">=</span> <span class="st">"sep"</span>,</span>
+<span>  outcome <span class="op">=</span> <span class="st">"child_mh"</span>,</span>
+<span>  mediators <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"parent_mh"</span>, <span class="st">"preschool_att"</span><span class="op">)</span>,</span>
+<span>  intermediate_confs <span class="op">=</span> <span class="va">intermediate_confs</span>,</span>
+<span>  confounders <span class="op">=</span> <span class="va">confounders</span>,</span>
+<span>  interactions_XC <span class="op">=</span> <span class="st">"all"</span>,</span>
+<span>  intervention_type <span class="op">=</span> <span class="st">"all"</span>,</span>
+<span>  intermediate_confs <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  boot_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>R <span class="op">=</span> <span class="fl">100</span>, stype <span class="op">=</span> <span class="st">"i"</span>, ci.type <span class="op">=</span> <span class="st">"norm"</span><span class="op">)</span>,</span>
+<span>  mcsim <span class="op">=</span> <span class="fl">100</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="single-mediator-case">Single mediator case:<a class="anchor" aria-label="anchor" href="#single-mediator-case"></a>
@@ -355,7 +368,7 @@ estimates</strong> for the estimand <code>shift_k_order</code>.</p>
 </h2>
 <p>We have developed a <strong>Shiny</strong> application for convenient
 model diagnostics, which can be launched using the command:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/medRCT_shiny.html">medRCT_shiny</a></span><span class="op">(</span>dat <span class="op">=</span> <span class="va">data</span><span class="op">)</span></span></code></pre></div>
 <p>In the Shiny application, after specifying the relevant arguments and
 clicking the <code>Run medRCT models</code> button, the app will fit all
@@ -439,7 +452,7 @@ Effects for Mediation Analysis with Multiple Mediators.”</span>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://tongchen.netlify.app/" class="external-link">Tong Chen</a>, <a href="https://www.mcri.edu.au/researcher-details/margarita-moreno-betancur" class="external-link">Margarita Moreno-Betancur</a>, S. Ghazaleh Dashti.</p>
+  <p>Developed by <a href="https://tongchen.netlify.app/" class="external-link">Tong Chen</a>, <a href="https://www.mcri.edu.au/researcher-details/margarita-moreno-betancur" class="external-link">Margarita Moreno-Betancur</a>, <a href="https://www.mcri.edu.au/researcher-details/ghazaleh-dashti" class="external-link">S. Ghazaleh Dashti</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
