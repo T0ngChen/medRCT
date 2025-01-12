@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">medRCT</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9075</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9080</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +18,7 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/intro.html">Estimating Mediation Effects that Emulate a Target Randomised Controlled Trial</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/intro.html">Causal Mediation Analysis Estimating Interventional Effects Mapped to a Target Trial</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -63,36 +63,36 @@
 
 <dt id="arg-exposure">exposure<a class="anchor" aria-label="anchor" href="#arg-exposure"></a></dt>
 <dd><p>A <code>character</code> string specifying the name of the exposure variable in the dataset.
-The exposure variable can be categorical, with <code>0</code> explicitly denoting the unexposed (or control) group.
-Other values represent different exposure categories.</p></dd>
+The exposure variable must be categorical, with <code>0</code> explicitly denoting the unexposed (or control) group, which is taken as the reference group.
+Other values represent different, non-reference exposure categories.</p></dd>
 
 
 <dt id="arg-outcome">outcome<a class="anchor" aria-label="anchor" href="#arg-outcome"></a></dt>
 <dd><p>A <code>character</code> string specifying the name of the outcome variable in the dataset.
-The outcome variable can be specified as either binary or continuous.</p></dd>
+The outcome variable can be either binary or continuous.</p></dd>
 
 
 <dt id="arg-mediators">mediators<a class="anchor" aria-label="anchor" href="#arg-mediators"></a></dt>
-<dd><p>A <code>character</code> vector specifying the names of mediator variables in the dataset. The mediators
-can be specified as either binary or continuous. When estimating the effect type <code>"shift_k_order"</code>,
-the order of mediators in the vector is important, as it determines the causal sequence of mediators.</p></dd>
+<dd><p>A <code>character</code> vector specifying the names of the variables in the dataset corresponding to the mediators of interest. The mediators
+can be either binary or continuous. When estimating the effect type <code>"shift_k_order"</code>,
+the order of mediators in the vector is important, as it interpreted as the assumed causal ordering of the mediators.</p></dd>
 
 
 <dt id="arg-intermediate-confs">intermediate_confs<a class="anchor" aria-label="anchor" href="#arg-intermediate-confs"></a></dt>
-<dd><p>A <code>character</code> vector specifying the names of intermediate confounders in the dataset.
-The intermediate confounders can be specified as either binary or continuous. If <code>NULL</code>,
-no intermediate confounders are specified, and the natural effect will be estimated.</p></dd>
+<dd><p>A <code>character</code> vector specifying the names of the variables in the dataset corresponding to intermediate confounders.
+The intermediate confounders can be either binary or continuous. If <code>NULL</code>,
+no intermediate confounders are specified.</p></dd>
 
 
 <dt id="arg-confounders">confounders<a class="anchor" aria-label="anchor" href="#arg-confounders"></a></dt>
-<dd><p>A <code>character</code> vector listing the names of baseline confounders.</p></dd>
+<dd><p>A <code>character</code> vector listing the names of the variables in the dataset corresponding to the baseline confounders.</p></dd>
 
 
 <dt id="arg-interactions-xc">interactions_XC<a class="anchor" aria-label="anchor" href="#arg-interactions-xc"></a></dt>
-<dd><p>A <code>character</code> string specifying the exposure-confounder or confounder-confounder
-interaction terms to include in the regression models for confounder adjustment. The default value, <code>"all"</code>,
+<dd><p>A <code>character</code> string specifying the two-way interactions amongst exposure and baseline confounders
+to include in the regression models in the estimation procedure. The default value, <code>"all"</code>,
 includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
-Specify <code>"none"</code> to exclude all two-way exposure-confounder and confounder-confounder interactions.</p></dd>
+Specify <code>"none"</code> to exclude all two-way interactions amongst exposure and baseline confounders.</p></dd>
 
 
 <dt id="arg-intervention-type">intervention_type<a class="anchor" aria-label="anchor" href="#arg-intervention-type"></a></dt>
@@ -105,7 +105,7 @@ Specify <code>"none"</code> to exclude all two-way exposure-confounder and confo
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://tongchen.netlify.app/" class="external-link">Tong Chen</a>, <a href="https://www.mcri.edu.au/researcher-details/margarita-moreno-betancur" class="external-link">Margarita Moreno-Betancur</a>, <a href="https://www.mcri.edu.au/researcher-details/ghazaleh-dashti" class="external-link">Ghazaleh Dashti</a>.</p>
+  <p>Developed by <a href="https://tongchen.netlify.app/" class="external-link">Tong Chen</a>, <a href="https://www.mcri.edu.au/researcher-details/margarita-moreno-betancur" class="external-link">Margarita Moreno-Betancur</a>, S. Ghazaleh Dashti.</p>
 </div>
 
 <div class="pkgdown-footer-right">
