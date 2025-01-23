@@ -13,7 +13,7 @@ medRCT(
   confounders,
   interactions_XC = "all",
   intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"),
-  mcsim,
+  mcsim = 200,
   bootstrap = TRUE,
   boot_args = list(R = 100, stype = "i", ci.type = "norm"),
   ...
@@ -58,7 +58,8 @@ specific mediator (\code{k}) in the exposed to match the corresponding distribut
 effects on causally descendant mediators.
 }}
 
-\item{mcsim}{An \code{integer} specifying the number of Monte Carlo simulations to perform.}
+\item{mcsim}{An \code{integer} specifying the number of Monte Carlo simulations to perform. The default is 200.
+It is recommended to run analysis with no fewer than 200 Monte Carlo simulations.}
 
 \item{bootstrap}{A \code{logical} value indicating whether bootstrapping should be performed. If \code{TRUE}
 (default), bootstrapping is conducted using the \code{boot} function from the \code{boot} package.}
@@ -76,6 +77,12 @@ effects on causally descendant mediators.
 \code{medRCT} is used to estimate interventional effects that map to a target trial evaluating hypothetical mediator interventions
 of interest. It can handle any number of potentially correlated mediators, including mediators that are not of primary
 interest but that are intermediate (exposure-induced) mediator-outcome confounders.
+}
+\details{
+Before conducting the mediation analysis, users are encouraged to explore and assess the models fitted by the algorithm
+using the interactive Shiny application, which can be launched by running the function \code{medRCT_shiny}.
+The Shiny app provides a user-friendly interface to review model summaries and identify potential warnings and errors,
+ensuring that the models are appropriately specified before proceeding with the analysis.
 }
 \examples{
 \dontrun{

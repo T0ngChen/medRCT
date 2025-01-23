@@ -37,7 +37,8 @@ utils::globalVariables(".SD")
 #'    specific mediator (\code{k}) in the exposed to match the corresponding distribution in the unexposed while accounting for the flow-on
 #'    effects on causally descendant mediators.
 #' }
-#' @param mcsim An \code{integer} specifying the number of Monte Carlo simulations to perform.
+#' @param mcsim An \code{integer} specifying the number of Monte Carlo simulations to perform. The default is 200.
+#' It is recommended to run analysis with no fewer than 200 Monte Carlo simulations.
 #' @param bootstrap A \code{logical} value indicating whether bootstrapping should be performed. If \code{TRUE}
 #'  (default), bootstrapping is conducted using the \code{boot} function from the \code{boot} package.
 #' @param boot_args A \code{list} of arguments for bootstrapping. The default settings are:
@@ -47,6 +48,12 @@ utils::globalVariables(".SD")
 #'   \item \code{ci.type}: Specifies the type of confidence interval to compute (default: \code{"norm"}).
 #' }
 #' @param ... Additional arguments passed to the \code{boot} function from the \code{boot} package.
+#'
+#' @details
+#' Before conducting the mediation analysis, users are encouraged to explore and assess the models fitted by the algorithm
+#' using the interactive Shiny application, which can be launched by running the function \code{medRCT_shiny}.
+#' The Shiny app provides a user-friendly interface to review model summaries and identify potential warnings and errors,
+#' ensuring that the models are appropriately specified before proceeding with the analysis.
 #'
 #' @export
 #'
@@ -84,7 +91,7 @@ medRCT <- function(dat,
                    confounders,
                    interactions_XC = "all",
                    intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"),
-                   mcsim,
+                   mcsim = 200,
                    bootstrap = TRUE,
                    boot_args = list(R = 100, stype = "i", ci.type = "norm"),
                    ...) {
@@ -102,6 +109,7 @@ medRCT <- function(dat,
     message("Only able to estimate the effect type 'shift_k' with a single mediator.")
   }
 
+
   mediators = c(intermediate_confs, mediators)
 
   # define the first mediator of interest
@@ -117,6 +125,11 @@ medRCT <- function(dat,
     no.miss,
     " observations were excluded due to missing data.\n"
   ))
+
+  if (mcsim<200) {
+    message("Note: It is recommended to run analysis with no fewer than 200 Monte Carlo simulations.")
+  }
+
   dat <- dat[stats::complete.cases(dat), ]
 
   fam_type = family_type(dat, mediators)
