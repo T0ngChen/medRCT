@@ -8,7 +8,7 @@ test_that("test medRCT_shiny", {
 
 test_that("Reactive inputs for medRCT_shiny", {
   app <- shinytest2::AppDriver$new(medRCT_shiny(data = LSACdata))
-  # Set initial inputs
+
   app$set_inputs(outcome = "child_sex", exposure = "sep")
   # Verify input values
   expect_equal(app$get_value(input = "outcome"), "child_sex")

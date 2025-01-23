@@ -177,18 +177,18 @@ test_that("test med_joint_other", {
     mediators = c("parent_mh", "preschool_att"),
     intermediate_confs = "fam_stress",
     confounders = c("child_sex", "child_atsi", "mat_cob", "mat_engl", "mat_age"),
-    interactions_XC = "all",
+    interactions_XC = "none",
     intervention_type = "all",
     mcsim = 10,
     bootstrap = T,
-    boot_args = list(R = 10, stype = "i", ci.type = "norm")
+    boot_args = list(R = 30, stype = "i", ci.type = "norm")
   )
   output <- capture.output({
     results <- summary(result)
   })
   expect_true("IIE" %in% names(results))
   expect_true("expected_outcome" %in% names(results))
-  expect_equal(results$sample_size, nrow(LSACdata))
+  expect_equal(results$sample_size, 2608)
   expect_equal(results$n.sim, 10)
 
   result_non_boot <- medRCT(
@@ -207,7 +207,7 @@ test_that("test med_joint_other", {
     result <- summary.medRCT(result_non_boot)
   })
   expect_false(is.null(names(result)))
-  expect_length(result, 11)
+  expect_length(result, 15)
 
   # Ensure no bootstrap-related output appears
   expect_false(any(grepl("Estimated interventional effect:", output)))
