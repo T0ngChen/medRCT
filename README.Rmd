@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 
 > Causal mediation analysis estimating interventional effects mapped to a target trial
 
-The R package `medRCT` for causal mediation analysis supports the estimation of interventional effects [@vanderweele2014effect], and specifically interventional effects that are defined explicitly in terms of a "target trial" [@hernan2016using], as proposed recently by @Moreno2021Mediation. In the target trial, the treatment strategies are specified to reflect hypothetical interventions targeting and thus shifting the joint distribution of the mediators. `medRCT` can accommodate any number of potentially correlated mediators, including mediators that are not of primary interest but that are intermediate (exposure-induced) mediator-outcome confounders.  
+The R package `medRCT` for causal mediation analysis supports the estimation of interventional effects [@vanderweele2014effect], specifically interventional effects that are defined explicitly in terms of a "target trial" [@hernan2016using], as recently proposed by @Moreno2021Mediation. In the target trial, the treatment strategies are specified to reflect hypothetical interventions targeting and thus shifting the joint distribution of the mediators. `medRCT` can accommodate any number of potentially correlated mediators, including mediators that are not of primary interest but that are intermediate (exposure-induced) mediator-outcome confounders.  
 
 ## Installation
 
@@ -36,7 +36,7 @@ remotes::install_github("T0ngChen/medRCT")
 
 ## Example
 
-Using a simulated dataset based on a published case study from the Longitudinal Study of Australian Children [@Goldfeld2023], we illustrate how to use `medRCT` to estimate the interventional indirect effects that emulate a target trial. Specifically, we aim to estimate the difference in expected outcome (risk of child mental health problems) under exposure (low family socioeconomic position) with versus without a hypothetical intervention that individually shifts the distribution of each mediator (parental mental health and preschool attendance) to the levels in the unexposed (high family socioeconomic position), while accounting for baseline confounders, an intermediate (exposure-induced) mediator-outcome confounder (family stressful life events), and correlations amongst mediators. 
+Using a simulated dataset based on a published case study from the Longitudinal Study of Australian Children [@Goldfeld2023], we illustrate how to use `medRCT` to estimate the interventional effects that emulate a target trial. Specifically, we aim to estimate the difference in expected outcome (risk of child mental health problems) under exposure (low family socioeconomic position) with versus without a hypothetical intervention that individually shifts the distribution of each mediator (parental mental health and preschool attendance) to the levels in the unexposed (high family socioeconomic position), while accounting for baseline confounders, an intermediate (exposure-induced) mediator-outcome confounder (family stressful life events), and correlations amongst mediators. 
 
 
 ```{r eg, warning=FALSE, message=FALSE}
@@ -44,14 +44,18 @@ Using a simulated dataset based on a published case study from the Longitudinal 
 library(medRCT)
 
 # Set a seed for reproducibility
-set.seed(2024)
+set.seed(2025)
 
 # Display the first few rows of the dataset
 head(LSACdata)
 
 # Define confounders for the analysis
 confounders <- c("child_sex", "child_atsi", "mat_cob", "mat_engl", "mat_age")
+```
 
+**Note:** It is recommended to perform the analysis with at least 200 Monte Carlo simulations by setting `mcsim = 200`. For illustration purposes, we use `mcsim = 50`, which takes approximately 90 seconds to run.
+
+```{r}
 # Estimate interventional indirect effects for a hypothetical intervention
 # that shifts the distribution of each mediator individually
 med_res <- medRCT(
@@ -63,7 +67,7 @@ med_res <- medRCT(
   confounders = confounders,           
   bootstrap = TRUE,                    
   intervention_type = "shift_k",       
-  mcsim = 100                          
+  mcsim = 50                          
 )
 
 # Summarise the results

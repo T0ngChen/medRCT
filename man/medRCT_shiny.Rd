@@ -2,7 +2,7 @@
 % Please edit documentation in R/medRCT_shiny.R
 \name{medRCT_shiny}
 \alias{medRCT_shiny}
-\title{Launch Interactive Shiny App for Model Diagnostics}
+\title{Launch Interactive Shiny App for Model Assessment}
 \usage{
 medRCT_shiny(data, ...)
 }
@@ -14,8 +14,8 @@ outcome, mediators, confounders, and exposure-induced mediator-outcome confounde
 }
 \description{
 \code{medRCT_shiny} launches a Shiny application to provide model summaries
-of all models fitted by the algorithm. The app serves as a user-friendly
-interface for diagnosing potential issues with the models and facilitates adjustments
+of all models fitted by the algorithm. The app provides a user-friendly
+interface for model assessment and facilitates adjustments
 to improve model fit.
 }
 \examples{

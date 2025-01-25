@@ -50,10 +50,14 @@ utils::globalVariables(".SD")
 #' @param ... Additional arguments passed to the \code{boot} function from the \code{boot} package.
 #'
 #' @details
-#' Before conducting the mediation analysis, users are encouraged to explore and assess the models fitted by the algorithm
+#'
+#' Before conducting the mediation analysis, users are encouraged to assess the models fitted by the algorithm
 #' using the interactive Shiny application, which can be launched by running the function \code{medRCT_shiny}.
 #' The Shiny app provides a user-friendly interface to review model summaries and identify potential warnings and errors,
 #' ensuring that the models are appropriately specified before proceeding with the analysis.
+#'
+#' If issues with model fitting are detected, users are encouraged to adjust the exposure-confounder interaction term as needed.
+#' However, \strong{confounders must not be selected based on model fitting results.}
 #'
 #' @export
 #'
