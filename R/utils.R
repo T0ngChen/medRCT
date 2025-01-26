@@ -13,7 +13,7 @@
 summary.medRCT <- function(object, ...){
   if (object$bootstrap == TRUE) {
     index <- grep("^IDE", names(object$est))[1]
-    out1 = cbind(object$est, object$se, object$cilow, object$ciupp, object$pval)[1:(index-1),]
+    out1 = cbind(object$est, object$se, object$cilow, object$ciupp, object$pval)[1:(index-1), , drop = FALSE]
     colnames(out1) <- c("Estimate", "Std. Error", "CI Lower",
                         "CI Upper", "p-value")
     rownames(out1) <- names(object$est)[1:(index-1)]
@@ -21,7 +21,7 @@ summary.medRCT <- function(object, ...){
     cat("Estimated interventional indirect effect: \n\n")
     stats::printCoefmat(out1, signif.stars = F, tst.ind=NULL, digits = 3)
     index1 <- grep("^p", names(object$est))[1]
-    out2 = cbind(object$est, object$se, object$cilow, object$ciupp, object$pval)[index:(index1-1),]
+    out2 = cbind(object$est, object$se, object$cilow, object$ciupp, object$pval)[index:(index1-1), , drop = FALSE]
     rownames(out2) <- names(object$est)[index:(index1-1)]
     colnames(out2) <- c("Estimate", "Std. Error", "CI Lower",
                         "CI Upper", "p-value")
@@ -30,7 +30,7 @@ summary.medRCT <- function(object, ...){
     stats::printCoefmat(out2, signif.stars = F, tst.ind=NULL, digits = 3)
     cat("\n")
     cat("Estimated expected outcome in each trial arm:\n\n")
-    out3 = cbind(object$est, object$se, object$cilow, object$ciupp, object$pval)[index1:length(object$est),]
+    out3 = cbind(object$est, object$se, object$cilow, object$ciupp, object$pval)[index1:length(object$est), , drop = FALSE]
     colnames(out3) <- c("Estimate", "Std. Error", "CI Lower",
                         "CI Upper", "p-value")
     rownames(out3) <- names(object$est)[index1:length(object$est)]
