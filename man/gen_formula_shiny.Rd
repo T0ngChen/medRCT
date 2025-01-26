@@ -2,7 +2,7 @@
 % Please edit documentation in R/medRCT_shiny.R
 \name{gen_formula_shiny}
 \alias{gen_formula_shiny}
-\title{Generate Model Formulas for Shiny-Based Model Diagnostics}
+\title{Generate Model Formulas for Shiny-Based Model Assessment}
 \usage{
 gen_formula_shiny(
   mediators = mediators,

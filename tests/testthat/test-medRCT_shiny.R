@@ -8,7 +8,7 @@ test_that("test medRCT_shiny", {
 
 test_that("Reactive inputs for medRCT_shiny", {
   app <- shinytest2::AppDriver$new(medRCT_shiny(data = LSACdata))
-  # Set initial inputs
+
   app$set_inputs(outcome = "child_sex", exposure = "sep")
   # Verify input values
   expect_equal(app$get_value(input = "outcome"), "child_sex")
@@ -38,10 +38,10 @@ test_that("test collect_models", {
     intervention_type = "all"
   )
   expect_type(result, "list")
-  expect_true(!is.null(result$outcome))
-  expect_true(length(result$outcome) > 0)
-  expect_true(!is.null(result$`shift_k effects`))
-  expect_true(length(result$`shift_k effects`) > 0)
+  expect_true(!is.null(result$`Outcome Model`))
+  expect_true(length(result$`Outcome Model`) > 0)
+  expect_true(!is.null(result$`Interventional Mediator Models`))
+  expect_true(length(result$`Interventional Mediator Models`) > 0)
 
 
   expect_message(
@@ -203,11 +203,10 @@ test_that("Server logic of medRCT_shiny works as expected", {
     expect_true("mediator1" %in% input$mediators)
     expect_true("conf1" %in% input$int_confs)
     expect_true(!is.null(model.list$model))
-    expect_named(model.list$model,
-                 c('all mediator effects', 'individual mediator effect',
-                   'shift_k effects', 'shift_k_order effects',
-                   'shift_all effects', 'outcome regression'))
-    expect_named(model.list$model$`all mediator effects`,
+    expect_named(model.list$model$`Joint Mediator Models`,
                  c("Model_1", "Model_2", "Model_3"))
+    expect_named(model.list$model,
+                 c('Joint Mediator Models', 'Interventional Mediator Models',
+                 'Outcome Model'))
   })
 })

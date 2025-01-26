@@ -1,10 +1,10 @@
 
 
-#' Launch Interactive Shiny App for Model Diagnostics
+#' Launch Interactive Shiny App for Model Assessment
 #'
 #' `medRCT_shiny` launches a Shiny application to provide model summaries
-#' of all models fitted by the algorithm. The app serves as a user-friendly
-#' interface for diagnosing potential issues with the models and facilitates adjustments
+#' of all models fitted by the algorithm. The app provides a user-friendly
+#' interface for model assessment and facilitates adjustments of interaction terms
 #' to improve model fit.
 #'
 #' @param data A \code{data.frame} containing the dataset for analysis. It should include variables for the exposure,
@@ -40,7 +40,7 @@ medRCT_shiny <- function(data, ...){
       }"))
     ),
     # App title
-    titlePanel("medRCT: Model Diagnostics"),
+    titlePanel("medRCT: Model Assessment"),
 
     # Sidebar layout
     sidebarLayout(
@@ -314,8 +314,19 @@ medRCT_shiny <- function(data, ...){
           h3("Models needed to estimate the interventional effect:"),
           # Create tabs dynamically based on first-level keys in the list
           do.call(tabsetPanel, lapply(names(model.list$model), function(group_name) {
+
+            description_text <- switch(group_name,
+                                       "Joint Mediator Models" =
+                                         "These models are used to estimate the joint distribution of mediators without accounting for any distributional shifts.",
+                                       "Interventional Mediator Models" =
+                                         "These models are used to estimate the mediator distribution under hypothetical interventions (with distributional shifts).",
+                                       "Outcome Model" =
+                                         "The outcome model is used to estimate the outcome expectation."
+            )
+
             tabPanel(
               title = group_name,
+              h4(description_text),
               # Add dynamic sub-tabs for each model in the group
               do.call(tabsetPanel, lapply(names(model.list$model[[group_name]]), function(model_name) {
                 model <- model.list$model[[group_name]][[model_name]]
@@ -473,8 +484,8 @@ collect_models <- function(data,
   exposure_level = sort(unique(as.numeric(data[[paste0(exposure)]])))
   lnzero = exposure_level[exposure_level!=0]
   res = list()
-  res[1:6] <- list(list())
-  names(res) = c("all mediator effects", "individual mediator effect", "shift_k effects", "shift_k_order effects", "shift_all effects", "outcome regression")
+  res[1:3] <- list(list())
+  names(res) = c("Joint Mediator Models", "Interventional Mediator Models", "Outcome Model")
 
   # Joint of M1 to MK under X=0 and X!=0 ...
   for (k in 1:K) {
@@ -486,10 +497,12 @@ collect_models <- function(data,
                         include_all = TRUE)),
       data = data,
       family = fam_type[[k]])
-    }
+  }
+
   # Marginals under X=0
+  mod_id = 1
   for (k in first:K) {
-    res[[names(res)[2]]][[k]] <- catch_model_messages(as.formula(
+    res[[names(res)[2]]][[mod_id]] <- catch_model_messages(as.formula(
       gen_formula_shiny(mediators = mediators,
                         exposure = exposure,
                         k = k,
@@ -497,6 +510,7 @@ collect_models <- function(data,
                         marginal = TRUE)),
       data = data,
       family = fam_type[[k]])
+    mod_id = mod_id +1
   }
   # Joint of others under X!=0
   if (any(intervention_type %in% c("all", "shift_k"))) {
@@ -504,7 +518,7 @@ collect_models <- function(data,
       index = setdiff(first:K, MM)
       for (k in index) {
         if (!(first == 1 && MM != 1 && k == index[1])) {
-          res[[names(res)[3]]][[paste(MM, k, sep = "_")]] <- catch_model_messages(as.formula(
+          res[[names(res)[2]]][[mod_id]] <- catch_model_messages(as.formula(
             gen_formula_shiny(mediators = mediators,
                               exposure = exposure,
                               k = k,
@@ -514,6 +528,7 @@ collect_models <- function(data,
                               interactions_XC = interactions_XC)),
             data = data,
             family = fam_type[[k]])
+          mod_id = mod_id +1
         }
       }
     }
@@ -524,7 +539,7 @@ collect_models <- function(data,
   if (any(intervention_type %in% c("all", "shift_k_order"))) {
     for (MM in first:(K - 1)) {
       for (k in (MM + 1):K) {
-        res[[names(res)[4]]][[paste(MM, k, sep = "_")]] <- catch_model_messages(as.formula(
+        res[[names(res)[2]]][[mod_id]] <- catch_model_messages(as.formula(
           gen_formula_shiny(mediators = mediators,
                             exposure = exposure,
                             k = k,
@@ -532,6 +547,7 @@ collect_models <- function(data,
                             include_all = TRUE)),
           data = data,
           family = fam_type[[k]])
+        mod_id = mod_id +1
       }
     }
   }
@@ -539,7 +555,7 @@ collect_models <- function(data,
   # Joint of main ones under X=0
   if (any(intervention_type %in% c("all", "shift_all"))) {
     for (k in (first + 1):K) {
-      res[[names(res)[5]]][[k]] <- catch_model_messages(as.formula(
+      res[[names(res)[2]]][[mod_id]] <- catch_model_messages(as.formula(
         gen_formula_shiny(mediators = mediators,
                           exposure = exposure,
                           k = k,
@@ -548,12 +564,13 @@ collect_models <- function(data,
                           include_all = TRUE)),
         data = data,
         family = fam_type[[k]])
+      mod_id = mod_id + 1
     }
   }
 
   # outcome
   outcome_type = family_type(data, outcome)
-  res[[names(res)[6]]][[1]] <- catch_model_messages(as.formula(paste0(
+  res[[names(res)[3]]][[1]] <- catch_model_messages(as.formula(paste0(
     outcome, " ~ (", exposure, " + ", paste0(mediators[1:K], collapse = "+"), ")^2+",
     interactions_XC)),
     data = data,
@@ -565,7 +582,7 @@ collect_models <- function(data,
 
 
 
-#' Generate Model Formulas for Shiny-Based Model Diagnostics
+#' Generate Model Formulas for Shiny-Based Model Assessment
 #'
 #' This function generates model formulas using the original variable names as they appear in the dataset.
 #'

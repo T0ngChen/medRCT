@@ -2,7 +2,7 @@
 % Please edit documentation in R/medRCT.R
 \name{medRCT}
 \alias{medRCT}
-\title{Causal Mediation Analysis Estimating Interventional Effects Mapped to A Target Trial}
+\title{Causal Mediation Analysis for Estimating Interventional Effects Mapped to A Target Trial}
 \usage{
 medRCT(
   dat,
@@ -13,7 +13,7 @@ medRCT(
   confounders,
   interactions_XC = "all",
   intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"),
-  mcsim,
+  mcsim = 200,
   bootstrap = TRUE,
   boot_args = list(R = 100, stype = "i", ci.type = "norm"),
   ...
@@ -28,27 +28,27 @@ The exposure variable must be categorical, with \code{0} explicitly denoting the
 Other values represent different, non-reference exposure categories.}
 
 \item{outcome}{A \code{character} string specifying the name of the outcome variable in the dataset.
-The outcome variable can be either binary or continuous.}
+The outcome variable can be binary or continuous.}
 
 \item{mediators}{A \code{character} vector specifying the names of the variables in the dataset corresponding to the mediators of interest. The mediators
-can be either binary or continuous. When estimating the effect type \code{"shift_k_order"},
-the order of mediators in the vector is important, as it interpreted as the assumed causal ordering of the mediators.}
+can be binary or continuous. When estimating the effect type \code{"shift_k_order"},
+the order of mediators in the vector is important and must correspond to the assumed causal ordering of the mediators.}
 
 \item{intermediate_confs}{A \code{character} vector specifying the names of the variables in the dataset corresponding to intermediate confounders.
-The intermediate confounders can be either binary or continuous. If \code{NULL},
+The intermediate confounders can be binary or continuous. If \code{NULL},
 no intermediate confounders are specified.}
 
 \item{confounders}{A \code{character} vector listing the names of the variables in the dataset corresponding to the baseline confounders.}
 
-\item{interactions_XC}{A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
+\item{interactions_XC}{A \code{character} string specifying the two-way interactions between exposure and baseline confounders
 to include in the regression models in the estimation procedure. The default value, \code{"all"},
 includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
-Specify \code{"none"} to exclude all two-way interactions amongst exposure and baseline confounders.}
+Specify \code{"none"} to exclude all two-way interactions between exposure and baseline confounders.}
 
 \item{intervention_type}{A \code{character} string indicating the type of interventional effect to be estimated.
 Options include:
 \itemize{
-\item \code{"all"} (default): Estimates all types of interventional indirect effects.
+\item \code{"all"} (default): Estimates all three types of interventional indirect effects.
 \item \code{"shift_all"}: Estimates an interventional indirect effect mapped to a target trial assessing the impact of shifting the joint distribution of all
 mediators in the exposed to match the corresponding distribution in the unexposed.
 \item \code{"shift_k"}: Estimates an interventional indirect effect mapped to a target trial assessing the impact of shifting the distribution of a specific
@@ -58,7 +58,8 @@ specific mediator (\code{k}) in the exposed to match the corresponding distribut
 effects on causally descendant mediators.
 }}
 
-\item{mcsim}{An \code{integer} specifying the number of Monte Carlo simulations to perform.}
+\item{mcsim}{An \code{integer} specifying the number of Monte Carlo simulations to perform. The default is 200.
+It is recommended to run analysis with no fewer than 200 Monte Carlo simulations.}
 
 \item{bootstrap}{A \code{logical} value indicating whether bootstrapping should be performed. If \code{TRUE}
 (default), bootstrapping is conducted using the \code{boot} function from the \code{boot} package.}
@@ -76,6 +77,15 @@ effects on causally descendant mediators.
 \code{medRCT} is used to estimate interventional effects that map to a target trial evaluating hypothetical mediator interventions
 of interest. It can handle any number of potentially correlated mediators, including mediators that are not of primary
 interest but that are intermediate (exposure-induced) mediator-outcome confounders.
+}
+\details{
+Before conducting the mediation analysis, users are encouraged to assess the models fitted by the algorithm
+using the interactive Shiny application, which can be launched by running the function \code{medRCT_shiny}.
+The Shiny app provides a user-friendly interface to review model summaries and identify potential warnings and errors,
+ensuring that the models are appropriately specified before proceeding with the analysis.
+
+If issues with model fitting are detected, users are encouraged to adjust the exposure-confounder interaction term as needed.
+However, \strong{confounders must not be selected based on model fitting results.}
 }
 \examples{
 \dontrun{

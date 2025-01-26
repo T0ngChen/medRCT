@@ -174,12 +174,12 @@ medRCT.fun <- function(dat,
     }
     # p_first....p_K and IIE_first .... IIE_K
     if (any(intervention_type %in% c("all", "shift_k"))) {
-      results = compute_assign_loop(dat2= dat2, fit = fit, a = a, K=K, first = first,
+      results = compute_assign_loop(dat2= dat2, fit = fit, a = a, K=K, first = first, p_ctr = p_ctr,
                                     type = "shift_k", results = results, lnzero = lnzero)
     }
     # p_first_prime....p_Kminus1_prime
     if (any(intervention_type %in% c("all", "shift_k_order"))) {
-      results = compute_assign_loop(dat2= dat2, fit = fit, a = a, K=K, first = first,
+      results = compute_assign_loop(dat2= dat2, fit = fit, a = a, K=K, first = first, p_ctr = p_ctr,
                                     type = "shift_k_order", results = results, lnzero = lnzero)
     }
   }
@@ -188,13 +188,16 @@ medRCT.fun <- function(dat,
   sorted_names <- sort(names(res))
   IIE_names = sorted_names[grep("IIE", sorted_names)]
   IIE_names = IIE_names[order(nchar(IIE_names))]
-  p_names = sorted_names[!grepl("IIE|TCE", sorted_names)]
+  IDE_names = sorted_names[grep("IDE", sorted_names)]
+  IDE_names = IDE_names[order(nchar(IDE_names))]
+  p_names = sorted_names[!grepl("IIE|TCE|IDE", sorted_names)]
   p_names = p_names[order(nchar(p_names))]
 
   # Move TCE-related names after IIE-related names
   final_order <- c(
     IIE_names,  # All IIE-related names
     sorted_names[grep("TCE", sorted_names)],  # All TCE-related names
+    IDE_names,
     p_names  # Remaining names
   )
   res = res[final_order]

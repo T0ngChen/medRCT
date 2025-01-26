@@ -349,7 +349,7 @@ joint_unexposed <- function(k, first, K, data, dat2, fam_type,
 }
 
 
-# estimation IIE and return results
+# estimation IIE, IDE, and return results
 compute_assign = function(dat2, fit, a, K, first, type, lnzero, p_ctr, results) {
   if (type == "trt") {
     l = 1:K
@@ -388,10 +388,16 @@ compute_assign = function(dat2, fit, a, K, first, type, lnzero, p_ctr, results) 
       results[[paste0("IIE_", type, "_", a,
                       " (p_trt_", a, " - p_all_", a, ")")]] =
         results[[paste0("p_trt_", a)]] - avg_pred
+      # IDE
+      results[[paste0("IDE_", type, "_", a,
+                      " (p_all_", a, " - p_ctr)")]] =
+        avg_pred - p_ctr
     } else {
       results[[paste0("p_", type)]] <- avg_pred
       # IIE
       results[[paste0("IIE_", type, " (p_trt - p_", type, ")")]] <- results$p_trt - avg_pred
+      # IDE
+      results[[paste0("IDE_", type, " (p_", type, " - p_ctr)")]] <- avg_pred - p_ctr
     }
   }
   results
@@ -399,7 +405,7 @@ compute_assign = function(dat2, fit, a, K, first, type, lnzero, p_ctr, results) 
 
 
 
-compute_assign_loop = function(dat2, fit, a, K, first, type, lnzero, results) {
+compute_assign_loop = function(dat2, fit, a, K, first, type, lnzero, results, p_ctr) {
   if (type == "shift_k") {
     if (first > 1) {
       l = 1:(first - 1)
@@ -449,11 +455,18 @@ compute_assign_loop = function(dat2, fit, a, K, first, type, lnzero, results) {
       results[[paste0("IIE_", MM - (first - 1), "_", a, suffix,
                       " (p_trt_", a, " - p_", MM - (first - 1), "_", a, suffix, ")")]] =
         results[[paste0("p_trt_", a)]] - avg_pred
+      # IDE
+      results[[paste0("IDE_", MM - (first - 1), "_", a, suffix,
+                      " (p_", MM - (first - 1), "_", a, suffix, " - p_ctr)")]] =
+        avg_pred - p_ctr
     } else {
       results[[paste0("p_", MM - (first - 1), suffix)]] <- avg_pred
       # IIE
       results[[paste0("IIE_", MM - (first - 1), suffix, " (p_trt - p_", MM - (first - 1), suffix, ")")]] <-
         results$p_trt - avg_pred
+      # IDE
+      results[[paste0("IDE_", MM - (first - 1), suffix, " (p_", MM - (first - 1), suffix, " - p_ctr)")]] <-
+        avg_pred - p_ctr
     }
   }
   results
