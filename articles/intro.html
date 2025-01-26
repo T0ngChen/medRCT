@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Causal Mediation Analysis Estimating Interventional Effects Mapped to a Target Trial • medRCT</title>
+<title>Causal Mediation Analysis for Estimating Interventional Effects Mapped to a Target Trial • medRCT</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.4.9/font.css" rel="stylesheet">
 <link href="../deps/Roboto_Slab-0.4.9/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Causal Mediation Analysis Estimating Interventional Effects Mapped to a Target Trial">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Causal Mediation Analysis for Estimating Interventional Effects Mapped to a Target Trial">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -35,7 +35,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/intro.html">Causal Mediation Analysis Estimating Interventional Effects Mapped to a Target Trial</a></li>
+<li><a class="dropdown-item" href="../articles/intro.html">Causal Mediation Analysis for Estimating Interventional Effects Mapped to a Target Trial</a></li>
   </ul>
 </li>
       </ul>
@@ -56,7 +56,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Causal Mediation Analysis Estimating Interventional Effects Mapped to a Target Trial</h1>
+      <h1>Causal Mediation Analysis for Estimating Interventional Effects Mapped to a Target Trial</h1>
             
       
 
@@ -71,14 +71,15 @@
 <p>Causal mediation analysis methods are commonly used in research
 studies to explore the causal pathways linking exposures to outcomes.
 Traditional mediation analysis aims to decompose the total effect of an
-exposure into natural direct and indirect effects, with natural indirect
-effects capturing the exposure effect acting through the mediator.
-However, the ultimate goal of research studies, especially in health and
-medical research, is often to elucidate the extent to which hypothetical
-interventions targeting mediators could counter exposure effects. This
-suggests that a shift in focus is warranted, from effect decomposition
-to explicitly evaluating hypothetical mediator interventions that may
-inform future policy, practice and intervention development.</p>
+exposure on an outcome into the natural direct and indirect effects,
+with the natural indirect effect capturing the exposure effect acting
+through the mediator. However, the goal of research studies, especially
+in health and medical research, is often to elucidate the extent to
+which hypothetical interventions targeting mediators could counter
+exposure effects. This suggests that a shift in focus is warranted, from
+effect decomposition to explicitly evaluating hypothetical mediator
+interventions that may inform future policy, practice and intervention
+development.</p>
 <p>Interventional effects <span class="citation">(VanderWeele,
 Vansteelandt, and Robins 2014)</span> are mediation estimands that are
 more aligned with this interventional focus while addressing key
@@ -95,16 +96,16 @@ examples <span class="citation">(Dashti et al. 2022; Goldfeld et al.
 2023; Afshar et al. 2024)</span>.</p>
 </div>
 <div class="section level2">
-<h2 id="define-interventional-effects-and-estimation-methods">Define interventional effects and estimation methods<a class="anchor" aria-label="anchor" href="#define-interventional-effects-and-estimation-methods"></a>
+<h2 id="interventional-effects-definition-and-estimation-methods">Interventional effects: definition and estimation methods<a class="anchor" aria-label="anchor" href="#interventional-effects-definition-and-estimation-methods"></a>
 </h2>
 <p><span class="citation">Moreno-Betancur et al. (2021)</span> provided
 definitions for interventional effects based on three types of
 hypothetical mediator interventions. In this vignette, we describe these
 estimands and their corresponding mediator interventions, as implemented
 in the <code>medRCT</code> R package. The type of mediator intervention
-can be specified using the argument <code>intervention_type</code>. By
-default, <code>intervention_type = "all"</code> estimates all three
-types of interventional effects. Other available options are:</p>
+can be specified using the argument <code>intervention_type</code>. The
+default, <code>intervention_type = "all"</code>, estimates all three
+types of interventional effects, which are:</p>
 <ul>
 <li><p><strong><code>shift_all</code></strong>:<br>
 This estimand corresponds to an intervention that shifts the
@@ -144,9 +145,9 @@ exposures</strong> with two or more levels (Levels
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>≥</mo><annotation encoding="application/x-tex">\geq</annotation></semantics></math>
 2). For the <strong>outcome variable</strong>, <code>medRCT</code>
 supports both <strong>binary</strong> and <strong>continuous</strong>
-outcomes. Additionally, it supports any number of mediators and each
-<strong>mediator</strong>, including those that are not of primary
-interest but <strong>intermediate confounders</strong>, can be either
+outcomes. Additionally, it supports any number of mediators. Each
+<strong>mediator</strong>, including those not of primary interest but
+<strong>intermediate confounders</strong>, can be either
 <strong>binary</strong> or <strong>continuous</strong>. Any number of
 <strong>baseline confounders</strong> of any type are supported. This
 makes the package suitable for a broad range of real-world applications
@@ -154,7 +155,7 @@ in epidemiology, public health, and social science research.</p>
 <p>We begin by illustrating how to estimate the three different types of
 interventional effects in the presence of multiple mediators and
 intermediate confounders. Such intermediate confounders can be specified
-using the argument <code>intermediate_confs</code>. Consider the
+using the argument <code>intermediate_confs</code>. We consider the
 following example using simulated data inspired by a case study within
 the Longitudinal Study of Australian Children (LSAC) <span class="citation">(Goldfeld et al. 2023)</span>. Specifically, we aim to
 estimate the difference in expected outcome (risk of mental health
@@ -164,29 +165,30 @@ distribution of each mediator (parental mental health and preschool
 attendance) to the levels in the unexposed, while accounting for
 baseline confounders, an intermediate (exposure-induced)
 mediator-outcome confounder and correlations amongst mediators.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://t0ngchen.github.io/medRCT/">medRCT</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; medRCT: Causal Mediation Analysis Estimating Interventional Effects Mapped to a Target Trial</span></span>
-<span><span class="co">#&gt; Note: When setting intervention_type = 'shift_k_order', the order of the mediators as specified in the 'mediators' argument is important.</span></span>
+<span><span class="co">#&gt; medRCT: Causal mediation analysis estimating interventional effects mapped to a target trial</span></span>
+<span><span class="co">#&gt; Note: When setting intervention_type = 'shift_k_order', the order of the mediators as specified </span></span>
+<span><span class="co">#&gt; in the 'mediators' argument is important.</span></span>
 <span></span>
 <span><span class="co"># Set a seed for reproducibility</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2024</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2025</span><span class="op">)</span></span>
 <span><span class="co"># Display the first few rows of the dataset</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">LSACdata</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   child_sex child_atsi mat_cob mat_engl mat_age sep fam_stress parent_mh</span></span>
-<span><span class="co">#&gt; 1         1          0       0        0       1   1          0         0</span></span>
-<span><span class="co">#&gt; 2         0          0       0        0       0   0          0         0</span></span>
-<span><span class="co">#&gt; 3         1          0       1        1       0   0          0         1</span></span>
-<span><span class="co">#&gt; 4         0          0       0        0       0   0          0         0</span></span>
-<span><span class="co">#&gt; 5         0          0       0        0       0   0          0         0</span></span>
-<span><span class="co">#&gt; 6         0          0       0        0       0   1          0         0</span></span>
-<span><span class="co">#&gt;   preschool_att child_mh</span></span>
-<span><span class="co">#&gt; 1             1        0</span></span>
-<span><span class="co">#&gt; 2             1        0</span></span>
-<span><span class="co">#&gt; 3             0        0</span></span>
-<span><span class="co">#&gt; 4             1        0</span></span>
-<span><span class="co">#&gt; 5             0        0</span></span>
-<span><span class="co">#&gt; 6             0        0</span></span>
+<span><span class="co">#&gt; 1         0          1       0        0       1   0          0         0</span></span>
+<span><span class="co">#&gt; 2        NA          0       0        0      NA   0         NA        NA</span></span>
+<span><span class="co">#&gt; 3        NA          0       0        0      NA   0         NA        NA</span></span>
+<span><span class="co">#&gt; 4        NA          0       0        0      NA   0         NA        NA</span></span>
+<span><span class="co">#&gt; 5         1          0       0        0       1   1          0         0</span></span>
+<span><span class="co">#&gt; 6         1          0       0        0       1   0          1         1</span></span>
+<span><span class="co">#&gt;   preschool_att child_mh child_SDQscore</span></span>
+<span><span class="co">#&gt; 1             1        0       8.924660</span></span>
+<span><span class="co">#&gt; 2             0        0       7.349826</span></span>
+<span><span class="co">#&gt; 3             0        1      12.824643</span></span>
+<span><span class="co">#&gt; 4             0        0       6.611369</span></span>
+<span><span class="co">#&gt; 5             0        1      10.329341</span></span>
+<span><span class="co">#&gt; 6             0        1      13.552515</span></span>
 <span></span>
 <span><span class="co"># Define confounders for the analysis</span></span>
 <span><span class="va">confounders</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"child_sex"</span>, <span class="st">"child_atsi"</span>, <span class="st">"mat_cob"</span>, <span class="st">"mat_engl"</span>, <span class="st">"mat_age"</span><span class="op">)</span></span>
@@ -206,41 +208,49 @@ mediator-outcome confounder and correlations amongst mediators.</p>
 <span>  intervention_type <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  boot_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>R <span class="op">=</span> <span class="fl">100</span>, stype <span class="op">=</span> <span class="st">"i"</span>, ci.type <span class="op">=</span> <span class="st">"norm"</span><span class="op">)</span>,</span>
-<span>  mcsim <span class="op">=</span> <span class="fl">100</span>                          </span>
+<span>  mcsim <span class="op">=</span> <span class="fl">200</span>                          </span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Conducting complete case analysis, 0 observations were excluded due to missing data.</span></span>
+<span><span class="co">#&gt; Conducting complete case analysis, 2499 observations were excluded due to missing data.</span></span>
 <span></span>
 <span><span class="co"># Summarise the results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">med_res</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Estimated interventional effect: </span></span>
+<span><span class="co">#&gt; Estimated interventional indirect effect: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;                                  Estimate Std. Error  CI Lower  CI Upper</span></span>
-<span><span class="co">#&gt; IIE_1 (p_trt - p_1)              0.010075   0.002722  0.004824  0.015493</span></span>
-<span><span class="co">#&gt; IIE_2 (p_trt - p_2)              0.000549   0.001735 -0.002869  0.003932</span></span>
-<span><span class="co">#&gt; IIE_all (p_trt - p_all)          0.010612   0.003140  0.004514  0.016822</span></span>
-<span><span class="co">#&gt; IIE_1_prime (p_trt - p_1_prime)  0.010120   0.002699  0.005052  0.015630</span></span>
-<span><span class="co">#&gt; TCE (p_trt - p_ctr)              0.106266   0.016422  0.073615  0.137990</span></span>
+<span><span class="co">#&gt; IIE_1 (p_trt - p_1)              0.012233   0.003988  0.004156  0.019787</span></span>
+<span><span class="co">#&gt; IIE_2 (p_trt - p_2)              0.000284   0.002492 -0.004544  0.005224</span></span>
+<span><span class="co">#&gt; IIE_all (p_trt - p_all)          0.012192   0.004735  0.002680  0.021243</span></span>
+<span><span class="co">#&gt; IIE_1_prime (p_trt - p_1_prime)  0.013044   0.004151  0.004521  0.020794</span></span>
+<span><span class="co">#&gt; TCE (p_trt - p_ctr)              0.129132   0.024456  0.082318  0.178184</span></span>
 <span><span class="co">#&gt;                                 p-value</span></span>
-<span><span class="co">#&gt; IIE_1 (p_trt - p_1)             0.00021</span></span>
-<span><span class="co">#&gt; IIE_2 (p_trt - p_2)             0.75158</span></span>
-<span><span class="co">#&gt; IIE_all (p_trt - p_all)         0.00073</span></span>
-<span><span class="co">#&gt; IIE_1_prime (p_trt - p_1_prime) 0.00018</span></span>
-<span><span class="co">#&gt; TCE (p_trt - p_ctr)             9.7e-11</span></span>
+<span><span class="co">#&gt; IIE_1 (p_trt - p_1)              0.0022</span></span>
+<span><span class="co">#&gt; IIE_2 (p_trt - p_2)              0.9092</span></span>
+<span><span class="co">#&gt; IIE_all (p_trt - p_all)          0.0100</span></span>
+<span><span class="co">#&gt; IIE_1_prime (p_trt - p_1_prime)  0.0017</span></span>
+<span><span class="co">#&gt; TCE (p_trt - p_ctr)             1.3e-07</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Estimated interventional direct effect: </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;                                 Estimate Std. Error CI Lower CI Upper p-value</span></span>
+<span><span class="co">#&gt; IDE_1 (p_1 - p_ctr)               0.1169     0.0246   0.0700   0.1666 2.1e-06</span></span>
+<span><span class="co">#&gt; IDE_2 (p_2 - p_ctr)               0.1288     0.0243   0.0823   0.1775 1.1e-07</span></span>
+<span><span class="co">#&gt; IDE_all (p_all - p_ctr)           0.1169     0.0245   0.0703   0.1663 1.8e-06</span></span>
+<span><span class="co">#&gt; IDE_1_prime (p_1_prime - p_ctr)   0.1161     0.0247   0.0692   0.1660 2.6e-06</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Estimated expected outcome in each trial arm:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;           Estimate Std. Error CI Lower CI Upper p-value</span></span>
-<span><span class="co">#&gt; p_1        0.32338    0.01410  0.29487  0.35012  &lt;2e-16</span></span>
-<span><span class="co">#&gt; p_2        0.33290    0.01423  0.30422  0.36002  &lt;2e-16</span></span>
-<span><span class="co">#&gt; p_all      0.32284    0.01427  0.29401  0.34996  &lt;2e-16</span></span>
-<span><span class="co">#&gt; p_ctr      0.22719    0.00766  0.21183  0.24186  &lt;2e-16</span></span>
-<span><span class="co">#&gt; p_trt      0.33345    0.01407  0.30507  0.36023  &lt;2e-16</span></span>
-<span><span class="co">#&gt; p_1_prime  0.32333    0.01407  0.29474  0.34989  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_1         0.3300     0.0225   0.2868   0.3751  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_2         0.3419     0.0220   0.2994   0.3858  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_all       0.3300     0.0224   0.2871   0.3748  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_ctr       0.2131     0.0100   0.1930   0.2323  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_trt       0.3422     0.0222   0.2994   0.3864  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_1_prime   0.3292     0.0226   0.2860   0.3745  &lt;2e-16</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Sample Size: 5107 </span></span>
+<span><span class="co">#&gt; Sample Size: 2608 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Simulations: 100</span></span></code></pre></div>
+<span><span class="co">#&gt; Simulations: 200</span></span></code></pre>
 <p>In the summary table:</p>
 <ul>
 <li><p><code>IIE_all</code> is the estimated interventional indirect
@@ -277,7 +287,7 @@ mental health problems.</p></li>
 <p>The argument <code>interactions_XC</code> in <code>medRCT</code>
 allows users to specify two-way interactions amongst exposure and
 baseline confounders. Of note, the algorithm automatically includes all
-two-way interactions among the exposure, mediators, and intermediate
+two-way interactions between the exposure, mediators, and intermediate
 confounders. These interaction terms are fixed and cannot be modified by
 the user.</p>
 <div class="section level4">
@@ -323,7 +333,7 @@ for specific research questions.</li>
 analysis, set the argument
 <strong><code>intermediate_confs = NULL</code></strong> when calling the
 <code>medRCT</code> function, as described in the following example:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">med_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/medRCT.html">medRCT</a></span><span class="op">(</span></span>
 <span>  dat <span class="op">=</span> <span class="va">LSACdata</span>,</span>
 <span>  exposure <span class="op">=</span> <span class="st">"sep"</span>,</span>
@@ -364,12 +374,21 @@ estimates</strong> for the estimand <code>shift_k_order</code>.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="model-diagnostics">Model diagnostics<a class="anchor" aria-label="anchor" href="#model-diagnostics"></a>
+<h2 id="model-assessment">Model assessment<a class="anchor" aria-label="anchor" href="#model-assessment"></a>
 </h2>
 <p>We have developed a <strong>Shiny</strong> application for convenient
-model diagnostics, which can be launched using the command:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+model assessment, which can be launched using the command:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/medRCT_shiny.html">medRCT_shiny</a></span><span class="op">(</span>dat <span class="op">=</span> <span class="va">data</span><span class="op">)</span></span></code></pre></div>
+<p>Before conducting the mediation analysis, users are encouraged to
+assess the models fitted by the algorithm using this Shiny application.
+The Shiny app provides a user-friendly interface to review model
+summaries and identify potential warnings and errors, ensuring that the
+models are appropriately specified before proceeding with the analysis.
+If issues with model fitting are detected, users are encouraged to
+adjust the exposure-confounder interaction term as needed. However,
+<strong>confounders must not be selected based on model fitting
+results</strong>.</p>
 <p>In the Shiny application, after specifying the relevant arguments and
 clicking the <code>Run medRCT models</code> button, the app will fit all
 regression models required by the <code>medRCT</code> algorithm and
@@ -379,7 +398,7 @@ fitting what are usually richly-specified models.</p>
 <p>Additionally, any <strong>warnings</strong> or <strong>error
 messages</strong> encountered during the model fitting process are
 highlighted in the app. By offering a user-friendly interface and
-diagnostic tool, our Shiny app streamlines the model diagnostics process
+diagnostic tool, our Shiny app streamlines the model assessment process
 for the <code>medRCT</code> algorithm, facilitating transparent and
 comprehensive model assessment.</p>
 </div>
