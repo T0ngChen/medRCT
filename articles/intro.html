@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">medRCT</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9080</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9082</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -114,8 +114,9 @@ match the corresponding distribution in the unexposed.</p></li>
 <li><p><strong><code>shift_k</code></strong>:<br>
 This estimand corresponds to an intervention that shifts the
 <strong>distribution of a specific mediator</strong> in the exposed to
-match the corresponding distribution in the unexposed, <strong>without
-considering flow-on effects</strong> on other mediators.</p></li>
+match the corresponding distribution in the unexposed, independent of
+and <strong>without considering flow-on effects</strong> on other
+mediators.</p></li>
 <li><p><strong><code>shift_k_order</code></strong>:<br>
 This estimand corresponds to an intervention that shifts the
 <strong>distribution of a specific mediator</strong> in the exposed to
@@ -128,9 +129,10 @@ interventions using a Monte Carlo simulation-based g-computation
 approach, as described by <span class="citation">Vansteelandt and Daniel
 (2017)</span>. The number of Monte Carlo simulations can be specified
 using the argument <code>mcsim</code>, allowing users to balance
-computational efficiency and estimation accuracy. Additionally,
-<code>medRCT</code> automatically removes missing values from the
-dataset, performing a complete-case analysis.</p>
+computational efficiency and estimation accuracy. The default number of
+Monte Carlo simulations used is 200. Additionally, <code>medRCT</code>
+automatically removes records with missing data for any of the analysis
+variables, performing a complete-case analysis.</p>
 </div>
 <div class="section level2">
 <h2 id="getting-started-with-medrct-estimating-interventional-effects">Getting started with <code>medRCT</code>: Estimating interventional
@@ -146,12 +148,12 @@ exposures</strong> with two or more levels (Levels
 2). For the <strong>outcome variable</strong>, <code>medRCT</code>
 supports both <strong>binary</strong> and <strong>continuous</strong>
 outcomes. Additionally, it supports any number of mediators. Each
-<strong>mediator</strong>, including those not of primary interest but
-<strong>intermediate confounders</strong>, can be either
-<strong>binary</strong> or <strong>continuous</strong>. Any number of
-<strong>baseline confounders</strong> of any type are supported. This
-makes the package suitable for a broad range of real-world applications
-in epidemiology, public health, and social science research.</p>
+<strong>mediator</strong>, including those not of primary interest
+(i.e., <strong>intermediate confounders</strong>), can be either
+<strong>binary</strong> or <strong>continuous</strong>. Any number and
+type of <strong>baseline confounders</strong> are supported. This makes
+the package suitable for a broad range of real-world applications in
+epidemiology, public health, and social science research.</p>
 <p>We begin by illustrating how to estimate the three different types of
 interventional effects in the presence of multiple mediators and
 intermediate confounders. Such intermediate confounders can be specified
@@ -346,7 +348,7 @@ analysis, set the argument
 <span>  intermediate_confs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  boot_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>R <span class="op">=</span> <span class="fl">100</span>, stype <span class="op">=</span> <span class="st">"i"</span>, ci.type <span class="op">=</span> <span class="st">"norm"</span><span class="op">)</span>,</span>
-<span>  mcsim <span class="op">=</span> <span class="fl">100</span></span>
+<span>  mcsim <span class="op">=</span> <span class="fl">200</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -382,13 +384,13 @@ model assessment, which can be launched using the command:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/medRCT_shiny.html">medRCT_shiny</a></span><span class="op">(</span>dat <span class="op">=</span> <span class="va">data</span><span class="op">)</span></span></code></pre></div>
 <p>Before conducting the mediation analysis, users are encouraged to
 assess the models fitted by the algorithm using this Shiny application.
-The Shiny app provides a user-friendly interface to review model
+The Shiny app aims to provide a user-friendly interface to review model
 summaries and identify potential warnings and errors, ensuring that the
 models are appropriately specified before proceeding with the analysis.
 If issues with model fitting are detected, users are encouraged to
 adjust the exposure-confounder interaction term as needed. However,
-<strong>confounders must not be selected based on model fitting
-results</strong>.</p>
+<strong>mediators or confounders must not be selected based on model
+fitting results</strong>.</p>
 <p>In the Shiny application, after specifying the relevant arguments and
 clicking the <code>Run medRCT models</code> button, the app will fit all
 regression models required by the <code>medRCT</code> algorithm and
