@@ -12,6 +12,7 @@
 #' @param ... additional arguments for shiny
 #'
 #' @importFrom stats formula
+#' @importFrom stats setNames
 #' @import shiny
 #'
 #' @export
@@ -281,6 +282,7 @@ medRCT_shiny <- function(data, ...){
             input$outcome,
             input$mediators,
             input$int_confs,
+            input$intervention_type,
             input$confounders)
         int_confs <- if (is.null(input$int_confs) || all(input$int_confs == "NULL")) {
           NULL
@@ -297,105 +299,208 @@ medRCT_shiny <- function(data, ...){
                                           intervention_type = input$intervention_type)
         # remove NULL and list() from the list
         model.list$model = clean_list(model.list$model)
-        # rename the list
-        for (i in seq_along(model.list$model)) {
-          names(model.list$model[[i]]) <- paste0("Model_", seq_along(model.list$model[[i]]))
-        }
+        model.list$newmod = list(
+          "Mediator Models" = list(),
+          "Outcome Model" = model.list$model[["Outcome Model"]]
+        )
+        all_mediator_models <- c(
+          lapply(model.list$model$L_models, function(m) list(model = m, type = "L_models")),
+          lapply(model.list$model$M_models, function(m) list(model = m, type = "M_models"))
+        )
+        all_labels <- unique(unlist(lapply(all_mediator_models, function(m) m$model$labels)))
+
+        model.list$newmod[["Mediator Models"]] <- setNames(
+          lapply(all_labels, function(label) {
+            list(
+              "L_models" = lapply(
+                Filter(function(m) label %in% m$model$labels && m$type == "L_models", all_mediator_models),
+                function(m) m$model
+              ),
+              "M_models" = lapply(
+                Filter(function(m) label %in% m$model$labels && m$type == "M_models", all_mediator_models),
+                function(m) m$model
+              )
+            )
+          }),
+          all_labels
+        )
+        model.list$newmod <- flatten_models(model.list$newmod)
+        model.list$newmod$`Outcome Model`[["Outcome_model"]] = model.list$newmod$`Outcome Model`[[1]]
+        model.list$newmod$`Outcome Model`[[1]] = NULL
       })
     })
 
 
     # main panel
+    # Main Panel
     output$model_panels <- renderUI({
-      req(model.list$model)
+      req(model.list$newmod)
       req(input$med_button)
+
       isolate({
         tagList(
-          h3("Models needed to estimate the interventional effect:"),
-          # Create tabs dynamically based on first-level keys in the list
-          do.call(tabsetPanel, lapply(names(model.list$model), function(group_name) {
+          h3(paste0("Models needed to estimate the expected outcome in relevant target trial arms for the specified interventional effect of interest (",
+                    ifelse(input$intervention_type == "all", "all interventional effects", input$intervention_type),
+                    ")")),
 
-            description_text <- switch(group_name,
-                                       "Joint Mediator Models" =
-                                         "These models are used to estimate the joint distribution of mediators without accounting for any distributional shifts.",
-                                       "Interventional Mediator Models" =
-                                         "These models are used to estimate the mediator distribution under hypothetical interventions (with distributional shifts).",
-                                       "Outcome Model" =
-                                         "The outcome model is used to estimate the outcome expectation."
-            )
+          # Create first-level tabs dynamically
+          do.call(tabsetPanel, lapply(names(model.list$newmod), function(group_name) {
 
-            tabPanel(
-              title = group_name,
-              h4(description_text),
-              # Add dynamic sub-tabs for each model in the group
-              do.call(tabsetPanel, lapply(names(model.list$model[[group_name]]), function(model_name) {
-                model <- model.list$model[[group_name]][[model_name]]
+            # Condition to check if it's "Outcome Model" (skip arm_name level)
+            if (group_name == "Outcome Model") {
+              tabPanel(
+                title = group_name,
+                do.call(tabsetPanel, lapply(names(model.list$newmod[[group_name]]), function(model_name) {
 
-                # Build the tabPanel inline
-                tabPanel(
-                  title = model_name,
-                  h4("Model Formula"),
-                  verbatimTextOutput(outputId = paste0(group_name, "_", model_name, "_formula")),
-                  # Conditionally add warnings section
-                  if (!is.null(model[['warnings']]) && length(model[['warnings']]) > 0) {
-                    tagList(
-                      h4("Warnings"),
-                      div(class = "warn",
-                          verbatimTextOutput(outputId = paste0(group_name, "_", model_name, "_warnings")))
-                    )
-                  },
-                  # Conditionally add errors section
-                  if (!is.null(model[['errors']]) && length(model[['errors']]) > 0) {
-                    tagList(
-                      h4("Errors"),
-                      div(class = "warn",
-                          verbatimTextOutput(outputId = paste0(group_name, "_", model_name, "_errors")))
-                    )
-                  },
-                  h4("Model Summary"),
-                  verbatimTextOutput(outputId = paste0(group_name, "_", model_name, "_summary")),
-                  tags$div(style = "height: 100px;")
-                )
-              }))
-            )
+                  model <- model.list$newmod[[group_name]][[model_name]]
+
+                  tabPanel(
+                    title = model_name,
+                    h4("Model Formula"),
+                    verbatimTextOutput(outputId = paste0(group_name, "_", model_name, "_formula")),
+
+                    # Warnings Section (only if available)
+                    if (!is.null(model[['warnings']]) && length(model[['warnings']]) > 0) {
+                      tagList(
+                        h4("Warnings"),
+                        div(class = "warn", verbatimTextOutput(outputId = paste0(group_name, "_", model_name, "_warnings")))
+                      )
+                    },
+
+                    # Errors Section (only if available)
+                    if (!is.null(model[['errors']]) && length(model[['errors']]) > 0) {
+                      tagList(
+                        h4("Errors"),
+                        div(class = "warn", verbatimTextOutput(outputId = paste0(group_name, "_", model_name, "_errors")))
+                      )
+                    },
+
+                    h4("Model Summary"),
+                    verbatimTextOutput(outputId = paste0(group_name, "_", model_name, "_summary")),
+                    tags$div(style = "height: 100px;")
+                  )
+                }))
+              )
+
+            } else {  # Keep Treatment Arm nesting for "Mediator Models"
+              tabPanel(
+                h5("Mediator models needed to estimate the expected outcome in relevant target trial arms below"),
+                title = group_name,
+                do.call(tabsetPanel, lapply(names(model.list$newmod[[group_name]]), function(arm_name) {
+                  tabPanel(
+                    h5("Joint_dist_models are used to estimate the joint distribution of mediators under a specific exposure level"),
+                    title = arm_name,
+                    do.call(tabsetPanel, lapply(names(model.list$newmod[[group_name]][[arm_name]]), function(model_name) {
+
+                      model <- model.list$newmod[[group_name]][[arm_name]][[model_name]]
+
+                      tabPanel(
+                        title = model_name,
+                        h4("Model Formula"),
+                        verbatimTextOutput(outputId = paste0(group_name, "_", arm_name, "_", model_name, "_formula")),
+
+                        # Warnings Section (only if available)
+                        if (!is.null(model[['warnings']]) && length(model[['warnings']]) > 0) {
+                          tagList(
+                            h4("Warnings"),
+                            div(class = "warn", verbatimTextOutput(outputId = paste0(group_name, "_", arm_name, "_", model_name, "_warnings")))
+                          )
+                        },
+
+                        # Errors Section (only if available)
+                        if (!is.null(model[['errors']]) && length(model[['errors']]) > 0) {
+                          tagList(
+                            h4("Errors"),
+                            div(class = "warn", verbatimTextOutput(outputId = paste0(group_name, "_", arm_name, "_", model_name, "_errors")))
+                          )
+                        },
+
+                        h4("Model Summary"),
+                        verbatimTextOutput(outputId = paste0(group_name, "_", arm_name, "_", model_name, "_summary")),
+                        tags$div(style = "height: 100px;")
+                      )
+                    }))
+                  )
+                }))
+              )
+            }
           }))
         )
       })
     })
 
 
-
-
+    # Observe function for dynamic UI rendering
     observe({
-      req(model.list$model)
-      lapply(names(model.list$model), function(group_name) {
-        lapply(names(model.list$model[[group_name]]), function(model_name) {
-          model <- model.list$model[[group_name]][[model_name]]
+      req(model.list$newmod)
 
-          # Render formula
-          output[[paste0(group_name, "_", model_name, "_formula")]] <- renderPrint({
-            cat(paste(deparse(stats::formula(model)), collapse = "\n"))
+      lapply(names(model.list$newmod), function(group_name) {
+
+        if (group_name == "Outcome Model") {
+          lapply(names(model.list$newmod[[group_name]]), function(model_name) {
+
+            model <- model.list$newmod[[group_name]][[model_name]]
+
+            # Render formula
+            output[[paste0(group_name, "_", model_name, "_formula")]] <- renderPrint({
+              cat(paste(deparse(stats::formula(model)), collapse = "\n"))
+            })
+
+            # Render summary
+            output[[paste0(group_name, "_", model_name, "_summary")]] <- renderPrint({
+              summary(model)
+            })
+
+            # Render warnings (if exist)
+            if (!is.null(model[['warnings']]) && length(model[['warnings']]) > 0) {
+              output[[paste0(group_name, "_", model_name, "_warnings")]] <- renderPrint({
+                cat(paste(model[['warnings']], collapse = "\n"))
+              })
+            }
+
+            # Render errors (if exist)
+            if (!is.null(model[['errors']]) && length(model[['errors']]) > 0) {
+              output[[paste0(group_name, "_", model_name, "_errors")]] <- renderPrint({
+                cat(paste(model[['errors']], collapse = "\n"))
+              })
+            }
           })
 
-          # Render summary
-          output[[paste0(group_name, "_", model_name, "_summary")]] <- renderPrint({
-            summary(model)
-          })
-          if (!is.null(model[['warnings']]) && length(model[['warnings']]) > 0) {
-            output[[paste0(group_name, "_", model_name, "_warnings")]] <- renderPrint({
-              cat(paste(model[['warnings']], collapse = "\n"))
-            })
-          }
+        } else {  # For Mediator Models
+          lapply(names(model.list$newmod[[group_name]]), function(arm_name) {
+            lapply(names(model.list$newmod[[group_name]][[arm_name]]), function(model_name) {
 
-          # Render errors if they exist
-          if (!is.null(model[['errors']]) && length(model[['errors']]) > 0) {
-            output[[paste0(group_name, "_", model_name, "_errors")]] <- renderPrint({
-              cat(paste(model[['errors']], collapse = "\n"))
+              model <- model.list$newmod[[group_name]][[arm_name]][[model_name]]
+
+              # Render formula
+              output[[paste0(group_name, "_", arm_name, "_", model_name, "_formula")]] <- renderPrint({
+                cat(paste(deparse(stats::formula(model)), collapse = "\n"))
+              })
+
+              # Render summary
+              output[[paste0(group_name, "_", arm_name, "_", model_name, "_summary")]] <- renderPrint({
+                summary(model)
+              })
+
+              # Render warnings (if exist)
+              if (!is.null(model[['warnings']]) && length(model[['warnings']]) > 0) {
+                output[[paste0(group_name, "_", arm_name, "_", model_name, "_warnings")]] <- renderPrint({
+                  cat(paste(model[['warnings']], collapse = "\n"))
+                })
+              }
+
+              # Render errors (if exist)
+              if (!is.null(model[['errors']]) && length(model[['errors']]) > 0) {
+                output[[paste0(group_name, "_", arm_name, "_", model_name, "_errors")]] <- renderPrint({
+                  cat(paste(model[['errors']], collapse = "\n"))
+                })
+              }
             })
-          }
-        })
+          })
+        }
       })
     })
+
 
   }
   # Run the application
@@ -485,7 +590,7 @@ collect_models <- function(data,
   lnzero = exposure_level[exposure_level!=0]
   res = list()
   res[1:3] <- list(list())
-  names(res) = c("Joint Mediator Models", "Interventional Mediator Models", "Outcome Model")
+  names(res) = c("L_models", "M_models", "Outcome Model")
 
   # Joint of M1 to MK under X=0 and X!=0 ...
   for (k in 1:K) {
@@ -497,7 +602,20 @@ collect_models <- function(data,
                         include_all = TRUE)),
       data = data,
       family = fam_type[[k]])
+    res[[names(res)[1]]][[k]]$labels = "p_trt / p_ctr"
+    if(k < first){
+      res[[names(res)[1]]][[k]]$labels = c(res[[names(res)[1]]][[k]]$labels,
+                                           if(first<K && any(intervention_type %in% c("all", "shift_all"))) "p_all",
+                                           if(any(intervention_type %in% c("all", "shift_k"))) paste0("p_", first:K - (first-1)),
+                                           if(first<K && any(intervention_type %in% c("all", "shift_k_order"))) paste0("p_", first:(K-1) - (first-1), "_prime"))
+    } else if (k >= first){
+      res[[names(res)[1]]][[k]]$labels = c(res[[names(res)[1]]][[k]]$labels,
+                                           if(k < (K-1) && any(intervention_type %in% c("all", "shift_k"))) paste0("p_", setdiff(first:K, k) - (first - 1)),
+                                           if(k == (K-1) && first != (K-1) && any(intervention_type %in% c("all", "shift_k"))) paste0("p_", setdiff(first:(K-1), k) - (first - 1)),
+                                           if(k < (K-1) && (k - first + 2) <= (K - first) && any(intervention_type %in% c("all", "shift_k_order"))) paste0("p_", (k-first+2):(K-first), "_prime"))
+    }
   }
+
 
   # Marginals under X=0
   mod_id = 1
@@ -510,8 +628,17 @@ collect_models <- function(data,
                         marginal = TRUE)),
       data = data,
       family = fam_type[[k]])
+    if (k == first){
+      res[[names(res)[2]]][[mod_id]]$labels = c(if(first<K && any(intervention_type %in% c("all", "shift_all"))) "p_all",
+                                                if(any(intervention_type %in% c("all", "shift_k"))) paste0("p_", first - (first - 1)),
+                                                if(first<K && any(intervention_type %in% c("all", "shift_k_order"))) paste0("p_", first - (first - 1), "_prime"))
+    } else {
+      res[[names(res)[2]]][[mod_id]]$labels = c(if(any(intervention_type %in% c("all", "shift_k"))) paste0("p_", k - (first - 1)),
+                                                if (k < K && any(intervention_type %in% c("all", "shift_k_order"))) paste0("p_", k - (first - 1), "_prime"))
+    }
     mod_id = mod_id +1
   }
+
   # Joint of others under X!=0
   if (any(intervention_type %in% c("all", "shift_k"))) {
     for (MM in first:K) {
@@ -528,13 +655,14 @@ collect_models <- function(data,
                               interactions_XC = interactions_XC)),
             data = data,
             family = fam_type[[k]])
+          res[[names(res)[2]]][[mod_id]]$labels = paste0("p_", MM - (first - 1))
           mod_id = mod_id +1
         }
       }
     }
   }
 
-  # For p_first_prime,...., p_K_prime
+  # p_first_prime....p_Kminus1_prime
   # Conditionals under X!=0
   if (any(intervention_type %in% c("all", "shift_k_order"))) {
     for (MM in first:(K - 1)) {
@@ -547,6 +675,7 @@ collect_models <- function(data,
                             include_all = TRUE)),
           data = data,
           family = fam_type[[k]])
+        res[[names(res)[2]]][[mod_id]]$labels = paste0("p_", MM - (first - 1), "_prime")
         mod_id = mod_id +1
       }
     }
@@ -564,6 +693,7 @@ collect_models <- function(data,
                           include_all = TRUE)),
         data = data,
         family = fam_type[[k]])
+      res[[names(res)[2]]][[mod_id]]$labels = "p_all"
       mod_id = mod_id + 1
     }
   }
@@ -716,4 +846,50 @@ catch_model_messages <- function(formula, data, family) {
   )
 
   return(model)
+}
+
+
+
+#' Flatten a Nested Model List
+#' This function processes a nested list of models by extracting specific sublists (`L_models` and `M_models`),
+#' renaming their elements, and merging them into the parent level.
+#'
+#' @param model_list A nested list containing models, with potential sublists named `L_models` and `M_models`.
+#' @keywords internal
+flatten_models <- function(model_list) {
+  # Check if the input is a list
+  if (!is.list(model_list)) return(model_list)
+
+  # Create a copy of the list to modify
+  new_list <- model_list
+
+  for (name in names(model_list)) {
+    if (is.list(model_list[[name]])) {
+      if ("L_models" %in% names(model_list[[name]])) {
+        l_models <- model_list[[name]]$L_models
+        if (length(l_models) > 0) {
+          names(l_models) <- paste0("Joint_dist_model_", seq_along(l_models))
+          # Merge into the parent level
+          new_list[[name]] <- c(new_list[[name]], l_models)
+        }
+        # Remove L_models
+        new_list[[name]]$L_models <- NULL
+      }
+
+      if ("M_models" %in% names(model_list[[name]])) {
+        m_models <- model_list[[name]]$M_models
+        if (length(m_models) > 0) {
+          names(m_models) <- paste0("M", seq_along(m_models), "_model")
+          # Merge into the parent level
+          new_list[[name]] <- c(new_list[[name]], m_models)
+        }
+        # Remove M_models
+        new_list[[name]]$M_models <- NULL
+      }
+
+      # Recursively apply function to deeper levels
+      new_list[[name]] <- flatten_models(new_list[[name]])
+    }
+  }
+  return(new_list)
 }
