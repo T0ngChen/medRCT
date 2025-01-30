@@ -57,7 +57,7 @@ utils::globalVariables(".SD")
 #' ensuring that the models are appropriately specified before proceeding with the analysis.
 #'
 #' If issues with model fitting are detected, users are encouraged to adjust the exposure-confounder interaction term as needed.
-#' However, \strong{confounders must not be selected based on model fitting results.}
+#' However, \strong{mediators or confounders must not be selected based on model fitting results.}
 #'
 #' @export
 #'

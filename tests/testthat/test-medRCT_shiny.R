@@ -40,8 +40,8 @@ test_that("test collect_models", {
   expect_type(result, "list")
   expect_true(!is.null(result$`Outcome Model`))
   expect_true(length(result$`Outcome Model`) > 0)
-  expect_true(!is.null(result$`Interventional Mediator Models`))
-  expect_true(length(result$`Interventional Mediator Models`) > 0)
+  expect_true(!is.null(result$`L_models`))
+  expect_true(length(result$`M_models`) > 0)
 
 
   expect_message(
@@ -203,10 +203,82 @@ test_that("Server logic of medRCT_shiny works as expected", {
     expect_true("mediator1" %in% input$mediators)
     expect_true("conf1" %in% input$int_confs)
     expect_true(!is.null(model.list$model))
-    expect_named(model.list$model$`Joint Mediator Models`,
-                 c("Model_1", "Model_2", "Model_3"))
     expect_named(model.list$model,
-                 c('Joint Mediator Models', 'Interventional Mediator Models',
+                 c('L_models', 'M_models',
                  'Outcome Model'))
   })
 })
+
+
+
+
+test_that("flatten_models", {
+  model_list <- list(
+    A = list(
+      L_models = list("model1", "model2"),
+      M_models = list("model3")
+    ),
+    B = list(
+      L_models = list("model4"),
+      M_models = list("model5", "model6")
+    )
+  )
+
+  expected_output <- list(
+    A = list(
+      Joint_dist_model_1 = "model1",
+      Joint_dist_model_2 = "model2",
+      M1_model = "model3"
+    ),
+    B = list(
+      Joint_dist_model_1 = "model4",
+      M1_model = "model5",
+      M2_model = "model6"
+    )
+  )
+
+  result <- flatten_models(model_list)
+  expect_equal(result, expected_output)
+})
+
+test_that("flatten_models", {
+  result <- flatten_models(list())
+  expect_equal(result, list())
+})
+
+test_that("flatten_models", {
+  model_list <- list(
+    A = list(model1 = "modelA"),
+    B = list(model2 = "modelB")
+  )
+
+  result <- flatten_models(model_list)
+  expect_equal(result, model_list)
+})
+
+
+
+test_that("flatten_models applies recursively to deeply nested lists", {
+  model_list <- list(
+    A = list(
+      B = list(
+        L_models = list("model1"),
+        M_models = list("model2")
+      )
+    )
+  )
+
+  expected_output <- list(
+    A = list(
+      B = list(
+        Joint_dist_model_1 = "model1",
+        M1_model = "model2"
+      )
+    )
+  )
+
+  result <- flatten_models(model_list)
+  expect_equal(result, expected_output)
+})
+
+
