@@ -40,7 +40,7 @@ Interventional effects [@vanderweele2014effect] are mediation estimands that are
 
 The `medRCT` package is designed to handle complex mediation settings involving **multiple interrelated mediators** and **intermediate confounders** (exposure-induced mediator-outcome confounders). It supports a range of variable types. Specifically, it supports **categorical exposures** with two or more levels (Levels $\geq$ 2). For the **outcome variable**, `medRCT` supports both **binary** and **continuous** outcomes. Additionally, it supports any number of mediators. Each **mediator**, including those not of primary interest (i.e., **intermediate confounders**), can be either **binary** or **continuous**. Any number and type of **baseline confounders** are supported. This makes the package suitable for a broad range of real-world applications in epidemiology, public health, and social science research. 
 
-We begin by illustrating how to estimate the three different types of interventional effects in the presence of multiple mediators and intermediate confounders. Such intermediate confounders can be specified using the argument `intermediate_confs`. We consider the following example using simulated data inspired by a case study within the Longitudinal Study of Australian Children (LSAC) [@Goldfeld2023]. Specifically, we aim to estimate the difference in expected outcome (risk of child mental health problems) under exposure (low socioeconomic position) with versus without a hypothetical intervention that individually shifts the distribution of each mediator (parental mental health and preschool attendance) to the levels in the unexposed, while accounting for baseline confounders, an intermediate (exposure-induced) mediator-outcome confounder and correlations amongst mediators.
+We begin by illustrating how to estimate the three different types of interventional effects in the presence of multiple mediators and intermediate confounders. Such intermediate confounders can be specified using the argument `intermediate_confs`. We consider the following example using simulated data inspired by a case study within the Longitudinal Study of Australian Children (LSAC) [@Goldfeld2023]. Specifically, we aim to estimate the difference in expected outcome (risk of child mental health problems) under exposure (low socioeconomic position) with versus without a hypothetical intervention that individually shifts the distribution of each mediator (parental mental health and preschool attendance) to the levels in the unexposed (high socioeconomic position), while accounting for baseline confounders, an intermediate (exposure-induced) mediator-outcome confounder and correlations amongst mediators.
 
 
 ```{r, eval=FALSE, echo=FALSE}
@@ -188,7 +188,7 @@ The argument `interactions_XC` in `medRCT` allows users to specify two-way inter
 
 ## Special cases
 
-#### Analysis without intermediate confounders
+#### Analysis without intermediate confounders:
 
 If there are **no intermediate confounders** in the analysis, set the argument **`intermediate_confs = NULL`** when calling the `medRCT` function, as described in the following example:
 
@@ -214,7 +214,7 @@ med_res <- medRCT(
 If there is only **one mediator**, only the `intervention_type` **`shift_k`** can be estimated, as the other options (`shift_all` and `shift_k_order`) require **multiple mediators** to define meaningful interventional effects.
 
 #### Causal ordering for the estimation of the estimand `shift_k_order`:  
-When estimating the estimand `shift_k_order`, the **order of mediators** specified in the argument **`mediators`** is important, as it defines the **causal ordering** among the mediators. This ordering determines the **causal descendants** for the mediator of interest, providing essential information for **accounting for flow-on effects** after the hypothetical intervention. Specifying an incorrect mediator ordering may result in **biased estimates** for the estimand `shift_k_order`. 
+When estimating the estimand `shift_k_order`, the **order of mediators** specified in the argument **`mediators`** is important, as it defines the assumed **causal ordering** among the mediators in the analysis. This ordering determines the **causal descendants** for the mediator of interest, providing essential information for **accounting for flow-on effects** after the hypothetical intervention. Specifying an incorrect mediator ordering may result in **biased estimates** for the estimand `shift_k_order`. 
 
 ## Model assessment
 
