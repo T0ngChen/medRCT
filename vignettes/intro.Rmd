@@ -226,9 +226,7 @@ medRCT_shiny(dat = data)
 
 Before conducting the mediation analysis, users are encouraged to assess the models fitted by the algorithm using this Shiny application. The Shiny app aims to provide a user-friendly interface to review model summaries and identify potential warnings and errors, ensuring that the models are appropriately specified before proceeding with the analysis. If issues with model fitting are detected, users are encouraged to adjust the exposure-confounder interaction term as needed. However, **mediators or confounders must not be selected based on model fitting results**.
 
-In the Shiny application, after specifying the relevant arguments and clicking the `Run medRCT models` button, the app will fit all regression models required by the `medRCT` algorithm and generate detailed summaries for each model. These summaries support model assessment, allowing users to identify potential issues with fitting what are usually richly-specified models.
-
-Additionally, any **warnings** or **error messages** encountered during the model fitting process are highlighted in the app. By offering a user-friendly interface and diagnostic tool, our Shiny app streamlines the model assessment process for the `medRCT` algorithm, facilitating transparent and comprehensive model assessment.
+In the Shiny application, after specifying the relevant arguments and clicking the `Run medRCT models` button, the app will fit all regression models required by the `medRCT` algorithm and generate detailed summaries for each model. These summaries support model assessment, allowing users to identify potential issues with fitting what are usually richly-specified models. Additionally, any **warnings** or **error messages** encountered during the model fitting process are highlighted in the app. 
 
 
 ## References
