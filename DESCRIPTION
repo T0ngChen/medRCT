@@ -6,7 +6,7 @@ Authors@R: c(
            comment = c(ORCID = "0000-0003-2751-2412")),
     person("Margarita", "Moreno-Betancur", email = "margarita.moreno@mcri.edu.au", role = "aut"),
     person("S. Ghazaleh", "Dashti", email = "ghazaleh.dashti@mcri.edu.au", role = "aut"))
-Description: Package for causal mediation analysis to estimate interventional effects, defined by mapping to a target trial assessing hypothetical mediator interventions. The package supports any number of potentially correlated mediators, including mediators that are not of primary interest but that are intermediate (exposure-induced) mediator-outcome confounders.
+Description: Package for causal mediation analysis using interventional effects defined by mapping to a target trial assessing hypothetical mediator interventions. The package supports any number of potentially correlated mediators, including mediators that are not of primary interest but that are intermediate (exposure-induced) mediator-outcome confounders.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
