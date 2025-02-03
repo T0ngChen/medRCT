@@ -87,9 +87,9 @@ medRCT.fun <- function(dat,
 
   # For p_first,..., p_K
   # Joint of others under X!=0
-  if (any(intervention_type %in% c("all", "shift_k"))) {
-    for (MM in first:K) {
-      index = setdiff(first:K, MM)
+  if (any(intervention_type %in% c("all", "shift_k")) && first<=(K-1)) {
+    for (MM in first:(K-1)) {
+      index = setdiff(MM:K, MM)
       for (k in index) {
         dat2 <- joint_X_nonzero(
           MM = MM, k = k, first = first, K = K, data = data, mediators = mediators,
