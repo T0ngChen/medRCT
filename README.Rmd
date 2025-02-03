@@ -38,7 +38,7 @@ remotes::install_github("T0ngChen/medRCT")
 
 Using a simulated dataset based on a published case study from the Longitudinal Study of Australian Children [@Goldfeld2023], we illustrate how to use `medRCT` to estimate the interventional effects that emulate a target trial. Specifically, we aim to estimate the difference in expected outcome (risk of child mental health problems) under exposure (low family socioeconomic position) with versus without a hypothetical intervention that individually shifts the distribution of each mediator (parental mental health and preschool attendance) to the levels in the unexposed (high family socioeconomic position), while accounting for baseline confounders, an intermediate (exposure-induced) mediator-outcome confounder (family stressful life events), and correlations amongst mediators. 
 
-
+We begin by loading the library and dataset, and defining the confounder vector.
 ```{r eg, warning=FALSE, message=FALSE}
 # Load the medRCT package
 library(medRCT)
@@ -52,11 +52,12 @@ head(LSACdata)
 # Define confounders for the analysis
 confounders <- c("child_sex", "child_atsi", "mat_cob", "mat_engl", "mat_age")
 ```
-
-**Note:** It is recommended to perform the analysis with at least 200 Monte Carlo simulations by setting `mcsim = 200`. For illustration purposes, we use `mcsim = 50`, which takes approximately 90 seconds to run.
+Next we run the analyses, estimating interventional effects for a hypothetical intervention that shifts the distribution of each mediator individually. 
+**Note 1:** the dataset has missing data. Incomplete records are by default deleted before the analysis. 
+**Note 2:** It is recommended to perform the analysis with at least 200 Monte Carlo simulations by setting `mcsim = 200`. For illustration purposes, we use `mcsim = 50`, which takes approximately 90 seconds to run.
 
 ```{r}
-# Estimate interventional indirect effects for a hypothetical intervention
+# Estimate interventional effects for a hypothetical intervention
 # that shifts the distribution of each mediator individually
 med_res <- medRCT(
   dat = LSACdata,                      
