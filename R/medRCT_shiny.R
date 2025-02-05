@@ -386,9 +386,15 @@ medRCT_shiny <- function(data, ...){
               tabPanel(
                 h5("Mediator models needed to estimate the expected outcome in relevant target trial arms below"),
                 title = group_name,
-                do.call(tabsetPanel, lapply(names(model.list$newmod[[group_name]]), function(arm_name) {
+                do.call(tabsetPanel, lapply(
+                  names(model.list$newmod[[group_name]])[order(
+                                              ifelse(names(model.list$newmod[[group_name]]) == "p_trt / p_ctr", 1,
+                                                     ifelse(names(model.list$newmod[[group_name]]) == "p_all", 2,
+                                                            ifelse(grepl("prime", names(model.list$newmod[[group_name]])), 4, 3))),
+                                              # Extract the numeric part when it exists (using a regex that grabs digits)
+                                              ifelse(grepl("[0-9]+", names(model.list$newmod[[group_name]])), as.numeric(gsub("[^0-9]", "", names(model.list$newmod[[group_name]]))), 0)
+                                            )], function(arm_name) {
                   tabPanel(
-                    h5("Joint_dist_models are used to estimate the joint distribution of mediators under a specific exposure level"),
                     title = arm_name,
                     do.call(tabsetPanel, lapply(names(model.list$newmod[[group_name]][[arm_name]]), function(model_name) {
 
@@ -593,32 +599,44 @@ collect_models <- function(data,
   names(res) = c("L_models", "M_models", "Outcome Model")
 
   # Joint of M1 to MK under X=0 and X!=0 ...
+
+  mod_id = 1
+
   for (k in 1:K) {
-    res[[names(res)[1]]][[k]] <- catch_model_messages(as.formula(
-      gen_formula_shiny(mediators = mediators,
-                        exposure = exposure,
-                        k = k,
-                        interactions_XC = interactions_XC,
-                        include_all = TRUE)),
-      data = data,
-      family = fam_type[[k]])
-    res[[names(res)[1]]][[k]]$labels = "p_trt / p_ctr"
+
     if(k < first){
+      res[[names(res)[1]]][[k]] <- catch_model_messages(as.formula(
+        gen_formula_shiny(mediators = mediators,
+                          exposure = exposure,
+                          k = k,
+                          interactions_XC = interactions_XC,
+                          include_all = TRUE)),
+        data = data,
+        family = fam_type[[k]])
       res[[names(res)[1]]][[k]]$labels = c(res[[names(res)[1]]][[k]]$labels,
+                                           "p_trt / p_ctr",
                                            if(first<K && any(intervention_type %in% c("all", "shift_all"))) "p_all",
                                            if(any(intervention_type %in% c("all", "shift_k"))) paste0("p_", first:K - (first-1)),
                                            if(first<K && any(intervention_type %in% c("all", "shift_k_order"))) paste0("p_", first:(K-1) - (first-1), "_prime"))
     } else if (k >= first){
-      res[[names(res)[1]]][[k]]$labels = c(res[[names(res)[1]]][[k]]$labels,
-                                           if(k < (K-1) && any(intervention_type %in% c("all", "shift_k"))) paste0("p_", setdiff(first:K, k) - (first - 1)),
-                                           if(k == (K-1) && first != (K-1) && any(intervention_type %in% c("all", "shift_k"))) paste0("p_", setdiff(first:(K-1), k) - (first - 1)),
+      res[[names(res)[2]]][[mod_id]] <- catch_model_messages(as.formula(
+        gen_formula_shiny(mediators = mediators,
+                          exposure = exposure,
+                          k = k,
+                          interactions_XC = interactions_XC,
+                          include_all = TRUE)),
+        data = data,
+        family = fam_type[[k]])
+      res[[names(res)[2]]][[mod_id]]$labels = c(res[[names(res)[2]]][[mod_id]]$labels,
+                                                "p_trt / p_ctr",
+                                           if((k+1)<=K && any(intervention_type %in% c("all", "shift_k"))) paste0("p_", (k+1):K - (first - 1)),
                                            if(k < (K-1) && (k - first + 2) <= (K - first) && any(intervention_type %in% c("all", "shift_k_order"))) paste0("p_", (k-first+2):(K-first), "_prime"))
+      mod_id = mod_id +1
     }
   }
 
 
   # Marginals under X=0
-  mod_id = 1
   for (k in first:K) {
     res[[names(res)[2]]][[mod_id]] <- catch_model_messages(as.formula(
       gen_formula_shiny(mediators = mediators,
@@ -640,11 +658,10 @@ collect_models <- function(data,
   }
 
   # Joint of others under X!=0
-  if (any(intervention_type %in% c("all", "shift_k"))) {
-    for (MM in first:K) {
-      index = setdiff(first:K, MM)
+  if (any(intervention_type %in% c("all", "shift_k")) && first<=(K-1)) {
+    for (MM in first:(K-1)) {
+      index = setdiff(MM:K, MM)
       for (k in index) {
-        if (!(first == 1 && MM != 1 && k == index[1])) {
           res[[names(res)[2]]][[mod_id]] <- catch_model_messages(as.formula(
             gen_formula_shiny(mediators = mediators,
                               exposure = exposure,
@@ -657,7 +674,6 @@ collect_models <- function(data,
             family = fam_type[[k]])
           res[[names(res)[2]]][[mod_id]]$labels = paste0("p_", MM - (first - 1))
           mod_id = mod_id +1
-        }
       }
     }
   }
@@ -868,7 +884,7 @@ flatten_models <- function(model_list) {
       if ("L_models" %in% names(model_list[[name]])) {
         l_models <- model_list[[name]]$L_models
         if (length(l_models) > 0) {
-          names(l_models) <- paste0("Joint_dist_model_", seq_along(l_models))
+          names(l_models) <- paste0("L", seq_along(l_models), "_model")
           # Merge into the parent level
           new_list[[name]] <- c(new_list[[name]], l_models)
         }
@@ -893,3 +909,5 @@ flatten_models <- function(model_list) {
   }
   return(new_list)
 }
+
+
