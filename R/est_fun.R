@@ -1,4 +1,4 @@
-#' Causal Mediation Analysis for Estimating Interventional Effects
+#' Causal Mediation Analysis Estimating Interventional Effects
 #'
 #' This function performs the actual causal mediation analysis to estimate interventional effects mapped to a
 #' hypothetical target trial.

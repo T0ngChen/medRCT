@@ -1,7 +1,7 @@
 utils::globalVariables(".SD")
 
 
-#' Causal Mediation Analysis for Estimating Interventional Effects Mapped to A Target Trial
+#' Causal Mediation Analysis Estimating Interventional Effects Mapped to A Target Trial
 #'
 #' `medRCT` is used to estimate interventional effects that map to a target trial evaluating hypothetical mediator interventions
 #' of interest. It can handle any number of potentially correlated mediators, including mediators that are not of primary
@@ -111,6 +111,10 @@ medRCT <- function(dat,
       any(intervention_type %in% c("all", "shift_all", "shift_k_order"))) {
     intervention_type = "shift_k"
     message("Only able to estimate the effect type 'shift_k' with a single mediator.")
+  }
+
+  if(any(intervention_type %in% c("all", "shift_k_order"))) {
+    message(paste0("Assumed causal order for estimating effect of type 'shift_k_order': ",  paste(mediators, collapse = ", "), "\n"))
   }
 
 

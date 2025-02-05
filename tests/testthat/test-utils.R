@@ -213,3 +213,106 @@ test_that("test med_joint_other", {
   expect_false(any(grepl("Estimated interventional effect:", output)))
   expect_false(any(grepl("Simulations:", output)))
 })
+
+######################################
+# test real examples for gen_formula #
+######################################
+
+test_that("test gen_formula", {
+  ######################################
+  # for estimating joint distributions #
+  # k in 1:K                           #
+  ######################################
+  expect_equal(gen_formula(k = 1, interactions_XC = "C", include_all = TRUE), "M1~X+C")
+  expect_equal(gen_formula(k = 2, interactions_XC = "C", include_all = TRUE), "M2~(X+M1)^2+C")
+  expect_equal(gen_formula(k = 3, interactions_XC = "C", include_all = TRUE), "M3~(X+M1+M2)^2+C")
+
+  ######################################
+  # for estimating Marginals under X=0 #
+  # k in first:K                       #
+  ######################################
+  # if first == 1
+  expect_equal(gen_formula(k = 1, interactions_XC = "C", marginal = TRUE), "M1~X+C")
+  expect_equal(gen_formula(k = 2, interactions_XC = "C", marginal = TRUE), "M2~X+C")
+  expect_equal(gen_formula(k = 3, interactions_XC = "C", marginal = TRUE), "M3~X+C")
+  ##########################################################################
+  # models for estimating joint of others under X!=0 for p_first, ..., p_K #
+  # MM in first:(K-1)                                                      #
+  # k in setdiff(MM:K, MM)                                                 #
+  ##########################################################################
+  # testing if first == 1, K = 2
+  expect_equal(gen_formula(k = 2, MM = 1, first = 1, K = 2, interactions_XC = "C"), "M2~X+C")
+  # testing if first == 1, K>2
+  ## MM == 1
+  expect_equal(gen_formula(k = 2, MM = 1, first = 1, K = 5, interactions_XC = "C"), "M2~X+C")
+  expect_equal(gen_formula(k = 3, MM = 1, first = 1, K = 5, interactions_XC = "C"), "M3~(X+M2)^2+C")
+  expect_equal(gen_formula(k = 4, MM = 1, first = 1, K = 5, interactions_XC = "C"), "M4~(X+M2+M3)^2+C")
+  expect_equal(gen_formula(k = 5, MM = 1, first = 1, K = 5, interactions_XC = "C"), "M5~(X+M2+M3+M4)^2+C")
+  ## MM == 2
+  expect_equal(gen_formula(k = 3, MM = 2, first = 1, K = 5, interactions_XC = "C"), "M3~(X+M1)^2+C")
+  expect_equal(gen_formula(k = 4, MM = 2, first = 1, K = 5, interactions_XC = "C"), "M4~(X+M1+M3)^2+C")
+  expect_equal(gen_formula(k = 5, MM = 2, first = 1, K = 5, interactions_XC = "C"), "M5~(X+M1+M3+M4)^2+C")
+  ## MM == 3
+  expect_equal(gen_formula(k = 4, MM = 3, first = 1, K = 5, interactions_XC = "C"), "M4~(X+M1+M2)^2+C")
+  expect_equal(gen_formula(k = 5, MM = 3, first = 1, K = 5, interactions_XC = "C"), "M5~(X+M1+M2+M4)^2+C")
+  ## MM == 4
+  expect_equal(gen_formula(k = 5, MM = 4, first = 1, K = 5, interactions_XC = "C"), "M5~(X+M1+M2+M3)^2+C")
+
+  # if first != 1 & first == K-1
+  expect_equal(gen_formula(k = 4, MM = 3, first = 3, K = 4, interactions_XC = "C"), "M4~(X+M1+M2)^2+C")
+
+  # in general case that first != 0 & K-1>first
+  ## MM == 3
+  expect_equal(gen_formula(k = 4, MM = 3, first = 3, K = 5, interactions_XC = "C"), "M4~(X+M1+M2)^2+C")
+  expect_equal(gen_formula(k = 5, MM = 3, first = 3, K = 5, interactions_XC = "C"), "M5~(X+M1+M2+M4)^2+C")
+  ## MM == 4
+  expect_equal(gen_formula(k = 5, MM = 3, first = 3, K = 5, interactions_XC = "C"), "M5~(X+M1+M2+M4)^2+C")
+
+  ###################################################################################
+  # models for estimating Conditionals under X!=0 for p_first_prime,...., p_K_prime #
+  # MM in first:(K-1)                                                               #
+  # k in (MM + 1):K                                                                 #
+  ###################################################################################
+
+  # testing if first == 1, K = 2
+  expect_equal(gen_formula(k = 2, K = 2, interactions_XC = "C", include_all = TRUE), "M2~(X+M1)^2+C")
+  # testing if first == 1, K>2
+  ## MM == 1
+  expect_equal(gen_formula(k = 2, K = 5, interactions_XC = "C", include_all = TRUE), "M2~(X+M1)^2+C")
+  expect_equal(gen_formula(k = 3, K = 5, interactions_XC = "C", include_all = TRUE), "M3~(X+M1+M2)^2+C")
+  expect_equal(gen_formula(k = 4, K = 5, interactions_XC = "C", include_all = TRUE), "M4~(X+M1+M2+M3)^2+C")
+  expect_equal(gen_formula(k = 5, K = 5, interactions_XC = "C", include_all = TRUE), "M5~(X+M1+M2+M3+M4)^2+C")
+  ## MM == 2
+  expect_equal(gen_formula(k = 3, K = 5, interactions_XC = "C", include_all = TRUE), "M3~(X+M1+M2)^2+C")
+  expect_equal(gen_formula(k = 4, K = 5, interactions_XC = "C", include_all = TRUE), "M4~(X+M1+M2+M3)^2+C")
+  expect_equal(gen_formula(k = 5, K = 5, interactions_XC = "C", include_all = TRUE), "M5~(X+M1+M2+M3+M4)^2+C")
+  ## MM == 3
+  expect_equal(gen_formula(k = 4, K = 5, interactions_XC = "C", include_all = TRUE), "M4~(X+M1+M2+M3)^2+C")
+  expect_equal(gen_formula(k = 5, K = 5, interactions_XC = "C", include_all = TRUE), "M5~(X+M1+M2+M3+M4)^2+C")
+  ## MM == 4
+  expect_equal(gen_formula(k = 5, K = 5, interactions_XC = "C", include_all = TRUE), "M5~(X+M1+M2+M3+M4)^2+C")
+
+  # if first != 1 & first == K-1
+  ## MM == 3
+  expect_equal(gen_formula(k = 4, K = 4, interactions_XC = "C", include_all = TRUE), "M4~(X+M1+M2+M3)^2+C")
+
+  # in general case that first != 0 & K-1>first
+  ## MM == 3
+  expect_equal(gen_formula(k = 4, K = 5, interactions_XC = "C", include_all = TRUE), "M4~(X+M1+M2+M3)^2+C")
+  expect_equal(gen_formula(k = 5, K = 5, interactions_XC = "C", include_all = TRUE), "M5~(X+M1+M2+M3+M4)^2+C")
+  ## MM == 4
+  expect_equal(gen_formula(k = 5, K = 5, interactions_XC = "C", include_all = TRUE), "M5~(X+M1+M2+M3+M4)^2+C")
+
+  ################################################################
+  # models for estimating Joint of main ones under X=0 for p_all #
+  # k in (first + 1):K                                           #
+  ################################################################
+  ## first == 2 && K == 5
+  expect_equal(gen_formula(k = 3, interactions_XC = "C", include_all = TRUE, first = 2), "M3~(X+M2)^2+C")
+  expect_equal(gen_formula(k = 4, interactions_XC = "C", include_all = TRUE, first = 2), "M4~(X+M2+M3)^2+C")
+  expect_equal(gen_formula(k = 5, interactions_XC = "C", include_all = TRUE, first = 2), "M5~(X+M2+M3+M4)^2+C")
+})
+
+
+
+
