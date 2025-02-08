@@ -2,7 +2,7 @@
 % Please edit documentation in R/est_fun.R
 \name{medRCT.fun}
 \alias{medRCT.fun}
-\title{Causal Mediation Analysis for Estimating Interventional Effects}
+\title{Causal Mediation Analysis Estimating Interventional Effects}
 \usage{
 medRCT.fun(
   dat,

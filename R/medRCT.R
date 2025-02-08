@@ -1,7 +1,7 @@
 utils::globalVariables(".SD")
 
 
-#' Causal Mediation Analysis for Estimating Interventional Effects Mapped to A Target Trial
+#' Causal Mediation Analysis Estimating Interventional Effects Mapped to A Target Trial
 #'
 #' `medRCT` is used to estimate interventional effects that map to a target trial evaluating hypothetical mediator interventions
 #' of interest. It can handle any number of potentially correlated mediators, including mediators that are not of primary
@@ -24,17 +24,17 @@ utils::globalVariables(".SD")
 #' @param interactions_XC A \code{character} string specifying the two-way interactions between exposure and baseline confounders
 #'  to include in the regression models in the estimation procedure. The default value, \code{"all"},
 #'  includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
-#'  Specify \code{"none"} to exclude all two-way interactions between exposure and baseline confounders.
+#'  Specify \code{"none"} to exclude all two-way interactions between exposure and baseline confounders. See Vignette for further details.
 #' @param intervention_type A \code{character} string indicating the type of interventional effect to be estimated.
 #'  Options include:
 #' \itemize{
 #'   \item \code{"all"} (default): Estimates all three types of interventional indirect effects.
 #'   \item \code{"shift_all"}: Estimates an interventional indirect effect mapped to a target trial assessing the impact of shifting the joint distribution of all
-#'    mediators in the exposed to match the corresponding distribution in the unexposed.
+#'    mediators in the exposed, given baseline confounders, to match the corresponding distribution in the unexposed.
 #'   \item \code{"shift_k"}: Estimates an interventional indirect effect mapped to a target trial assessing the impact of shifting the distribution of a specific
-#'    mediator (\code{k}) in the exposed to match the corresponding distribution in the unexposed.
+#'    mediator (\code{k}) in the exposed, given baseline confounders, to match the corresponding distribution in the unexposed.
 #'   \item \code{"shift_k_order"}: Estimates an interventional indirect effect mapped to a target trial assessing the impact of shifting the distribution of a
-#'    specific mediator (\code{k}) in the exposed to match the corresponding distribution in the unexposed while accounting for the flow-on
+#'    specific mediator (\code{k}) in the exposed, given baseline confounders, to match the corresponding distribution in the unexposed while accounting for the flow-on
 #'    effects on causally descendant mediators.
 #' }
 #' @param mcsim An \code{integer} specifying the number of Monte Carlo simulations to perform. The default is 200.
@@ -111,6 +111,10 @@ medRCT <- function(dat,
       any(intervention_type %in% c("all", "shift_all", "shift_k_order"))) {
     intervention_type = "shift_k"
     message("Only able to estimate the effect type 'shift_k' with a single mediator.")
+  }
+
+  if(any(intervention_type %in% c("all", "shift_k_order"))) {
+    message(paste0("Assumed causal order for estimating effect of type 'shift_k_order': ",  paste(mediators, collapse = ", "), "\n"))
   }
 
 

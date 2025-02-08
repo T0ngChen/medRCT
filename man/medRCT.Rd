@@ -2,7 +2,7 @@
 % Please edit documentation in R/medRCT.R
 \name{medRCT}
 \alias{medRCT}
-\title{Causal Mediation Analysis for Estimating Interventional Effects Mapped to A Target Trial}
+\title{Causal Mediation Analysis Estimating Interventional Effects Mapped to A Target Trial}
 \usage{
 medRCT(
   dat,
@@ -43,18 +43,18 @@ no intermediate confounders are specified.}
 \item{interactions_XC}{A \code{character} string specifying the two-way interactions between exposure and baseline confounders
 to include in the regression models in the estimation procedure. The default value, \code{"all"},
 includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
-Specify \code{"none"} to exclude all two-way interactions between exposure and baseline confounders.}
+Specify \code{"none"} to exclude all two-way interactions between exposure and baseline confounders. See Vignette for further details.}
 
 \item{intervention_type}{A \code{character} string indicating the type of interventional effect to be estimated.
 Options include:
 \itemize{
 \item \code{"all"} (default): Estimates all three types of interventional indirect effects.
 \item \code{"shift_all"}: Estimates an interventional indirect effect mapped to a target trial assessing the impact of shifting the joint distribution of all
-mediators in the exposed to match the corresponding distribution in the unexposed.
+mediators in the exposed, given baseline confounders, to match the corresponding distribution in the unexposed.
 \item \code{"shift_k"}: Estimates an interventional indirect effect mapped to a target trial assessing the impact of shifting the distribution of a specific
-mediator (\code{k}) in the exposed to match the corresponding distribution in the unexposed.
+mediator (\code{k}) in the exposed, given baseline confounders, to match the corresponding distribution in the unexposed.
 \item \code{"shift_k_order"}: Estimates an interventional indirect effect mapped to a target trial assessing the impact of shifting the distribution of a
-specific mediator (\code{k}) in the exposed to match the corresponding distribution in the unexposed while accounting for the flow-on
+specific mediator (\code{k}) in the exposed, given baseline confounders, to match the corresponding distribution in the unexposed while accounting for the flow-on
 effects on causally descendant mediators.
 }}
 

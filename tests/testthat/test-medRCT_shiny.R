@@ -226,12 +226,12 @@ test_that("flatten_models", {
 
   expected_output <- list(
     A = list(
-      Joint_dist_model_1 = "model1",
-      Joint_dist_model_2 = "model2",
+      L1_model = "model1",
+      L2_model = "model2",
       M1_model = "model3"
     ),
     B = list(
-      Joint_dist_model_1 = "model4",
+      L1_model = "model4",
       M1_model = "model5",
       M2_model = "model6"
     )
@@ -271,7 +271,7 @@ test_that("flatten_models applies recursively to deeply nested lists", {
   expected_output <- list(
     A = list(
       B = list(
-        Joint_dist_model_1 = "model1",
+        L1_model = "model1",
         M1_model = "model2"
       )
     )

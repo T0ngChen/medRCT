@@ -51,6 +51,9 @@ accounting for baseline confounders, an intermediate (exposure-induced)
 mediator-outcome confounder (family stressful life events), and
 correlations amongst mediators.
 
+We begin by loading the library and dataset, and defining the confounder
+vector.
+
 ``` r
 # Load the medRCT package
 library(medRCT)
@@ -74,13 +77,16 @@ head(LSACdata)
 confounders <- c("child_sex", "child_atsi", "mat_cob", "mat_engl", "mat_age")
 ```
 
-**Note:** It is recommended to perform the analysis with at least 200
-Monte Carlo simulations by setting `mcsim = 200`. For illustration
-purposes, we use `mcsim = 50`, which takes approximately 90 seconds to
-run.
+Next we run the analyses, estimating interventional effects for a
+hypothetical intervention that shifts the distribution of each mediator
+individually. **Note 1:** the dataset has missing data. Incomplete
+records are by default deleted before the analysis. **Note 2:** It is
+recommended to perform the analysis with at least 200 Monte Carlo
+simulations by setting `mcsim = 200`. For illustration purposes, we use
+`mcsim = 50`, which takes approximately 90 seconds to run.
 
 ``` r
-# Estimate interventional indirect effects for a hypothetical intervention
+# Estimate interventional effects for a hypothetical intervention
 # that shifts the distribution of each mediator individually
 med_res <- medRCT(
   dat = LSACdata,                      
@@ -102,23 +108,23 @@ summary(med_res)
 #> Estimated interventional indirect effect: 
 #> 
 #>                      Estimate Std. Error  CI Lower  CI Upper p-value
-#> IIE_1 (p_trt - p_1)  0.012176   0.003975  0.004076  0.019659  0.0022
-#> IIE_2 (p_trt - p_2)  0.000353   0.002497 -0.004423  0.005363  0.8877
-#> TCE (p_trt - p_ctr)  0.129689   0.024512  0.083348  0.179432 1.2e-07
+#> IIE_1 (p_trt - p_1)  0.011155   0.004181  0.002814  0.019203  0.0076
+#> IIE_2 (p_trt - p_2) -0.000763   0.002501 -0.005443  0.004362  0.7604
+#> TCE (p_trt - p_ctr)  0.128669   0.024554  0.082420  0.178668 1.6e-07
 #> 
 #> Estimated interventional direct effect: 
 #> 
 #>                     Estimate Std. Error CI Lower CI Upper p-value
 #> IDE_1 (p_1 - p_ctr)   0.1175     0.0247   0.0712   0.1679 1.9e-06
-#> IDE_2 (p_2 - p_ctr)   0.1293     0.0243   0.0832   0.1786 1.1e-07
+#> IDE_2 (p_2 - p_ctr)   0.1294     0.0244   0.0833   0.1789 1.1e-07
 #> 
 #> Estimated expected outcome in each trial arm:
 #> 
 #>       Estimate Std. Error CI Lower CI Upper p-value
 #> p_1     0.3302     0.0225   0.2872   0.3755  <2e-16
-#> p_2     0.3420     0.0221   0.2994   0.3861  <2e-16
-#> p_ctr   0.2127     0.0101   0.1921   0.2315  <2e-16
-#> p_trt   0.3424     0.0223   0.2996   0.3868  <2e-16
+#> p_2     0.3421     0.0221   0.2995   0.3862  <2e-16
+#> p_ctr   0.2127     0.0100   0.1922   0.2315  <2e-16
+#> p_trt   0.3413     0.0223   0.2987   0.3860  <2e-16
 #> 
 #> Sample Size: 2608 
 #> 
@@ -146,7 +152,7 @@ For work involving the `medRCT` R package, please cite the following:
        title = {medRCT: Causal mediation analysis estimating interventional effects mapped to a target trial},
        year  = {2025},
        url = {https://t0ngchen.github.io/medRCT/},
-       note = {R package version 0.0.0.9080}
+       note = {R package version 0.0.0.9082}
        }
     @article{Moreno2021Mediation,
        author={Margarita Moreno-Betancur and Paul Moran and Denise Becker and George C Patton and John B Carlin},

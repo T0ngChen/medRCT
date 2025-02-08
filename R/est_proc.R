@@ -49,7 +49,7 @@ joint_dist <- function(k, K, data, dat2, fam_type, mediators,
     # Set exposure
     dat2 <- set_exposure(data = dat2, column_name = "X", exp_val = a)
 
-    # Handle mediators M1 to M(k-1) if k > 1
+    # Handle mediators M1 to M_(k-1) if k > 1
     if (k != 1) {
       l <- 1:(k - 1)
       dat2[, paste0("M", l) := mget(med_outcome_name(a = a, l = l, K = K))]
@@ -159,14 +159,11 @@ marg_dist <- function(k, first, K, data, dat2, fam_type, mediators,
 joint_X_nonzero <- function(MM, k, first, K, data, dat2, fam_type,
                             mediators, interactions_XC, lnzero, n, index) {
   # Check for intermediate confounders
-  if (first == 1 && MM != 1 && k == index[1]) {
-      return(dat2)
-    } else {
-      fit <- glm(stats::as.formula(gen_formula(k = k, MM = MM,
-                                               first = first, K = K,
-                                               interactions_XC = interactions_XC)),
+  fit <- glm(stats::as.formula(gen_formula(k = k, MM = MM,
+                                           first = first, K = K,
+                                           interactions_XC = interactions_XC)),
                  data = data, family = fam_type[[k]])
-    }
+
 
   # Check model convergence and coefficients
   if(!fit$converged){
@@ -183,9 +180,14 @@ joint_X_nonzero <- function(MM, k, first, K, data, dat2, fam_type,
     dat2 <- set_exposure(data = dat2, column_name = "X", exp_val = a)
 
     # Update mediators
-    if ((first == 1 && k != index[1]) || first != 1) {
-      l <- setdiff(1:(k - 1), MM)
+    if (first != 1) {
+      l = 1:(first-1)
       dat2[, paste0("M", l) := mget(med_outcome_name(a = a, l = l, K = K))]
+    }
+    if ((k-1) > first) {
+      l = setdiff(first:(k-1), MM)
+      dat2[, paste0("M", l) := mget(med_joint_other(k = l, a = a, MM = MM, K = K,
+                                                    ordering = FALSE))]
     }
 
     # Perform counterfactual prediction
@@ -406,14 +408,7 @@ compute_assign = function(dat2, fit, a, K, first, type, lnzero, p_ctr, results) 
 
 
 compute_assign_loop = function(dat2, fit, a, K, first, type, lnzero, results, p_ctr) {
-  if (type == "shift_k") {
-    if (first > 1) {
-      l = 1:(first - 1)
-      dat2[, paste0("M", l) :=  mget(med_outcome_name(a = a,
-                                                      l = l,
-                                                      K = K))]
-    }
-  }
+
   # get index for loop
   if (type == "shift_k") {
     index = first:K
@@ -425,6 +420,13 @@ compute_assign_loop = function(dat2, fit, a, K, first, type, lnzero, results, p_
   for (MM in index) {
     # prepare data
     if (type == "shift_k") {
+      if (first > 1) {
+        l = 1:(first - 1)
+        dat2[, paste0("M", l) :=  mget(med_outcome_name(a = a,
+                                                        l = l,
+                                                        K = K))]
+      }
+
       dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
                                            strrep("m", K)))]
       if (length(first:K) > 1){
@@ -469,5 +471,6 @@ compute_assign_loop = function(dat2, fit, a, K, first, type, lnzero, results, p_
         avg_pred - p_ctr
     }
   }
+
   results
 }
