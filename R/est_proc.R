@@ -408,14 +408,7 @@ compute_assign = function(dat2, fit, a, K, first, type, lnzero, p_ctr, results) 
 
 
 compute_assign_loop = function(dat2, fit, a, K, first, type, lnzero, results, p_ctr) {
-  if (type == "shift_k") {
-    if (first > 1) {
-      l = 1:(first - 1)
-      dat2[, paste0("M", l) :=  mget(med_outcome_name(a = a,
-                                                      l = l,
-                                                      K = K))]
-    }
-  }
+
   # get index for loop
   if (type == "shift_k") {
     index = first:K
@@ -427,6 +420,13 @@ compute_assign_loop = function(dat2, fit, a, K, first, type, lnzero, results, p_
   for (MM in index) {
     # prepare data
     if (type == "shift_k") {
+      if (first > 1) {
+        l = 1:(first - 1)
+        dat2[, paste0("M", l) :=  mget(med_outcome_name(a = a,
+                                                        l = l,
+                                                        K = K))]
+      }
+
       dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
                                            strrep("m", K)))]
       if (length(first:K) > 1){
@@ -471,5 +471,6 @@ compute_assign_loop = function(dat2, fit, a, K, first, type, lnzero, results, p_
         avg_pred - p_ctr
     }
   }
+
   results
 }
