@@ -13,8 +13,8 @@
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Causal mediation analysis estimating interventional effects mapped to a target trial">
-<meta name="description" content="Package for causal mediation analysis to estimate interventional effects, defined by mapping to a target trial assessing hypothetical mediator interventions. The package supports any number of potentially correlated mediators, including mediators that are not of primary interest but that are intermediate (exposure-induced) mediator-outcome confounders.">
-<meta property="og:description" content="Package for causal mediation analysis to estimate interventional effects, defined by mapping to a target trial assessing hypothetical mediator interventions. The package supports any number of potentially correlated mediators, including mediators that are not of primary interest but that are intermediate (exposure-induced) mediator-outcome confounders.">
+<meta name="description" content="Package for causal mediation analysis using interventional effects defined by mapping to a target trial assessing hypothetical mediator interventions. The package supports any number of potentially correlated mediators, including mediators that are not of primary interest but that are intermediate (exposure-induced) mediator-outcome confounders.">
+<meta property="og:description" content="Package for causal mediation analysis using interventional effects defined by mapping to a target trial assessing hypothetical mediator interventions. The package supports any number of potentially correlated mediators, including mediators that are not of primary interest but that are intermediate (exposure-induced) mediator-outcome confounders.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -37,7 +37,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/intro.html">Causal Mediation Analysis for Estimating Interventional Effects Mapped to a Target Trial</a></li>
+<li><a class="dropdown-item" href="articles/intro.html">Causal Mediation Analysis Estimating Interventional Effects Mapped to a Target Trial</a></li>
   </ul>
 </li>
       </ul>
@@ -72,6 +72,7 @@
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
 <p>Using a simulated dataset based on a published case study from the Longitudinal Study of Australian Children (Goldfeld et al. 2023), we illustrate how to use <code>medRCT</code> to estimate the interventional effects that emulate a target trial. Specifically, we aim to estimate the difference in expected outcome (risk of child mental health problems) under exposure (low family socioeconomic position) with versus without a hypothetical intervention that individually shifts the distribution of each mediator (parental mental health and preschool attendance) to the levels in the unexposed (high family socioeconomic position), while accounting for baseline confounders, an intermediate (exposure-induced) mediator-outcome confounder (family stressful life events), and correlations amongst mediators.</p>
+<p>We begin by loading the library and dataset, and defining the confounder vector.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load the medRCT package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://t0ngchen.github.io/medRCT/">medRCT</a></span><span class="op">)</span></span>
@@ -93,9 +94,9 @@
 <span></span>
 <span><span class="co"># Define confounders for the analysis</span></span>
 <span><span class="va">confounders</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"child_sex"</span>, <span class="st">"child_atsi"</span>, <span class="st">"mat_cob"</span>, <span class="st">"mat_engl"</span>, <span class="st">"mat_age"</span><span class="op">)</span></span></code></pre></div>
-<p><strong>Note:</strong> It is recommended to perform the analysis with at least 200 Monte Carlo simulations by setting <code>mcsim = 200</code>. For illustration purposes, we use <code>mcsim = 50</code>, which takes approximately 90 seconds to run.</p>
+<p>Next we run the analyses, estimating interventional effects for a hypothetical intervention that shifts the distribution of each mediator individually. <strong>Note 1:</strong> the dataset has missing data. Incomplete records are by default deleted before the analysis. <strong>Note 2:</strong> It is recommended to perform the analysis with at least 200 Monte Carlo simulations by setting <code>mcsim = 200</code>. For illustration purposes, we use <code>mcsim = 50</code>, which takes approximately 90 seconds to run.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Estimate interventional indirect effects for a hypothetical intervention</span></span>
+<code class="sourceCode R"><span><span class="co"># Estimate interventional effects for a hypothetical intervention</span></span>
 <span><span class="co"># that shifts the distribution of each mediator individually</span></span>
 <span><span class="va">med_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/medRCT.html">medRCT</a></span><span class="op">(</span></span>
 <span>  dat <span class="op">=</span> <span class="va">LSACdata</span>,                      </span>
@@ -117,23 +118,23 @@
 <span><span class="co">#&gt; Estimated interventional indirect effect: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;                      Estimate Std. Error  CI Lower  CI Upper p-value</span></span>
-<span><span class="co">#&gt; IIE_1 (p_trt - p_1)  0.012176   0.003975  0.004076  0.019659  0.0022</span></span>
-<span><span class="co">#&gt; IIE_2 (p_trt - p_2)  0.000353   0.002497 -0.004423  0.005363  0.8877</span></span>
-<span><span class="co">#&gt; TCE (p_trt - p_ctr)  0.129689   0.024512  0.083348  0.179432 1.2e-07</span></span>
+<span><span class="co">#&gt; IIE_1 (p_trt - p_1)  0.011155   0.004181  0.002814  0.019203  0.0076</span></span>
+<span><span class="co">#&gt; IIE_2 (p_trt - p_2) -0.000763   0.002501 -0.005443  0.004362  0.7604</span></span>
+<span><span class="co">#&gt; TCE (p_trt - p_ctr)  0.128669   0.024554  0.082420  0.178668 1.6e-07</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Estimated interventional direct effect: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;                     Estimate Std. Error CI Lower CI Upper p-value</span></span>
 <span><span class="co">#&gt; IDE_1 (p_1 - p_ctr)   0.1175     0.0247   0.0712   0.1679 1.9e-06</span></span>
-<span><span class="co">#&gt; IDE_2 (p_2 - p_ctr)   0.1293     0.0243   0.0832   0.1786 1.1e-07</span></span>
+<span><span class="co">#&gt; IDE_2 (p_2 - p_ctr)   0.1294     0.0244   0.0833   0.1789 1.1e-07</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Estimated expected outcome in each trial arm:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;       Estimate Std. Error CI Lower CI Upper p-value</span></span>
 <span><span class="co">#&gt; p_1     0.3302     0.0225   0.2872   0.3755  &lt;2e-16</span></span>
-<span><span class="co">#&gt; p_2     0.3420     0.0221   0.2994   0.3861  &lt;2e-16</span></span>
-<span><span class="co">#&gt; p_ctr   0.2127     0.0101   0.1921   0.2315  &lt;2e-16</span></span>
-<span><span class="co">#&gt; p_trt   0.3424     0.0223   0.2996   0.3868  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_2     0.3421     0.0221   0.2995   0.3862  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_ctr   0.2127     0.0100   0.1922   0.2315  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_trt   0.3413     0.0223   0.2987   0.3860  &lt;2e-16</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Sample Size: 2608 </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -150,7 +151,7 @@
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>   title <span class="ot">=</span> {medRCT<span class="sc">:</span> Causal mediation analysis estimating interventional effects mapped to a target trial},</span>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>   year  <span class="ot">=</span> {<span class="dv">2025</span>},</span>
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>   url <span class="ot">=</span> {https<span class="sc">:</span><span class="er">//</span>t0ngchen.github.io<span class="sc">/</span>medRCT<span class="sc">/</span>},</span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>   note <span class="ot">=</span> {R package version <span class="dv">0</span>.<span class="dv">0</span>.<span class="fl">0.9080</span>}</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>   note <span class="ot">=</span> {R package version <span class="dv">0</span>.<span class="dv">0</span>.<span class="fl">0.9082</span>}</span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>   }</span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="sc">@</span>article{Moreno2021Mediation,</span>
 <span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>   author<span class="ot">=</span>{Margarita Moreno<span class="sc">-</span>Betancur and Paul Moran and Denise Becker and George C Patton and John B Carlin},</span>

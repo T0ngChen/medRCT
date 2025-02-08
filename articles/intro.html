@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Causal Mediation Analysis for Estimating Interventional Effects Mapped to a Target Trial • medRCT</title>
+<title>Causal Mediation Analysis Estimating Interventional Effects Mapped to a Target Trial • medRCT</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.4.9/font.css" rel="stylesheet">
 <link href="../deps/Roboto_Slab-0.4.9/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Causal Mediation Analysis for Estimating Interventional Effects Mapped to a Target Trial">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Causal Mediation Analysis Estimating Interventional Effects Mapped to a Target Trial">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -35,7 +35,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/intro.html">Causal Mediation Analysis for Estimating Interventional Effects Mapped to a Target Trial</a></li>
+<li><a class="dropdown-item" href="../articles/intro.html">Causal Mediation Analysis Estimating Interventional Effects Mapped to a Target Trial</a></li>
   </ul>
 </li>
       </ul>
@@ -56,7 +56,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Causal Mediation Analysis for Estimating Interventional Effects Mapped to a Target Trial</h1>
+      <h1>Causal Mediation Analysis Estimating Interventional Effects Mapped to a Target Trial</h1>
             
       
 
@@ -109,20 +109,21 @@ types of interventional effects, which are:</p>
 <ul>
 <li><p><strong><code>shift_all</code></strong>:<br>
 This estimand corresponds to an intervention that shifts the
-<strong>joint distribution of all mediators</strong> in the exposed to
-match the corresponding distribution in the unexposed.</p></li>
+<strong>joint distribution of all mediators</strong> in the exposed,
+given confounders, to match the corresponding distribution in the
+unexposed.</p></li>
 <li><p><strong><code>shift_k</code></strong>:<br>
 This estimand corresponds to an intervention that shifts the
-<strong>distribution of a specific mediator</strong> in the exposed to
-match the corresponding distribution in the unexposed, independent of
-and <strong>without considering flow-on effects</strong> on other
-mediators.</p></li>
+<strong>distribution of a specific mediator</strong> in the exposed,
+given confounders, to match the corresponding distribution in the
+unexposed, independent of and <strong>without considering flow-on
+effects</strong> on other mediators.</p></li>
 <li><p><strong><code>shift_k_order</code></strong>:<br>
 This estimand corresponds to an intervention that shifts the
-<strong>distribution of a specific mediator</strong> in the exposed to
-match the corresponding distribution in the unexposed, <strong>while
-considering flow-on effects</strong> on causally descendant
-mediators.</p></li>
+<strong>distribution of a specific mediator</strong> in the exposed,
+given confounders, to match the corresponding distribution in the
+unexposed, <strong>while considering flow-on effects</strong> on
+causally descendant mediators.</p></li>
 </ul>
 <p><code>medRCT</code> estimates interventional effects based on these
 interventions using a Monte Carlo simulation-based g-computation
@@ -160,13 +161,14 @@ intermediate confounders. Such intermediate confounders can be specified
 using the argument <code>intermediate_confs</code>. We consider the
 following example using simulated data inspired by a case study within
 the Longitudinal Study of Australian Children (LSAC) <span class="citation">(Goldfeld et al. 2023)</span>. Specifically, we aim to
-estimate the difference in expected outcome (risk of mental health
+estimate the difference in expected outcome (risk of child mental health
 problems) under exposure (low socioeconomic position) with versus
 without a hypothetical intervention that individually shifts the
 distribution of each mediator (parental mental health and preschool
-attendance) to the levels in the unexposed, while accounting for
-baseline confounders, an intermediate (exposure-induced)
-mediator-outcome confounder and correlations amongst mediators.</p>
+attendance) to the levels in the unexposed (high socioeconomic
+position), while accounting for baseline confounders, an intermediate
+(exposure-induced) mediator-outcome confounder and correlations amongst
+mediators.</p>
 <pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://t0ngchen.github.io/medRCT/">medRCT</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; medRCT: Causal mediation analysis estimating interventional effects mapped to a target trial</span></span>
@@ -212,6 +214,7 @@ mediator-outcome confounder and correlations amongst mediators.</p>
 <span>  boot_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>R <span class="op">=</span> <span class="fl">100</span>, stype <span class="op">=</span> <span class="st">"i"</span>, ci.type <span class="op">=</span> <span class="st">"norm"</span><span class="op">)</span>,</span>
 <span>  mcsim <span class="op">=</span> <span class="fl">200</span>                          </span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; Assumed causal order for estimating effect of type 'shift_k_order': parent_mh, preschool_att</span></span>
 <span><span class="co">#&gt; Conducting complete case analysis, 2499 observations were excluded due to missing data.</span></span>
 <span></span>
 <span><span class="co"># Summarise the results</span></span>
@@ -220,34 +223,34 @@ mediator-outcome confounder and correlations amongst mediators.</p>
 <span><span class="co">#&gt; Estimated interventional indirect effect: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;                                  Estimate Std. Error  CI Lower  CI Upper</span></span>
-<span><span class="co">#&gt; IIE_1 (p_trt - p_1)              0.012233   0.003988  0.004156  0.019787</span></span>
-<span><span class="co">#&gt; IIE_2 (p_trt - p_2)              0.000284   0.002492 -0.004544  0.005224</span></span>
-<span><span class="co">#&gt; IIE_all (p_trt - p_all)          0.012192   0.004735  0.002680  0.021243</span></span>
-<span><span class="co">#&gt; IIE_1_prime (p_trt - p_1_prime)  0.013044   0.004151  0.004521  0.020794</span></span>
-<span><span class="co">#&gt; TCE (p_trt - p_ctr)              0.129132   0.024456  0.082318  0.178184</span></span>
+<span><span class="co">#&gt; IIE_1 (p_trt - p_1)              0.011029   0.004155  0.002601  0.018890</span></span>
+<span><span class="co">#&gt; IIE_2 (p_trt - p_2)             -0.000779   0.002482 -0.005452  0.004278</span></span>
+<span><span class="co">#&gt; IIE_all (p_trt - p_all)          0.011012   0.004736  0.001513  0.020078</span></span>
+<span><span class="co">#&gt; IIE_1_prime (p_trt - p_1_prime)  0.011824   0.003960  0.003646  0.019167</span></span>
+<span><span class="co">#&gt; TCE (p_trt - p_ctr)              0.127928   0.024522  0.080967  0.177092</span></span>
 <span><span class="co">#&gt;                                 p-value</span></span>
-<span><span class="co">#&gt; IIE_1 (p_trt - p_1)              0.0022</span></span>
-<span><span class="co">#&gt; IIE_2 (p_trt - p_2)              0.9092</span></span>
-<span><span class="co">#&gt; IIE_all (p_trt - p_all)          0.0100</span></span>
-<span><span class="co">#&gt; IIE_1_prime (p_trt - p_1_prime)  0.0017</span></span>
-<span><span class="co">#&gt; TCE (p_trt - p_ctr)             1.3e-07</span></span>
+<span><span class="co">#&gt; IIE_1 (p_trt - p_1)              0.0080</span></span>
+<span><span class="co">#&gt; IIE_2 (p_trt - p_2)              0.7538</span></span>
+<span><span class="co">#&gt; IIE_all (p_trt - p_all)          0.0201</span></span>
+<span><span class="co">#&gt; IIE_1_prime (p_trt - p_1_prime)  0.0028</span></span>
+<span><span class="co">#&gt; TCE (p_trt - p_ctr)             1.8e-07</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Estimated interventional direct effect: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;                                 Estimate Std. Error CI Lower CI Upper p-value</span></span>
-<span><span class="co">#&gt; IDE_1 (p_1 - p_ctr)               0.1169     0.0246   0.0700   0.1666 2.1e-06</span></span>
-<span><span class="co">#&gt; IDE_2 (p_2 - p_ctr)               0.1288     0.0243   0.0823   0.1775 1.1e-07</span></span>
-<span><span class="co">#&gt; IDE_all (p_all - p_ctr)           0.1169     0.0245   0.0703   0.1663 1.8e-06</span></span>
-<span><span class="co">#&gt; IDE_1_prime (p_1_prime - p_ctr)   0.1161     0.0247   0.0692   0.1660 2.6e-06</span></span>
+<span><span class="co">#&gt; IDE_1 (p_1 - p_ctr)               0.1169     0.0247   0.0699   0.1666 2.2e-06</span></span>
+<span><span class="co">#&gt; IDE_2 (p_2 - p_ctr)               0.1287     0.0243   0.0819   0.1773 1.2e-07</span></span>
+<span><span class="co">#&gt; IDE_all (p_all - p_ctr)           0.1169     0.0245   0.0702   0.1663 1.9e-06</span></span>
+<span><span class="co">#&gt; IDE_1_prime (p_1_prime - p_ctr)   0.1161     0.0247   0.0691   0.1661 2.7e-06</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Estimated expected outcome in each trial arm:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;           Estimate Std. Error CI Lower CI Upper p-value</span></span>
 <span><span class="co">#&gt; p_1         0.3300     0.0225   0.2868   0.3751  &lt;2e-16</span></span>
-<span><span class="co">#&gt; p_2         0.3419     0.0220   0.2994   0.3858  &lt;2e-16</span></span>
-<span><span class="co">#&gt; p_all       0.3300     0.0224   0.2871   0.3748  &lt;2e-16</span></span>
-<span><span class="co">#&gt; p_ctr       0.2131     0.0100   0.1930   0.2323  &lt;2e-16</span></span>
-<span><span class="co">#&gt; p_trt       0.3422     0.0222   0.2994   0.3864  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_2         0.3418     0.0221   0.2990   0.3855  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_all       0.3300     0.0224   0.2870   0.3748  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_ctr       0.2131     0.0101   0.1929   0.2324  &lt;2e-16</span></span>
+<span><span class="co">#&gt; p_trt       0.3410     0.0222   0.2981   0.3853  &lt;2e-16</span></span>
 <span><span class="co">#&gt; p_1_prime   0.3292     0.0226   0.2860   0.3745  &lt;2e-16</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Sample Size: 2608 </span></span>
@@ -329,7 +332,7 @@ for specific research questions.</li>
 <h2 id="special-cases">Special cases<a class="anchor" aria-label="anchor" href="#special-cases"></a>
 </h2>
 <div class="section level4">
-<h4 id="analysis-without-intermediate-confounders">Analysis without intermediate confounders<a class="anchor" aria-label="anchor" href="#analysis-without-intermediate-confounders"></a>
+<h4 id="analysis-without-intermediate-confounders">Analysis without intermediate confounders:<a class="anchor" aria-label="anchor" href="#analysis-without-intermediate-confounders"></a>
 </h4>
 <p>If there are <strong>no intermediate confounders</strong> in the
 analysis, set the argument
@@ -367,12 +370,13 @@ to define meaningful interventional effects.</p>
 <p>When estimating the estimand <code>shift_k_order</code>, the
 <strong>order of mediators</strong> specified in the argument
 <strong><code>mediators</code></strong> is important, as it defines the
-<strong>causal ordering</strong> among the mediators. This ordering
-determines the <strong>causal descendants</strong> for the mediator of
-interest, providing essential information for <strong>accounting for
-flow-on effects</strong> after the hypothetical intervention. Specifying
-an incorrect mediator ordering may result in <strong>biased
-estimates</strong> for the estimand <code>shift_k_order</code>.</p>
+assumed <strong>causal ordering</strong> among the mediators in the
+analysis. This ordering determines the <strong>causal
+descendants</strong> for the mediator of interest, providing essential
+information for <strong>accounting for flow-on effects</strong> after
+the hypothetical intervention. Specifying an incorrect mediator ordering
+may result in <strong>biased estimates</strong> for the estimand
+<code>shift_k_order</code>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -396,13 +400,9 @@ clicking the <code>Run medRCT models</code> button, the app will fit all
 regression models required by the <code>medRCT</code> algorithm and
 generate detailed summaries for each model. These summaries support
 model assessment, allowing users to identify potential issues with
-fitting what are usually richly-specified models.</p>
-<p>Additionally, any <strong>warnings</strong> or <strong>error
-messages</strong> encountered during the model fitting process are
-highlighted in the app. By offering a user-friendly interface and
-diagnostic tool, our Shiny app streamlines the model assessment process
-for the <code>medRCT</code> algorithm, facilitating transparent and
-comprehensive model assessment.</p>
+fitting what are usually richly-specified models. Additionally, any
+<strong>warnings</strong> or <strong>error messages</strong> encountered
+during the model fitting process are highlighted in the app.</p>
 </div>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
