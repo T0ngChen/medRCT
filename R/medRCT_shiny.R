@@ -339,9 +339,8 @@ medRCT_shiny <- function(data, ...){
 
       isolate({
         tagList(
-          h3(paste0("Models needed to estimate the expected outcome in relevant target trial arms for the specified interventional effect of interest (",
-                    ifelse(input$intervention_type == "all", "all interventional effects", input$intervention_type),
-                    ")")),
+          h3(paste0("Models needed to estimate the expected outcome in relevant target trial arms for the specified interventional effect of interest: ",
+                    ifelse(input$intervention_type == "all", "all interventional effects", input$intervention_type))),
 
           # Create first-level tabs dynamically
           do.call(tabsetPanel, lapply(names(model.list$newmod), function(group_name) {
@@ -384,7 +383,6 @@ medRCT_shiny <- function(data, ...){
 
             } else {  # Keep Treatment Arm nesting for "Mediator Models"
               tabPanel(
-                h5("Mediator models needed to estimate the expected outcome in relevant target trial arms below"),
                 title = group_name,
                 do.call(tabsetPanel, lapply(
                   names(model.list$newmod[[group_name]])[order(
@@ -395,6 +393,9 @@ medRCT_shiny <- function(data, ...){
                                               ifelse(grepl("[0-9]+", names(model.list$newmod[[group_name]])), as.numeric(gsub("[^0-9]", "", names(model.list$newmod[[group_name]]))), 0)
                                             )], function(arm_name) {
                   tabPanel(
+                    h4("L-models correspond to intermediate confounder models (e.g., in L1_model, the response variable is the
+                       first intermediate confounder), and M-models correspond to mediator models (e.g., in M1_model,
+                       the response variable is the first mediator of interest)"),
                     title = arm_name,
                     do.call(tabsetPanel, lapply(names(model.list$newmod[[group_name]][[arm_name]]), function(model_name) {
 
