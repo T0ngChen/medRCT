@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 
 > Causal mediation analysis estimating interventional effects mapped to a target trial
 
-The R package `medRCT` for causal mediation analysis supports the estimation of interventional effects [@vanderweele2014effect], specifically interventional effects that are defined explicitly in terms of a "target trial" [@hernan2016using], as recently proposed by @Moreno2021Mediation. In the target trial, the treatment strategies are specified to reflect hypothetical interventions targeting and thus shifting the joint distribution of the mediators. `medRCT` can accommodate any number of potentially correlated mediators, including mediators that are not of primary interest but that are intermediate (exposure-induced) mediator-outcome confounders.  
+The R package `medRCT` for causal mediation analysis supports the estimation of interventional effects [@vanderweele2014effect], specifically interventional effects that are defined such that they explicitly map to a "target trial" [@hernan2016using], as recently proposed by @Moreno2021Mediation. In the target trial, the treatment strategies are specified to reflect hypothetical interventions targeting and thus shifting the joint distribution of the mediators. `medRCT` can accommodate any number of potentially correlated mediators, including mediators that are not of primary interest but that are intermediate (exposure-induced) mediator-outcome confounders.  
 
 ## Installation
 
