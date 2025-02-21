@@ -339,7 +339,7 @@ medRCT_shiny <- function(data, ...){
 
       isolate({
         tagList(
-          h3(paste0("Models needed to estimate the expected outcome in relevant target trial arms for the specified interventional effect of interest: ",
+          h3(paste0("Models needed to estimate the expected outcome in relevant target trial arms for the specified interventional effect(s) of interest: ",
                     ifelse(input$intervention_type == "all", "all interventional effects", input$intervention_type))),
 
           # Create first-level tabs dynamically
