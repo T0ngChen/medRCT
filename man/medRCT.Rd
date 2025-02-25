@@ -80,7 +80,7 @@ interest but that are intermediate (exposure-induced) mediator-outcome confounde
 }
 \details{
 Before conducting the mediation analysis, users are encouraged to assess the models fitted by the algorithm
-using the interactive Shiny application, which can be launched by running the function \code{medRCT_shiny}.
+using the interactive Shiny application, which can be launched by running the function \code{medRCT_shiny(data = data)}.
 The Shiny app provides a user-friendly interface to review model summaries and identify potential warnings and errors,
 ensuring that the models are appropriately specified before proceeding with the analysis.
 

@@ -17,10 +17,10 @@ coverage](https://codecov.io/gh/T0ngChen/medRCT/graph/badge.svg)](https://app.co
 
 The R package `medRCT` for causal mediation analysis supports the
 estimation of interventional effects (VanderWeele, Vansteelandt, and
-Robins 2014), specifically interventional effects that are defined
-explicitly in terms of a “target trial” (Hernán and Robins 2016), as
-recently proposed by Moreno-Betancur et al. (2021). In the target trial,
-the treatment strategies are specified to reflect hypothetical
+Robins 2014), specifically interventional effects that are defined such
+that they map explicitly to a “target trial” (Hernán and Robins 2016),
+as recently proposed by Moreno-Betancur et al. (2021). In the target
+trial, the treatment strategies are specified to reflect hypothetical
 interventions targeting and thus shifting the joint distribution of the
 mediators. `medRCT` can accommodate any number of potentially correlated
 mediators, including mediators that are not of primary interest but that
@@ -63,15 +63,20 @@ set.seed(2025)
 
 # Display the first few rows of the dataset
 head(LSACdata)
-#> # A tibble: 6 × 11
-#>   child_sex child_atsi mat_cob mat_engl mat_age   sep fam_stress parent_mh preschool_att child_mh child_SDQscore
-#>       <dbl>      <dbl>   <dbl>    <dbl>   <dbl> <dbl>      <dbl>     <dbl>         <dbl>    <dbl>          <dbl>
-#> 1         0          1       0        0       1     0          0         0             1        0           8.92
-#> 2        NA          0       0        0      NA     0         NA        NA             0        0           7.35
-#> 3        NA          0       0        0      NA     0         NA        NA             0        1          12.8 
-#> 4        NA          0       0        0      NA     0         NA        NA             0        0           6.61
-#> 5         1          0       0        0       1     1          0         0             0        1          10.3 
-#> 6         1          0       0        0       1     0          1         1             0        1          13.6
+#>   child_sex child_atsi mat_cob mat_engl mat_age sep fam_stress parent_mh preschool_att child_mh
+#> 1         0          1       0        0       1   0          0         0             1        0
+#> 2        NA          0       0        0      NA   0         NA        NA             0        0
+#> 3        NA          0       0        0      NA   0         NA        NA             0        1
+#> 4        NA          0       0        0      NA   0         NA        NA             0        0
+#> 5         1          0       0        0       1   1          0         0             0        1
+#> 6         1          0       0        0       1   0          1         1             0        1
+#>   child_SDQscore
+#> 1       8.924660
+#> 2       7.349826
+#> 3      12.824643
+#> 4       6.611369
+#> 5      10.329341
+#> 6      13.552515
 
 # Define confounders for the analysis
 confounders <- c("child_sex", "child_atsi", "mat_cob", "mat_engl", "mat_age")
@@ -152,7 +157,7 @@ For work involving the `medRCT` R package, please cite the following:
        title = {medRCT: Causal mediation analysis estimating interventional effects mapped to a target trial},
        year  = {2025},
        url = {https://t0ngchen.github.io/medRCT/},
-       note = {R package version 0.0.0.9082}
+       note = {R package version 0.1.0}
        }
     @article{Moreno2021Mediation,
        author={Margarita Moreno-Betancur and Paul Moran and Denise Becker and George C Patton and John B Carlin},
