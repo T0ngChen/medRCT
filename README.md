@@ -39,12 +39,15 @@ cross-world counterfactuals, these effects have been criticized for not
 capturing the effects of interventions or policy measures that could be
 conducted in the real world (Naimi, Kaufman, and MacLehose 2014).
 Further, the independence assumption required can never be guaranteed,
-even in an experiment, and it renders the estimands unidentifiable in
-the common settings of exposure-induced mediator-outcome confounding and
-multiple mediators. However, in the context of multiple mediators,
-certain path-specific natural effects, also defined in terms of
-cross-world counterfactuals, can still be identified and may be of
-substantive interest (VanderWeele and Vansteelandt 2014).
+even in an experiment (Robins and Richardson 2011; Didelez, Dawid, and
+Geneletti 2006), and it renders the estimands unidentifiable in the
+common settings of exposure-induced mediator-outcome confounding and
+multiple mediators (Avin, Shpitser, and Pearl 2005; VanderWeele,
+Vansteelandt, and Robins 2014; Vansteelandt and VanderWeele 2012).
+However, in the context of multiple mediators, certain path-specific
+natural effects, also defined in terms of cross-world counterfactuals,
+can still be identified and may be of substantive interest (VanderWeele
+and Vansteelandt 2014).
 
 Interventional effects have been proposed as an alternative to address
 these limitations. Firstly, these effects can be shown to map to a
@@ -66,7 +69,7 @@ interventional effects that correspond to effects of hypothetical
 interventions which:
 
 1.  shift the joint distribution of all mediators under exposure to that
-    under no exposure
+    under no exposure,
 
 2.  shift the distribution of a specific mediator under exposure, given
     confounders, to match the corresponding distribution under no
@@ -239,6 +242,26 @@ For work involving the `medRCT` R package, please cite the following:
 <div id="refs" class="references csl-bib-body hanging-indent"
 entry-spacing="0">
 
+<div id="ref-Avin2005" class="csl-entry">
+
+Avin, Chen, Ilya Shpitser, and Judea Pearl. 2005. “Identifiability of
+Path-Specific Effects.” In *Proceedings of the 19th International Joint
+Conference on Artificial Intelligence*, 357–63. IJCAI’05. San Francisco,
+CA, USA: Morgan Kaufmann Publishers Inc.
+<https://doi.org/10.5555/1642293.1642350>.
+
+</div>
+
+<div id="ref-Didelez2006" class="csl-entry">
+
+Didelez, Vanessa, Philip Dawid, and Sara Geneletti. 2006. “Direct and
+Indirect Effects of Sequential Treatments.” In *Proceedings of the
+Twenty-Second Conference on Uncertainty in Artificial Intelligence*,
+138–46. UAI’06. Arlington, Virginia, USA: AUAI Press.
+<https://doi.org/10.5555/3020419.3020437>.
+
+</div>
+
 <div id="ref-Goldfeld2023" class="csl-entry">
 
 Goldfeld, Sharon, Margarita Moreno-Betancur, Sarah Gray, Shuaijun Guo,
@@ -251,8 +274,8 @@ Health and Preschool Attendance.” *Pediatrics* 151 (5): e2022057101.
 
 <div id="ref-hernan2016using" class="csl-entry">
 
-Hernán, Miguel A, and James M Robins. 2016. “Using Big Data to Emulate a
-Target Trial When a Randomized Trial Is Not Available.” *American
+Hernán, Miguel A, and James M. Robins. 2016. “Using Big Data to Emulate
+a Target Trial When a Randomized Trial Is Not Available.” *American
 Journal of Epidemiology* 183 (8): 758–64.
 <https://doi.org/10.1093/aje/kwv254>.
 
@@ -269,8 +292,8 @@ Interventional Effects: A More Natural Approach to Mediation Analysis.”
 
 <div id="ref-Moreno2021Mediation" class="csl-entry">
 
-Moreno-Betancur, Margarita, Paul Moran, Denise Becker, George C Patton,
-and John B Carlin. 2021. “Mediation Effects That Emulate a Target
+Moreno-Betancur, Margarita, Paul Moran, Denise Becker, George C. Patton,
+and John B. Carlin. 2021. “Mediation Effects That Emulate a Target
 Randomised Trial: Simulation-Based Evaluation of Ill-Defined
 Interventions on Multiple Mediators.” *Statistical Methods in Medical
 Research* 30 (6): 1395–1412. <https://doi.org/10.1177/0962280221998409>.
@@ -279,7 +302,7 @@ Research* 30 (6): 1395–1412. <https://doi.org/10.1177/0962280221998409>.
 
 <div id="ref-Naimi2014Mediation" class="csl-entry">
 
-Naimi, Ashley I, Jay S Kaufman, and Richard F MacLehose. 2014.
+Naimi, Ashley I., Jay S. Kaufman, and Richard F. MacLehose. 2014.
 “Mediation Misgivings: Ambiguous Clinical and Public Health
 Interpretations of Natural Direct and Indirect Effects.” *International
 Journal of Epidemiology* 43 (5): 1656–61.
@@ -298,7 +321,7 @@ UAI’01. San Francisco, CA, USA: Morgan Kaufmann Publishers Inc.
 
 <div id="ref-Robins1992" class="csl-entry">
 
-Robins, James M, and Sander Greenland. 1992. “Identifiability and
+Robins, James M., and Sander Greenland. 1992. “Identifiability and
 Exchangeability for Direct and Indirect Effects.” *Epidemiology* 3 (2):
 143–55. <https://doi.org/10.1097/00001648-199203000-00013>.
 
@@ -306,7 +329,7 @@ Exchangeability for Direct and Indirect Effects.” *Epidemiology* 3 (2):
 
 <div id="ref-Robins2011" class="csl-entry">
 
-Robins, James M, and Thomas S Richardson. 2011. “Alternative Graphical
+Robins, James M., and Thomas S. Richardson. 2011. “Alternative Graphical
 Causal Models and the Identification of Direct Effects.” In *Causality
 and Psychopathology: Finding the Determinants of Disorders and Their
 Cures*. Oxford University Press.
@@ -316,7 +339,7 @@ Cures*. Oxford University Press.
 
 <div id="ref-VanderWeele2014" class="csl-entry">
 
-VanderWeele, Tyler J, and Stijn Vansteelandt. 2014. “Mediation Analysis
+VanderWeele, Tyler J., and Stijn Vansteelandt. 2014. “Mediation Analysis
 with Multiple Mediators.” *Epidemiologic Methods* 2 (1): 95–115.
 <https://doi.org/10.1515/em-2012-0010>.
 
@@ -324,10 +347,19 @@ with Multiple Mediators.” *Epidemiologic Methods* 2 (1): 95–115.
 
 <div id="ref-vanderweele2014effect" class="csl-entry">
 
-VanderWeele, Tyler J, Stijn Vansteelandt, and James M Robins. 2014.
+VanderWeele, Tyler J., Stijn Vansteelandt, and James M. Robins. 2014.
 “Effect Decomposition in the Presence of an Exposure-Induced
 Mediator-Outcome Confounder.” *Epidemiology* 25 (2): 300–306.
 <https://doi.org/10.1097/EDE.0000000000000034>.
+
+</div>
+
+<div id="ref-Vansteelandt2012Natural" class="csl-entry">
+
+Vansteelandt, Stijn, and Tyler J. VanderWeele. 2012. “Natural Direct and
+Indirect Effects on the Exposed: Effect Decomposition Under Weaker
+Assumptions.” *Biometrics* 68 (4): 1019–27.
+<https://doi.org/10.1111/j.1541-0420.2012.01777.x>.
 
 </div>
 
