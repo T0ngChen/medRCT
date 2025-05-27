@@ -8,8 +8,8 @@
 <title>Causal mediation analysis estimating interventional effects mapped to a target trial • medRCT</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/Roboto-0.4.9/font.css" rel="stylesheet">
-<link href="deps/Roboto_Slab-0.4.9/font.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/Roboto-0.4.10/font.css" rel="stylesheet">
+<link href="deps/Roboto_Slab-0.4.10/font.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Causal mediation analysis estimating interventional effects mapped to a target trial">
@@ -63,6 +63,20 @@
 </blockquote>
 <p>The R package <code>medRCT</code> for causal mediation analysis supports the estimation of interventional effects (VanderWeele, Vansteelandt, and Robins 2014), specifically interventional effects that are defined such that they map explicitly to a “target trial” (Hernán and Robins 2016), as recently proposed by Moreno-Betancur et al. (2021). In the target trial, the treatment strategies are specified to reflect hypothetical interventions targeting and thus shifting the joint distribution of the mediators. <code>medRCT</code> can accommodate any number of potentially correlated mediators, including mediators that are not of primary interest but that are intermediate (exposure-induced) mediator-outcome confounders.</p>
 <div class="section level2">
+<h2 id="statement-of-need">Statement of need:<a class="anchor" aria-label="anchor" href="#statement-of-need"></a>
+</h2>
+<p>Causal mediation analysis generally seeks to investigate the extent to which the causal effect of an exposure on an outcome is mediated through intermediate variables. Natural (in)direct effects (Robins and Greenland 1992; Pearl 2001) were initially proposed as the estimands of interest in these analyses. Natural effects are defined based on cross-world counterfactuals (Robins and Richardson 2011) and their identifiability relies on a cross-world independence assumption. Given their reliance on cross-world counterfactuals, these effects have been criticized for not capturing the effects of interventions or policy measures that could be conducted in the real world (Naimi, Kaufman, and MacLehose 2014). Further, the independence assumption required can never be guaranteed, even in an experiment (Robins and Richardson 2011; Didelez, Dawid, and Geneletti 2006), and it renders the estimands unidentifiable in the common settings of exposure-induced mediator-outcome confounding and multiple mediators (Avin, Shpitser, and Pearl 2005; VanderWeele, Vansteelandt, and Robins 2014; Vansteelandt and VanderWeele 2012). However, in the context of multiple mediators, certain path-specific natural effects, also defined in terms of cross-world counterfactuals, can still be identified and may be of substantive interest (VanderWeele and Vansteelandt 2014).</p>
+<p>Interventional effects have been proposed as an alternative to address these limitations. Firstly, these effects can be shown to map to a hypothetical randomized trial that evaluates the impact of hypothetical interventions shifting the distribution of the mediators (Moreno-Betancur and Carlin 2018). Secondly, interventional effects remain identifiable in the presence of exposure-induced mediator-outcome confounding and multiple interrelated mediators of interest.</p>
+<p>The <code>medRCT</code> package implements the estimation of interventional effects that are defined explicitly as effects in a hypothetical randomized trial (the target trial) , as proposed by Moreno-Betancur et al. (2021). This assists with clarifying the research question and ensuring that the study findings are meaningful and relevant to policy and practice. In the target trial, the treatment strategies are specified to reflect hypothetical interventions targeting and thus shifting the joint mediator distribution. The <code>medRCT</code> package implements the estimation of interventional effects that correspond to effects of hypothetical interventions which:</p>
+<ol style="list-style-type: decimal">
+<li><p>shift the joint distribution of all mediators under exposure to that under no exposure,</p></li>
+<li><p>shift the distribution of a specific mediator under exposure, given confounders, to match the corresponding distribution under no exposure, independent of and without considering flow-on effects on other mediators,</p></li>
+<li><p>shift the distribution of a specific mediator under exposure, given confounders, to match the corresponding distribution under no exposure, while considering flow-on effects on causally descendant mediators.</p></li>
+</ol>
+<p><code>medRCT</code> estimates these interventional effects using a Monte Carlo simulation-based g-computation approach. It should be noted that this method can be computationally intensive and is sensitive to model misspecification, as all nuisance parameters are estimated via restrictive parametric models.</p>
+<p>Researchers should consider using <code>medRCT</code> when their ultimate goal for conducting mediation analysis is to examine the effects of hypothetical interventions targeting multiple, potentially interdependent mediators.</p>
+</div>
+<div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>The <code>medRCT</code> package is not yet available on CRAN. You can install the latest stable version from <a href="https://github.com/T0ngChen/medRCT" class="external-link">GitHub</a> using the following command:</p>
@@ -83,20 +97,20 @@
 <span></span>
 <span><span class="co"># Display the first few rows of the dataset</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">LSACdata</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   child_sex child_atsi mat_cob mat_engl mat_age sep fam_stress parent_mh preschool_att child_mh</span></span>
-<span><span class="co">#&gt; 1         0          1       0        0       1   0          0         0             1        0</span></span>
-<span><span class="co">#&gt; 2        NA          0       0        0      NA   0         NA        NA             0        0</span></span>
-<span><span class="co">#&gt; 3        NA          0       0        0      NA   0         NA        NA             0        1</span></span>
-<span><span class="co">#&gt; 4        NA          0       0        0      NA   0         NA        NA             0        0</span></span>
-<span><span class="co">#&gt; 5         1          0       0        0       1   1          0         0             0        1</span></span>
-<span><span class="co">#&gt; 6         1          0       0        0       1   0          1         1             0        1</span></span>
-<span><span class="co">#&gt;   child_SDQscore</span></span>
-<span><span class="co">#&gt; 1       8.924660</span></span>
-<span><span class="co">#&gt; 2       7.349826</span></span>
-<span><span class="co">#&gt; 3      12.824643</span></span>
-<span><span class="co">#&gt; 4       6.611369</span></span>
-<span><span class="co">#&gt; 5      10.329341</span></span>
-<span><span class="co">#&gt; 6      13.552515</span></span>
+<span><span class="co">#&gt;   child_sex child_atsi mat_cob mat_engl mat_age sep fam_stress parent_mh</span></span>
+<span><span class="co">#&gt; 1         0          1       0        0       1   0          0         0</span></span>
+<span><span class="co">#&gt; 2        NA          0       0        0      NA   0         NA        NA</span></span>
+<span><span class="co">#&gt; 3        NA          0       0        0      NA   0         NA        NA</span></span>
+<span><span class="co">#&gt; 4        NA          0       0        0      NA   0         NA        NA</span></span>
+<span><span class="co">#&gt; 5         1          0       0        0       1   1          0         0</span></span>
+<span><span class="co">#&gt; 6         1          0       0        0       1   0          1         1</span></span>
+<span><span class="co">#&gt;   preschool_att child_mh child_SDQscore</span></span>
+<span><span class="co">#&gt; 1             1        0       8.924660</span></span>
+<span><span class="co">#&gt; 2             0        0       7.349826</span></span>
+<span><span class="co">#&gt; 3             0        1      12.824643</span></span>
+<span><span class="co">#&gt; 4             0        0       6.611369</span></span>
+<span><span class="co">#&gt; 5             0        1      10.329341</span></span>
+<span><span class="co">#&gt; 6             0        1      13.552515</span></span>
 <span></span>
 <span><span class="co"># Define confounders for the analysis</span></span>
 <span><span class="va">confounders</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"child_sex"</span>, <span class="st">"child_atsi"</span>, <span class="st">"mat_cob"</span>, <span class="st">"mat_engl"</span>, <span class="st">"mat_age"</span><span class="op">)</span></span></code></pre></div>
@@ -176,17 +190,44 @@
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-Avin2005" class="csl-entry">
+Avin, Chen, Ilya Shpitser, and Judea Pearl. 2005. “Identifiability of Path-Specific Effects.” In <em>Proceedings of the 19th International Joint Conference on Artificial Intelligence</em>, 357–63. IJCAI’05. San Francisco, CA, USA: Morgan Kaufmann Publishers Inc. <a href="https://doi.org/10.5555/1642293.1642350" class="external-link uri">https://doi.org/10.5555/1642293.1642350</a>.
+</div>
+<div id="ref-Didelez2006" class="csl-entry">
+Didelez, Vanessa, Philip Dawid, and Sara Geneletti. 2006. “Direct and Indirect Effects of Sequential Treatments.” In <em>Proceedings of the Twenty-Second Conference on Uncertainty in Artificial Intelligence</em>, 138–46. UAI’06. Arlington, Virginia, USA: AUAI Press. <a href="https://doi.org/10.5555/3020419.3020437" class="external-link uri">https://doi.org/10.5555/3020419.3020437</a>.
+</div>
 <div id="ref-Goldfeld2023" class="csl-entry">
 Goldfeld, Sharon, Margarita Moreno-Betancur, Sarah Gray, Shuaijun Guo, Marnie Downes, Elodie O’Connor, Francisco Azpitarte, et al. 2023. “Addressing Child Mental Health Inequities Through Parental Mental Health and Preschool Attendance.” <em>Pediatrics</em> 151 (5): e2022057101. <a href="https://doi.org/10.1542/peds.2022-057101" class="external-link uri">https://doi.org/10.1542/peds.2022-057101</a>.
 </div>
 <div id="ref-hernan2016using" class="csl-entry">
-Hernán, Miguel A, and James M Robins. 2016. “Using Big Data to Emulate a Target Trial When a Randomized Trial Is Not Available.” <em>American Journal of Epidemiology</em> 183 (8): 758–64. <a href="https://doi.org/10.1093/aje/kwv254" class="external-link uri">https://doi.org/10.1093/aje/kwv254</a>.
+Hernán, Miguel A, and James M. Robins. 2016. “Using Big Data to Emulate a Target Trial When a Randomized Trial Is Not Available.” <em>American Journal of Epidemiology</em> 183 (8): 758–64. <a href="https://doi.org/10.1093/aje/kwv254" class="external-link uri">https://doi.org/10.1093/aje/kwv254</a>.
+</div>
+<div id="ref-MorenoBetancur2018" class="csl-entry">
+Moreno-Betancur, Margarita, and John B. Carlin. 2018. “Understanding Interventional Effects: A More Natural Approach to Mediation Analysis.” <em>Epidemiology</em> 29 (5): 614–17. <a href="https://doi.org/10.1097/EDE.0000000000000866" class="external-link uri">https://doi.org/10.1097/EDE.0000000000000866</a>.
 </div>
 <div id="ref-Moreno2021Mediation" class="csl-entry">
-Moreno-Betancur, Margarita, Paul Moran, Denise Becker, George C Patton, and John B Carlin. 2021. “Mediation Effects That Emulate a Target Randomised Trial: Simulation-Based Evaluation of Ill-Defined Interventions on Multiple Mediators.” <em>Statistical Methods in Medical Research</em> 30 (6): 1395–1412. <a href="https://doi.org/10.1177/0962280221998409" class="external-link uri">https://doi.org/10.1177/0962280221998409</a>.
+Moreno-Betancur, Margarita, Paul Moran, Denise Becker, George C. Patton, and John B. Carlin. 2021. “Mediation Effects That Emulate a Target Randomised Trial: Simulation-Based Evaluation of Ill-Defined Interventions on Multiple Mediators.” <em>Statistical Methods in Medical Research</em> 30 (6): 1395–1412. <a href="https://doi.org/10.1177/0962280221998409" class="external-link uri">https://doi.org/10.1177/0962280221998409</a>.
+</div>
+<div id="ref-Naimi2014Mediation" class="csl-entry">
+Naimi, Ashley I., Jay S. Kaufman, and Richard F. MacLehose. 2014. “Mediation Misgivings: Ambiguous Clinical and Public Health Interpretations of Natural Direct and Indirect Effects.” <em>International Journal of Epidemiology</em> 43 (5): 1656–61. <a href="https://doi.org/10.1093/ije/dyu107" class="external-link uri">https://doi.org/10.1093/ije/dyu107</a>.
+</div>
+<div id="ref-Pearl2001" class="csl-entry">
+Pearl, Judea. 2001. “Direct and Indirect Effects.” In <em>Proceedings of the 17th Conference on Uncertainty in Artificial Intelligence</em>, 411–20. UAI’01. San Francisco, CA, USA: Morgan Kaufmann Publishers Inc. <a href="https://doi.org/10.5555/2074022.2074073" class="external-link uri">https://doi.org/10.5555/2074022.2074073</a>.
+</div>
+<div id="ref-Robins1992" class="csl-entry">
+Robins, James M., and Sander Greenland. 1992. “Identifiability and Exchangeability for Direct and Indirect Effects.” <em>Epidemiology</em> 3 (2): 143–55. <a href="https://doi.org/10.1097/00001648-199203000-00013" class="external-link uri">https://doi.org/10.1097/00001648-199203000-00013</a>.
+</div>
+<div id="ref-Robins2011" class="csl-entry">
+Robins, James M., and Thomas S. Richardson. 2011. “Alternative Graphical Causal Models and the Identification of Direct Effects.” In <em>Causality and Psychopathology: Finding the Determinants of Disorders and Their Cures</em>. Oxford University Press. <a href="https://doi.org/10.1093/oso/9780199754649.003.0011" class="external-link uri">https://doi.org/10.1093/oso/9780199754649.003.0011</a>.
+</div>
+<div id="ref-VanderWeele2014" class="csl-entry">
+VanderWeele, Tyler J., and Stijn Vansteelandt. 2014. “Mediation Analysis with Multiple Mediators.” <em>Epidemiologic Methods</em> 2 (1): 95–115. <a href="https://doi.org/10.1515/em-2012-0010" class="external-link uri">https://doi.org/10.1515/em-2012-0010</a>.
 </div>
 <div id="ref-vanderweele2014effect" class="csl-entry">
-VanderWeele, Tyler J, Stijn Vansteelandt, and James M Robins. 2014. “Effect Decomposition in the Presence of an Exposure-Induced Mediator-Outcome Confounder.” <em>Epidemiology</em> 25 (2): 300–306. <a href="https://doi.org/10.1097/EDE.0000000000000034" class="external-link uri">https://doi.org/10.1097/EDE.0000000000000034</a>.
+VanderWeele, Tyler J., Stijn Vansteelandt, and James M. Robins. 2014. “Effect Decomposition in the Presence of an Exposure-Induced Mediator-Outcome Confounder.” <em>Epidemiology</em> 25 (2): 300–306. <a href="https://doi.org/10.1097/EDE.0000000000000034" class="external-link uri">https://doi.org/10.1097/EDE.0000000000000034</a>.
+</div>
+<div id="ref-Vansteelandt2012Natural" class="csl-entry">
+Vansteelandt, Stijn, and Tyler J. VanderWeele. 2012. “Natural Direct and Indirect Effects on the Exposed: Effect Decomposition Under Weaker Assumptions.” <em>Biometrics</em> 68 (4): 1019–27. <a href="https://doi.org/10.1111/j.1541-0420.2012.01777.x" class="external-link uri">https://doi.org/10.1111/j.1541-0420.2012.01777.x</a>.
 </div>
 </div>
 </div>
@@ -218,11 +259,11 @@ VanderWeele, Tyler J, Stijn Vansteelandt, and James M Robins. 2014. “Effect De
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://tongchen.netlify.app/" class="external-link">Tong Chen</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-2751-2412" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<a href="https://tongchen.netlify.app/" class="external-link">Tong Chen</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-2751-2412" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li>
-<a href="https://www.mcri.edu.au/researcher-details/margarita-moreno-betancur" class="external-link">Margarita Moreno-Betancur</a> <br><small class="roles"> Author </small>  </li>
+<a href="https://www.mcri.edu.au/researcher-details/margarita-moreno-betancur" class="external-link">Margarita Moreno-Betancur</a> <br><small class="roles"> Author </small>   </li>
 <li>
-<a href="https://www.mcri.edu.au/researcher-details/ghazaleh-dashti" class="external-link">S. Ghazaleh Dashti</a> <br><small class="roles"> Author </small>  </li>
+<a href="https://www.mcri.edu.au/researcher-details/ghazaleh-dashti" class="external-link">S. Ghazaleh Dashti</a> <br><small class="roles"> Author </small>   </li>
 </ul>
 </div>
 
@@ -244,7 +285,7 @@ VanderWeele, Tyler J, Stijn Vansteelandt, and James M Robins. 2014. “Effect De
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
