@@ -1,4 +1,3 @@
-
 #' Estimation of Joint Distribution of Mediators and Intermediate Confounders under
 #' Exposed and Unexposed
 #'
@@ -22,27 +21,46 @@
 #' @importFrom stats coef as.formula
 #'
 #' @keywords internal
-joint_dist <- function(k, K, data, dat2, fam_type, mediators,
-                       interactions_XC, exposure_level, n) {
+joint_dist <- function(
+  k,
+  K,
+  data,
+  dat2,
+  fam_type,
+  mediators,
+  interactions_XC,
+  exposure_level,
+  n
+) {
   # Fit the model
   fit <- glm(
-    stats::as.formula(gen_formula(k = k,
-                                  interactions_XC = interactions_XC,
-                                  include_all = TRUE)),
+    stats::as.formula(gen_formula(
+      k = k,
+      interactions_XC = interactions_XC,
+      include_all = TRUE
+    )),
     data = data,
     family = fam_type[[k]]
   )
 
   # Check convergence and coefficients
-  if(!fit$converged){
-    warning(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
+  if (!fit$converged) {
+    warning(paste0(
+      "Model did not converge when using variable ",
+      mediators[k],
+      " as the response"
+    ))
   }
-  if(any(is.na(fit$coefficients))){
+  if (any(is.na(fit$coefficients))) {
     na_coefs <- names(stats::coef(fit))[is.na(stats::coef(fit))]
-    warning(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
-                   "when using variable ", mediators[k], " as the response"))
+    warning(paste0(
+      "The following coefficients were NA: ",
+      paste(na_coefs, collapse = ", "),
+      "when using variable ",
+      mediators[k],
+      " as the response"
+    ))
   }
-
 
   # Loop through exposure levels
   for (a in exposure_level) {
@@ -68,7 +86,6 @@ joint_dist <- function(k, K, data, dat2, fam_type, mediators,
 }
 
 
-
 #' Estimation of Marginal Distributions of Mediators under Unexposed
 #'
 #' @param k An integer specifying the index of the current mediator being processed.
@@ -90,25 +107,44 @@ joint_dist <- function(k, K, data, dat2, fam_type, mediators,
 #' @importFrom stats coef as.formula
 #'
 #' @keywords internal
-marg_dist <- function(k, first, K, data, dat2, fam_type, mediators,
-                      interactions_XC, n) {
+marg_dist <- function(
+  k,
+  first,
+  K,
+  data,
+  dat2,
+  fam_type,
+  mediators,
+  interactions_XC,
+  n
+) {
   # Fit the model
   fit <- glm(
-    stats::as.formula(gen_formula(k = k,
-                                  interactions_XC = interactions_XC,
-                                  marginal = TRUE)),
+    stats::as.formula(gen_formula(
+      k = k,
+      interactions_XC = interactions_XC,
+      marginal = TRUE
+    )),
     data = data,
     family = fam_type[[k]]
   )
 
-  # Initialize a flag for convergence issues
-  if(!fit$converged){
-    warning(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
+  if (!fit$converged) {
+    warning(paste0(
+      "Model did not converge when using variable ",
+      mediators[k],
+      " as the response"
+    ))
   }
-  if(any(is.na(fit$coefficients))){
+  if (any(is.na(fit$coefficients))) {
     na_coefs <- names(stats::coef(fit))[is.na(stats::coef(fit))]
-    warning(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
-                   "when using variable ", mediators[k], " as the response"))
+    warning(paste0(
+      "The following coefficients were NA: ",
+      paste(na_coefs, collapse = ", "),
+      "when using variable ",
+      mediators[k],
+      " as the response"
+    ))
   }
 
   # Set exposure to 0
@@ -126,8 +162,6 @@ marg_dist <- function(k, first, K, data, dat2, fam_type, mediators,
 
   dat2 = dat2
 }
-
-
 
 
 #' Estimation of Joint Distribution of All Other Mediators under Exposed
@@ -156,23 +190,50 @@ marg_dist <- function(k, first, K, data, dat2, fam_type, mediators,
 #' @importFrom stats coef as.formula
 #'
 #' @keywords internal
-joint_X_nonzero <- function(MM, k, first, K, data, dat2, fam_type,
-                            mediators, interactions_XC, lnzero, n, index) {
+joint_X_nonzero <- function(
+  MM,
+  k,
+  first,
+  K,
+  data,
+  dat2,
+  fam_type,
+  mediators,
+  interactions_XC,
+  lnzero,
+  n,
+  index
+) {
   # Check for intermediate confounders
-  fit <- glm(stats::as.formula(gen_formula(k = k, MM = MM,
-                                           first = first, K = K,
-                                           interactions_XC = interactions_XC)),
-                 data = data, family = fam_type[[k]])
-
+  fit <- glm(
+    stats::as.formula(gen_formula(
+      k = k,
+      MM = MM,
+      first = first,
+      K = K,
+      interactions_XC = interactions_XC
+    )),
+    data = data,
+    family = fam_type[[k]]
+  )
 
   # Check model convergence and coefficients
-  if(!fit$converged){
-    warning(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
+  if (!fit$converged) {
+    warning(paste0(
+      "Model did not converge when using variable ",
+      mediators[k],
+      " as the response"
+    ))
   }
-  if(any(is.na(fit$coefficients))){
+  if (any(is.na(fit$coefficients))) {
     na_coefs <- names(stats::coef(fit))[is.na(stats::coef(fit))]
-    warning(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
-                   "when using variable ", mediators[k], " as the response"))
+    warning(paste0(
+      "The following coefficients were NA: ",
+      paste(na_coefs, collapse = ", "),
+      "when using variable ",
+      mediators[k],
+      " as the response"
+    ))
   }
 
   # loop over exposure levels
@@ -181,27 +242,39 @@ joint_X_nonzero <- function(MM, k, first, K, data, dat2, fam_type,
 
     # Update mediators
     if (first != 1) {
-      l = 1:(first-1)
+      l = 1:(first - 1)
       dat2[, paste0("M", l) := mget(med_outcome_name(a = a, l = l, K = K))]
     }
-    if ((k-1) > first) {
-      l = setdiff(first:(k-1), MM)
-      dat2[, paste0("M", l) := mget(med_joint_other(k = l, a = a, MM = MM, K = K,
-                                                    ordering = FALSE))]
+    if ((k - 1) > first) {
+      l = setdiff(first:(k - 1), MM)
+      dat2[,
+        paste0("M", l) := mget(med_joint_other(
+          k = l,
+          a = a,
+          MM = MM,
+          K = K,
+          ordering = FALSE
+        ))
+      ]
     }
 
     # Perform counterfactual prediction
-    dat2 <- cf_predict(fit = fit, data = dat2,
-                       var_name = med_joint_other(k = k, a = a, MM = MM, K = K,
-                                                  ordering = FALSE),
-                       n = n,
-                       family = fam_type[[k]]$family)
+    dat2 <- cf_predict(
+      fit = fit,
+      data = dat2,
+      var_name = med_joint_other(
+        k = k,
+        a = a,
+        MM = MM,
+        K = K,
+        ordering = FALSE
+      ),
+      n = n,
+      family = fam_type[[k]]$family
+    )
   }
   dat2
 }
-
-
-
 
 
 #' Estimation of Conditionals of Mediators under Exposed
@@ -227,25 +300,46 @@ joint_X_nonzero <- function(MM, k, first, K, data, dat2, fam_type,
 #' @importFrom stats coef as.formula
 #'
 #' @keywords internal
-con_exposed <- function(MM, k, K, data, dat2, fam_type, mediators,
-                        interactions_XC, lnzero, n) {
+con_exposed <- function(
+  MM,
+  k,
+  K,
+  data,
+  dat2,
+  fam_type,
+  mediators,
+  interactions_XC,
+  lnzero,
+  n
+) {
   # Fit the model for the mediator k
   fit <- glm(
-    stats::as.formula(gen_formula(k = k,
-                                  interactions_XC = interactions_XC,
-                                  include_all = TRUE)),
+    stats::as.formula(gen_formula(
+      k = k,
+      interactions_XC = interactions_XC,
+      include_all = TRUE
+    )),
     data = data,
     family = fam_type[[k]]
   )
 
   # Check for convergence or NA coefficients
-  if(!fit$converged){
-    warning(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
+  if (!fit$converged) {
+    warning(paste0(
+      "Model did not converge when using variable ",
+      mediators[k],
+      " as the response"
+    ))
   }
-  if(any(is.na(fit$coefficients))){
+  if (any(is.na(fit$coefficients))) {
     na_coefs <- names(stats::coef(fit))[is.na(stats::coef(fit))]
-    warning(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
-                "when using variable ", mediators[k], " as the response"))
+    warning(paste0(
+      "The following coefficients were NA: ",
+      paste(na_coefs, collapse = ", "),
+      "when using variable ",
+      mediators[k],
+      " as the response"
+    ))
   }
 
   # Iterate over exposure levels
@@ -256,9 +350,7 @@ con_exposed <- function(MM, k, K, data, dat2, fam_type, mediators,
     # Handle mediators before MM
     if (MM != 1) {
       l = 1:(MM - 1)
-      dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
-                                                     l = l,
-                                                     K = K))]
+      dat2[, paste0("M", l) := mget(med_outcome_name(a = a, l = l, K = K))]
     }
 
     # Handle mediator MM
@@ -267,7 +359,9 @@ con_exposed <- function(MM, k, K, data, dat2, fam_type, mediators,
     # Handle mediators between MM and k
     if (k > (MM + 1)) {
       l = (MM + 1):(k - 1)
-      dat2[, paste0("M", l) := mget(med_joint_other(k = l, a = a, MM = MM, K = K))]
+      dat2[,
+        paste0("M", l) := mget(med_joint_other(k = l, a = a, MM = MM, K = K))
+      ]
     }
 
     # Perform counterfactual prediction
@@ -282,8 +376,6 @@ con_exposed <- function(MM, k, K, data, dat2, fam_type, mediators,
   }
   dat2
 }
-
-
 
 
 #' Estimation of Joint Distribution of All Mediators under Unexposed
@@ -307,24 +399,46 @@ con_exposed <- function(MM, k, K, data, dat2, fam_type, mediators,
 #' @importFrom stats coef as.formula
 #'
 #' @keywords internal
-joint_unexposed <- function(k, first, K, data, dat2, fam_type,
-                            mediators, interactions_XC, n) {
+joint_unexposed <- function(
+  k,
+  first,
+  K,
+  data,
+  dat2,
+  fam_type,
+  mediators,
+  interactions_XC,
+  n
+) {
   # Fit the model for the mediator k
   fit <- glm(
-    stats::as.formula(gen_formula(k = k, interactions_XC = interactions_XC,
-                                  include_all = TRUE, first = first)),
+    stats::as.formula(gen_formula(
+      k = k,
+      interactions_XC = interactions_XC,
+      include_all = TRUE,
+      first = first
+    )),
     data = data,
     family = fam_type[[k]]
   )
 
   # Check for convergence or NA coefficients
-  if(!fit$converged){
-    warning(paste0("Model did not converge when using variable ", mediators[k], " as the response"))
+  if (!fit$converged) {
+    warning(paste0(
+      "Model did not converge when using variable ",
+      mediators[k],
+      " as the response"
+    ))
   }
-  if(any(is.na(fit$coefficients))){
+  if (any(is.na(fit$coefficients))) {
     na_coefs <- names(stats::coef(fit))[is.na(stats::coef(fit))]
-    warning(paste0("The following coefficients were NA: ", paste(na_coefs, collapse = ", "),
-                "when using variable ", mediators[k], " as the response"))
+    warning(paste0(
+      "The following coefficients were NA: ",
+      paste(na_coefs, collapse = ", "),
+      "when using variable ",
+      mediators[k],
+      " as the response"
+    ))
   }
 
   # Set exposure
@@ -333,10 +447,9 @@ joint_unexposed <- function(k, first, K, data, dat2, fam_type,
 
   # Update mediators
   l = first:(k - 1)
-  dat2[, paste0("M", l) := mget(med_outcome_all(l = l,
-                                                first = first,
-                                                a = a,
-                                                K = K))]
+  dat2[,
+    paste0("M", l) := mget(med_outcome_all(l = l, first = first, a = a, K = K))
+  ]
 
   # Perform counterfactual prediction and random draw
   dat2 <- cf_predict(
@@ -352,68 +465,149 @@ joint_unexposed <- function(k, first, K, data, dat2, fam_type,
 
 
 # estimation IIE, IDE, and return results
-compute_assign = function(dat2, fit, a, K, first, type, lnzero, p_ctr, results) {
+compute_assign = function(
+  dat2,
+  fit,
+  a,
+  K,
+  first,
+  type,
+  lnzero,
+  p_ctr,
+  results,
+  effect_measure
+) {
   if (type == "trt") {
     l = 1:K
-    dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
-                                                   l = l,
-                                                   K = K))]
+    dat2[, paste0("M", l) := mget(med_outcome_name(a = a, l = l, K = K))]
   } else if (type == "all") {
     if (first > 1) {
       l = 1:(first - 1)
-      dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
-                                                     l = l,
-                                                     K = K))]
+      dat2[, paste0("M", l) := mget(med_outcome_name(a = a, l = l, K = K))]
     }
 
     # all mediators of interest
     k = first:K
-    dat2[, paste0("M", k) := mget(med_outcome_all(l = k,
-                                                  first = first,
-                                                  a = 0,
-                                                  K = K))]
+    dat2[,
+      paste0("M", k) := mget(med_outcome_all(
+        l = k,
+        first = first,
+        a = 0,
+        K = K
+      ))
+    ]
   }
   y1 <- predict(fit, newdata = dat2, type = "response")
   avg_pred = mean(y1)
   if (type == "trt") {
-    if(length(lnzero) > 1){
+    if (length(lnzero) > 1) {
       results[[paste0("p_trt_", a)]] <- avg_pred
-      results[[paste0("TCE_", a, " (p_trt_", a, " - p_ctr)")]] <- avg_pred - p_ctr
+      if (effect_measure %in% c("RD", "Diff")) {
+        results[[paste0("TCE_", a, " (p_trt_", a, " - p_ctr)")]] <- avg_pred -
+          p_ctr
+      } else if (effect_measure == "RR") {
+        results[[paste0("TCE_", a, " (p_trt_", a, " - p_ctr)")]] <- avg_pred /
+          p_ctr
+      }
     } else {
       results$p_trt <- avg_pred
-      results[["TCE (p_trt - p_ctr)"]] <- avg_pred - p_ctr
+      if (effect_measure %in% c("RD", "Diff")) {
+        results[["TCE (p_trt - p_ctr)"]] <- avg_pred - p_ctr
+      } else if (effect_measure == "RR") {
+        results[["TCE (p_trt - p_ctr)"]] <- avg_pred / p_ctr
+      }
     }
   } else if (type == "all") {
-    if(length(lnzero) > 1){
+    if (length(lnzero) > 1) {
       results[[paste0("p_", type, "_", a)]] <- avg_pred
       # IIE
-      results[[paste0("IIE_", type, "_", a,
-                      " (p_trt_", a, " - p_all_", a, ")")]] =
-        results[[paste0("p_trt_", a)]] - avg_pred
+      if (effect_measure %in% c("RD", "Diff")) {
+        results[[paste0(
+          "IIE_",
+          type,
+          "_",
+          a,
+          " (p_trt_",
+          a,
+          " - p_all_",
+          a,
+          ")"
+        )]] =
+          results[[paste0("p_trt_", a)]] - avg_pred
+      } else if (effect_measure == "RR") {
+        results[[paste0(
+          "IIE_",
+          type,
+          "_",
+          a,
+          " (p_trt_",
+          a,
+          " - p_all_",
+          a,
+          ")"
+        )]] =
+          results[[paste0("p_trt_", a)]] / avg_pred
+      }
+
       # IDE
-      results[[paste0("IDE_", type, "_", a,
-                      " (p_all_", a, " - p_ctr)")]] =
-        avg_pred - p_ctr
+      if (effect_measure %in% c("RD", "Diff")) {
+        results[[paste0("IDE_", type, "_", a, " (p_all_", a, " - p_ctr)")]] =
+          avg_pred - p_ctr
+      } else if (effect_measure == "RR") {
+        results[[paste0("IDE_", type, "_", a, " (p_all_", a, " - p_ctr)")]] =
+          avg_pred / p_ctr
+      }
     } else {
       results[[paste0("p_", type)]] <- avg_pred
       # IIE
-      results[[paste0("IIE_", type, " (p_trt - p_", type, ")")]] <- results$p_trt - avg_pred
+      if (effect_measure %in% c("RD", "Diff")) {
+        results[[paste0(
+          "IIE_",
+          type,
+          " (p_trt - p_",
+          type,
+          ")"
+        )]] <- results$p_trt - avg_pred
+      } else if (effect_measure == "RR") {
+        results[[paste0(
+          "IIE_",
+          type,
+          " (p_trt - p_",
+          type,
+          ")"
+        )]] <- results$p_trt / avg_pred
+      }
       # IDE
-      results[[paste0("IDE_", type, " (p_", type, " - p_ctr)")]] <- avg_pred - p_ctr
+      if (effect_measure %in% c("RD", "Diff")) {
+        results[[paste0("IDE_", type, " (p_", type, " - p_ctr)")]] <- avg_pred -
+          p_ctr
+      } else if (effect_measure == "RR") {
+        results[[paste0("IDE_", type, " (p_", type, " - p_ctr)")]] <- avg_pred /
+          p_ctr
+      }
     }
   }
   results
 }
 
 
-
-compute_assign_loop = function(dat2, fit, a, K, first, type, lnzero, results, p_ctr) {
-
+compute_assign_loop = function(
+  dat2,
+  fit,
+  a,
+  K,
+  first,
+  type,
+  lnzero,
+  results,
+  p_ctr,
+  effect_measure
+) {
   # get index for loop
   if (type == "shift_k") {
     index = first:K
     suffix = NULL
-  } else if (type == "shift_k_order"){
+  } else if (type == "shift_k_order") {
     index = first:(K - 1)
     suffix = "_prime"
   }
@@ -422,53 +616,162 @@ compute_assign_loop = function(dat2, fit, a, K, first, type, lnzero, results, p_
     if (type == "shift_k") {
       if (first > 1) {
         l = 1:(first - 1)
-        dat2[, paste0("M", l) :=  mget(med_outcome_name(a = a,
-                                                        l = l,
-                                                        K = K))]
+        dat2[, paste0("M", l) := mget(med_outcome_name(a = a, l = l, K = K))]
       }
 
-      dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
-                                           strrep("m", K)))]
-      if (length(first:K) > 1){
+      dat2[,
+        paste0("M", MM) := get(paste0("m", MM, "_", 0, "_", strrep("m", K)))
+      ]
+      if (length(first:K) > 1) {
         k = setdiff(first:K, MM)
-        dat2[, paste0("M", k) := mget(med_joint_other(k = k, a = a, MM = MM, K = K,
-                                                      ordering = FALSE))]
+        dat2[,
+          paste0("M", k) := mget(med_joint_other(
+            k = k,
+            a = a,
+            MM = MM,
+            K = K,
+            ordering = FALSE
+          ))
+        ]
       }
     } else if (type == "shift_k_order") {
       if (MM != 1) {
         l = 1:(MM - 1)
-        dat2[, paste0("M", l) := mget(med_outcome_name(a = a,
-                                                       l = l,
-                                                       K = K))]
+        dat2[, paste0("M", l) := mget(med_outcome_name(a = a, l = l, K = K))]
       }
-      dat2[, paste0("M", MM) := get(paste0("m", MM, "_", 0, "_",
-                                           strrep("m", K)))]
+      dat2[,
+        paste0("M", MM) := get(paste0("m", MM, "_", 0, "_", strrep("m", K)))
+      ]
       if ((MM + 1) <= K) {
         k = (MM + 1):K
-        dat2[, paste0("M", k) := mget(med_joint_other(k = k, a = a, MM = MM, K = K))]
+        dat2[,
+          paste0("M", k) := mget(med_joint_other(k = k, a = a, MM = MM, K = K))
+        ]
       }
     }
     y1 <- predict(fit, newdata = dat2, type = "response")
     avg_pred = mean(y1)
 
-    if(length(lnzero) > 1){
+    if (length(lnzero) > 1) {
       results[[paste0("p_", MM - (first - 1), "_", a, suffix)]] <- avg_pred
       # IIE
-      results[[paste0("IIE_", MM - (first - 1), "_", a, suffix,
-                      " (p_trt_", a, " - p_", MM - (first - 1), "_", a, suffix, ")")]] =
-        results[[paste0("p_trt_", a)]] - avg_pred
+      if (effect_measure %in% c("RD", "Diff")) {
+        results[[paste0(
+          "IIE_",
+          MM - (first - 1),
+          "_",
+          a,
+          suffix,
+          " (p_trt_",
+          a,
+          " - p_",
+          MM - (first - 1),
+          "_",
+          a,
+          suffix,
+          ")"
+        )]] =
+          results[[paste0("p_trt_", a)]] - avg_pred
+      } else if (effect_measure == "RR") {
+        results[[paste0(
+          "IIE_",
+          MM - (first - 1),
+          "_",
+          a,
+          suffix,
+          " (p_trt_",
+          a,
+          " - p_",
+          MM - (first - 1),
+          "_",
+          a,
+          suffix,
+          ")"
+        )]] =
+          results[[paste0("p_trt_", a)]] / avg_pred
+      }
       # IDE
-      results[[paste0("IDE_", MM - (first - 1), "_", a, suffix,
-                      " (p_", MM - (first - 1), "_", a, suffix, " - p_ctr)")]] =
-        avg_pred - p_ctr
+      if (effect_measure %in% c("RD", "Diff")) {
+        results[[paste0(
+          "IDE_",
+          MM - (first - 1),
+          "_",
+          a,
+          suffix,
+          " (p_",
+          MM - (first - 1),
+          "_",
+          a,
+          suffix,
+          " - p_ctr)"
+        )]] =
+          avg_pred - p_ctr
+      } else if (effect_measure == "RR") {
+        results[[paste0(
+          "IDE_",
+          MM - (first - 1),
+          "_",
+          a,
+          suffix,
+          " (p_",
+          MM - (first - 1),
+          "_",
+          a,
+          suffix,
+          " - p_ctr)"
+        )]] =
+          avg_pred / p_ctr
+      }
     } else {
       results[[paste0("p_", MM - (first - 1), suffix)]] <- avg_pred
       # IIE
-      results[[paste0("IIE_", MM - (first - 1), suffix, " (p_trt - p_", MM - (first - 1), suffix, ")")]] <-
-        results$p_trt - avg_pred
+      if (effect_measure %in% c("RD", "Diff")) {
+        results[[paste0(
+          "IIE_",
+          MM - (first - 1),
+          suffix,
+          " (p_trt - p_",
+          MM - (first - 1),
+          suffix,
+          ")"
+        )]] <-
+          results$p_trt - avg_pred
+      } else if (effect_measure == "RR") {
+        results[[paste0(
+          "IIE_",
+          MM - (first - 1),
+          suffix,
+          " (p_trt - p_",
+          MM - (first - 1),
+          suffix,
+          ")"
+        )]] <-
+          results$p_trt / avg_pred
+      }
       # IDE
-      results[[paste0("IDE_", MM - (first - 1), suffix, " (p_", MM - (first - 1), suffix, " - p_ctr)")]] <-
-        avg_pred - p_ctr
+      if (effect_measure %in% c("RD", "Diff")) {
+        results[[paste0(
+          "IDE_",
+          MM - (first - 1),
+          suffix,
+          " (p_",
+          MM - (first - 1),
+          suffix,
+          " - p_ctr)"
+        )]] <-
+          avg_pred - p_ctr
+      } else if (effect_measure == "RR") {
+        results[[paste0(
+          "IDE_",
+          MM - (first - 1),
+          suffix,
+          " (p_",
+          MM - (first - 1),
+          suffix,
+          " - p_ctr)"
+        )]] <-
+          avg_pred / p_ctr
+      }
     }
   }
 
