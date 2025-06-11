@@ -13,6 +13,7 @@ medRCT(
   confounders,
   interactions_XC = "all",
   intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"),
+  effect_measure = NULL,
   mcsim = 200,
   bootstrap = TRUE,
   boot_args = list(R = 100, stype = "i", ci.type = "norm"),
@@ -58,6 +59,12 @@ specific mediator (\code{k}) in the exposed, given baseline confounders, to matc
 effects on causally descendant mediators.
 }}
 
+\item{effect_measure}{A \code{character} string specifying the effect measure to calculate.
+For a continuous outcome, only \code{"Diff"} (difference in means) is allowed.
+For a binary outcome, must be either \code{"RD"} (risk difference) or \code{"RR"} (risk ratio).
+If not specified, defaults to \code{"Diff"} for continuous outcomes and \code{"RD"} for binary outcomes.
+Only one effect measure can be specified at a time.}
+
 \item{mcsim}{An \code{integer} specifying the number of Monte Carlo simulations to perform. The default is 200.
 It is recommended to run analysis with no fewer than 200 Monte Carlo simulations.}
 
@@ -86,6 +93,9 @@ ensuring that the models are appropriately specified before proceeding with the 
 
 If issues with model fitting are detected, users are encouraged to adjust the exposure-confounder interaction term as needed.
 However, \strong{mediators or confounders must not be selected based on model fitting results.}
+
+The function accepts binary mediators and intermediate confounders coded as 0/1, TRUE/FALSE, or any two unique values (numeric, character, or factor).
+Internally, the lower value will always be treated as 0 and the higher value as 1, regardless of the original coding.
 }
 \examples{
 \dontrun{
@@ -106,6 +116,7 @@ med_res <- medRCT(
   confounders = confounders,
   interactions_XC = "all",
   intervention_type = "all",
+  effect_measure = "RD",
   bootstrap = TRUE,
   boot_args = list(R = 100, stype = "i", ci.type = "norm"),
   mcsim = 100
