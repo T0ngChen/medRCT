@@ -1,6 +1,3 @@
-
-
-
 #' Summarise Results from Mediation Analysis
 #'
 #' Provides a summary of the results obtained from a mediation analysis conducted
@@ -10,35 +7,98 @@
 #' @param ... Additional arguments to customise the summary output.
 #' @method summary medRCT
 #' @export
-summary.medRCT <- function(object, ...){
+summary.medRCT <- function(object, ...) {
   if (object$bootstrap == TRUE) {
     index <- grep("^IDE", names(object$est))[1]
-    out1 = cbind(object$est, object$se, object$cilow, object$ciupp, object$pval)[1:(index-1), , drop = FALSE]
-    colnames(out1) <- c("Estimate", "Std. Error", "CI Lower",
-                        "CI Upper", "p-value")
-    rownames(out1) <- names(object$est)[1:(index-1)]
+    out1 = cbind(
+      object$est,
+      object$se,
+      object$cilow,
+      object$ciupp,
+      object$pval
+    )[1:(index - 1), , drop = FALSE]
+    colnames(out1) <- c(
+      "Estimate",
+      "Std. Error",
+      "CI Lower",
+      "CI Upper",
+      "p-value"
+    )
+    rownames(out1) <- names(object$est)[1:(index - 1)]
     cat("\n")
     cat("Estimated interventional indirect effect: \n\n")
-    stats::printCoefmat(out1, signif.stars = F, tst.ind=NULL, digits = 3)
+    stats::printCoefmat(out1, signif.stars = F, tst.ind = NULL, digits = 3)
     index1 <- grep("^p", names(object$est))[1]
-    out2 = cbind(object$est, object$se, object$cilow, object$ciupp, object$pval)[index:(index1-1), , drop = FALSE]
-    rownames(out2) <- names(object$est)[index:(index1-1)]
-    colnames(out2) <- c("Estimate", "Std. Error", "CI Lower",
-                        "CI Upper", "p-value")
+    out2 = cbind(
+      object$est,
+      object$se,
+      object$cilow,
+      object$ciupp,
+      object$pval
+    )[index:(index1 - 1), , drop = FALSE]
+    rownames(out2) <- names(object$est)[index:(index1 - 1)]
+    colnames(out2) <- c(
+      "Estimate",
+      "Std. Error",
+      "CI Lower",
+      "CI Upper",
+      "p-value"
+    )
     cat("\n")
     cat("Estimated interventional direct effect: \n\n")
-    stats::printCoefmat(out2, signif.stars = F, tst.ind=NULL, digits = 3)
+    stats::printCoefmat(out2, signif.stars = F, tst.ind = NULL, digits = 3)
     cat("\n")
     cat("Estimated expected outcome in each trial arm:\n\n")
-    out3 = cbind(object$est, object$se, object$cilow, object$ciupp, object$pval)[index1:length(object$est), , drop = FALSE]
-    colnames(out3) <- c("Estimate", "Std. Error", "CI Lower",
-                        "CI Upper", "p-value")
+    out3 = cbind(
+      object$est,
+      object$se,
+      object$cilow,
+      object$ciupp,
+      object$pval
+    )[index1:length(object$est), , drop = FALSE]
+    colnames(out3) <- c(
+      "Estimate",
+      "Std. Error",
+      "CI Lower",
+      "CI Upper",
+      "p-value"
+    )
     rownames(out3) <- names(object$est)[index1:length(object$est)]
-    stats::printCoefmat(out3, signif.stars = F, tst.ind=NULL, digits = 3)
+    stats::printCoefmat(out3, signif.stars = F, tst.ind = NULL, digits = 3)
     cat("\n")
-    cat("Sample Size:", object$sample.size,"\n")
+    cat("Sample Size:", object$sample.size, "\n")
     cat("\n")
-    cat("Simulations:", object$mcsim,"\n\n")
+    cat("Simulations:", object$mcsim, "\n")
+    cat("\n")
+    cat(
+      paste0(
+        "Effect Measure: ",
+        ifelse(
+          object$effect_measure == "Diff",
+          "Difference in Means",
+          ifelse(object$effect_measure == "RD", "Risk Difference", "Risk Ratio")
+        )
+      ),
+      "\n"
+    )
+    cat(
+      ifelse(
+        object$num_failed > 0,
+        paste0(
+          object$num_failed,
+          " bootstrap samples returned a warning or error and were excluded from the analysis. ",
+          "Results are based on the remaining ",
+          object$R - object$num_failed,
+          " bootstrap samples."
+        ),
+        paste0(
+          "Results are based on all ",
+          object$R,
+          " bootstrap samples."
+        )
+      ),
+      "\n\n"
+    )
 
     # Return as a list for easy extraction of coefficients
     invisible(list(
@@ -48,14 +108,10 @@ summary.medRCT <- function(object, ...){
       sample_size = object$sample.size,
       n.sim = object$mcsim
     ))
-
   } else {
     object$est
   }
 }
-
-
-
 
 
 #' Determine Appropriate Family Types for GLM
@@ -91,7 +147,6 @@ family_type <- function(data, variable_names, unique_threshold = 10) {
 }
 
 
-
 #' Set Exposure Column to a Specific Value and Convert to Factor
 #'
 #' @param data A `data.table` object.
@@ -124,24 +179,25 @@ set_exposure = function(data, column_name, exp_val) {
 #'  generating random draws. Must be either `"binomial"` or `"gaussian"`.
 #'
 #' @keywords internal
-cf_predict = function(fit, data, var_name, n, family){
+cf_predict = function(fit, data, var_name, n, family) {
   # get predictions
   predictions <- predict(fit, newdata = data, type = "response")
 
   # counterfactual prediction and random draw
-  data[, (var_name) := switch(
-    family,
-    "binomial" = stats::rbinom(n, 1, predictions),
-    "gaussian" = stats::rnorm(
-      n,
-      mean = predictions,
-      sd = sqrt(sum(fit$residuals^2) / stats::df.residual(fit))
+  data[,
+    (var_name) := switch(
+      family,
+      "binomial" = stats::rbinom(n, 1, predictions),
+      "gaussian" = stats::rnorm(
+        n,
+        mean = predictions,
+        sd = sqrt(sum(fit$residuals^2) / stats::df.residual(fit))
+      )
     )
-  )]
+  ]
 
   data
 }
-
 
 
 #' Generate Model Formula for Mediator Models
@@ -169,24 +225,38 @@ cf_predict = function(fit, data, var_name, n, family){
 #' @param marginal Logical. If `TRUE`, estimating marginals under `X=0`.
 #'
 #' @keywords internal
-gen_formula <- function(k, first=NULL, MM = NULL, K=NULL, interactions_XC,
-                        include_all = FALSE, marginal = FALSE) {
-  if ((k == 1 || marginal) && is.null(MM))  {
+gen_formula <- function(
+  k,
+  first = NULL,
+  MM = NULL,
+  K = NULL,
+  interactions_XC,
+  include_all = FALSE,
+  marginal = FALSE
+) {
+  if ((k == 1 || marginal) && is.null(MM)) {
     # Formula does not include other mediators
     return(paste0("M", k, "~X+", interactions_XC))
   } else if (include_all) {
     # Formula including all mediators up to (k - 1)
-    if (is.null(first)){
+    if (is.null(first)) {
       return(paste0(
-        "M", k, "~(X+",
+        "M",
+        k,
+        "~(X+",
         paste0("M", 1:(k - 1), collapse = "+"),
-        ")^2+", interactions_XC
+        ")^2+",
+        interactions_XC
       ))
     } else {
-      return(paste0("M", k, "~(X+",
-                    paste0("M", first:(k - 1), collapse = "+"),
-                    ")^2+",
-                    interactions_XC))
+      return(paste0(
+        "M",
+        k,
+        "~(X+",
+        paste0("M", first:(k - 1), collapse = "+"),
+        ")^2+",
+        interactions_XC
+      ))
     }
   } else if (!is.null(MM)) {
     # Formula for cases involving MM
@@ -194,34 +264,47 @@ gen_formula <- function(k, first=NULL, MM = NULL, K=NULL, interactions_XC,
       return(paste0("M", k, "~X+", interactions_XC))
     } else {
       return(paste0(
-        "M", k, "~(X+",
+        "M",
+        k,
+        "~(X+",
         paste0("M", setdiff(1:(k - 1), MM), collapse = "+"),
-        ")^2+", interactions_XC
+        ")^2+",
+        interactions_XC
       ))
     }
   }
 }
 
 
-
 med_outcome_name = function(l, a, K) {
-  paste0("m", l, "_", a, "_",
-    strrep(a, (l - 1)), strrep("m", K - (l - 1))
-  )
+  paste0("m", l, "_", a, "_", strrep(a, (l - 1)), strrep("m", K - (l - 1)))
 }
 
-med_outcome_all = function(l, first, a, K){
-  paste0("m", l, "_", a, "_",
-    strrep("m", first - 1), strrep(a, (l - first)), strrep("m", K - l + 1))
+med_outcome_all = function(l, first, a, K) {
+  paste0(
+    "m",
+    l,
+    "_",
+    a,
+    "_",
+    strrep("m", first - 1),
+    strrep(a, (l - first)),
+    strrep("m", K - l + 1)
+  )
 }
 
 
 med_joint_other <- function(k, a, MM, K, ordering = TRUE) {
   re = if (ordering == TRUE) MM - 1 else pmin(k - 1, MM - 1)
-  paste0("m", k, "_", a, "_",
-         strrep(a, re),
-         if(ordering) 0 else "m",
-         strrep(a, pmax(k - 1 - MM, 0)),
-         strrep("m", K - re - 1  - pmax(k - 1 - MM, 0)))
+  paste0(
+    "m",
+    k,
+    "_",
+    a,
+    "_",
+    strrep(a, re),
+    if (ordering) 0 else "m",
+    strrep(a, pmax(k - 1 - MM, 0)),
+    strrep("m", K - re - 1 - pmax(k - 1 - MM, 0))
+  )
 }
-
