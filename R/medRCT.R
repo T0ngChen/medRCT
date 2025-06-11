@@ -37,6 +37,11 @@ utils::globalVariables(".SD")
 #'    specific mediator (\code{k}) in the exposed, given baseline confounders, to match the corresponding distribution in the unexposed while accounting for the flow-on
 #'    effects on causally descendant mediators.
 #' }
+#' @param effect_measure A \code{character} string specifying the effect measure to calculate.
+#'   For a continuous outcome, only \code{"Diff"} (difference in means) is allowed.
+#'   For a binary outcome, must be either \code{"RD"} (risk difference) or \code{"RR"} (risk ratio).
+#'   If not specified, defaults to \code{"Diff"} for continuous outcomes and \code{"RD"} for binary outcomes.
+#'   Only one effect measure can be specified at a time.
 #' @param mcsim An \code{integer} specifying the number of Monte Carlo simulations to perform. The default is 200.
 #' It is recommended to run analysis with no fewer than 200 Monte Carlo simulations.
 #' @param bootstrap A \code{logical} value indicating whether bootstrapping should be performed. If \code{TRUE}
@@ -59,6 +64,9 @@ utils::globalVariables(".SD")
 #' If issues with model fitting are detected, users are encouraged to adjust the exposure-confounder interaction term as needed.
 #' However, \strong{mediators or confounders must not be selected based on model fitting results.}
 #'
+#' The function accepts binary mediators and intermediate confounders coded as 0/1, TRUE/FALSE, or any two unique values (numeric, character, or factor).
+#' Internally, the lower value will always be treated as 0 and the higher value as 1, regardless of the original coding.
+#'
 #' @export
 #'
 #' @examples
@@ -80,6 +88,7 @@ utils::globalVariables(".SD")
 #'   confounders = confounders,
 #'   interactions_XC = "all",
 #'   intervention_type = "all",
+#'   effect_measure = "RD",
 #'   bootstrap = TRUE,
 #'   boot_args = list(R = 100, stype = "i", ci.type = "norm"),
 #'   mcsim = 100
@@ -87,36 +96,44 @@ utils::globalVariables(".SD")
 #' # Summarise the results
 #' summary(med_res)
 #' }
-medRCT <- function(dat,
-                   exposure,
-                   outcome,
-                   mediators,
-                   intermediate_confs,
-                   confounders,
-                   interactions_XC = "all",
-                   intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"),
-                   mcsim = 200,
-                   bootstrap = TRUE,
-                   boot_args = list(R = 100, stype = "i", ci.type = "norm"),
-                   ...) {
+medRCT <- function(
+  dat,
+  exposure,
+  outcome,
+  mediators,
+  intermediate_confs,
+  confounders,
+  interactions_XC = "all",
+  intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"),
+  effect_measure = NULL,
+  mcsim = 200,
+  bootstrap = TRUE,
+  boot_args = list(R = 100, stype = "i", ci.type = "norm"),
+  ...
+) {
   # match intervention type
-  intervention_type = sapply(intervention_type, function(arg)
-    match.arg(
-      arg,
-      choices = c("all", "shift_all", "shift_k", "shift_k_order")
-    ))
+  choices <- c("all", "shift_all", "shift_k", "shift_k_order")
+  idx <- match(intervention_type, choices)
+  intervention_type <- choices[idx]
 
   # set intervention type to shift_k when K==1
-  if (length(mediators) == 1 &
-      any(intervention_type %in% c("all", "shift_all", "shift_k_order"))) {
+  if (
+    length(mediators) == 1 &
+      any(intervention_type %in% c("all", "shift_all", "shift_k_order"))
+  ) {
     intervention_type = "shift_k"
-    message("Only able to estimate the effect type 'shift_k' with a single mediator.")
+    message(
+      "Only able to estimate the effect type 'shift_k' with a single mediator."
+    )
   }
 
-  if(any(intervention_type %in% c("all", "shift_k_order"))) {
-    message(paste0("Assumed causal order for estimating effect of type 'shift_k_order': ",  paste(mediators, collapse = ", "), "\n"))
+  if (any(intervention_type %in% c("all", "shift_k_order"))) {
+    message(paste0(
+      "Assumed causal order for estimating effect of type 'shift_k_order': ",
+      paste(mediators, collapse = ", "),
+      "\n"
+    ))
   }
-
 
   mediators = c(intermediate_confs, mediators)
 
@@ -126,34 +143,73 @@ medRCT <- function(dat,
   K <- length(mediators)
 
   dat <- as.data.frame(dat)
+
   # count the No. of missing values
-  no.miss = nrow(dat) - sum(stats::complete.cases(dat))
+  cc = stats::complete.cases(dat)
+  no.miss = nrow(dat) - sum(cc)
   message(paste0(
     "Conducting complete case analysis, ",
     no.miss,
     " observations were excluded due to missing data.\n"
   ))
 
-  if (mcsim<200) {
-    message("Note: It is recommended to run analysis with no fewer than 200 Monte Carlo simulations.")
+  if (mcsim < 200) {
+    message(
+      "Note: It is recommended to run analysis with no fewer than 200 Monte Carlo simulations."
+    )
   }
 
-  dat <- dat[stats::complete.cases(dat), ]
+  dat <- dat[cc, ]
 
   fam_type = family_type(dat, mediators)
 
   # Rename all variables & prepare dataset
   dat$X <- dat[, exposure]
   dat$Y <- dat[, outcome]
-  for (k in 1:K)
-    dat[, paste0("M", k)] <- dat[, mediators[k]]
+  dat[, paste0("M", 1:K)] <- dat[, mediators[1:K]]
+  for (i in 1:K) {
+    v <- paste0("M", i)
+    levs <- sort(unique(dat[[v]]))
+    if (length(levs) == 2) {
+      # Convert so lower value becomes 0, higher becomes 1
+      dat[[v]] <- as.numeric(dat[[v]] == levs[2])
+    }
+  }
+
   dat <- dat[, c("X", paste0("M", 1:K), "Y", confounders)]
+
+  # effect measure
+  unique_vals <- unique(dat$Y)
+  if (is.numeric(dat$Y) && length(unique_vals) > 2) {
+    outcome_type <- "continuous"
+  } else {
+    outcome_type <- "binary"
+  }
+
+  if (outcome_type == "continuous") {
+    if (is.null(effect_measure)) {
+      effect_measure <- "Diff"
+    }
+    if (effect_measure != "Diff") {
+      stop("For continuous outcome, effect_measure must be 'Diff'.")
+    }
+  } else if (outcome_type == "binary") {
+    valid_measures <- c("RD", "RR")
+    if (is.null(effect_measure)) {
+      effect_measure <- "RD"
+    }
+    if (!effect_measure %in% valid_measures) {
+      stop("For binary outcome, effect_measure must be one of 'RD' or 'RR'.")
+    }
+  }
 
   # Prepare confounder terms for formulae
   # (defaults to all exposure-confounder interactions if not provided)
   if (interactions_XC == "all") {
-    interactions_XC <- paste(paste(rep("X", length(confounders)), confounders, sep =
-                                     "*"), collapse = "+")
+    interactions_XC <- paste(
+      paste("X", confounders, sep = "*"),
+      collapse = "+"
+    )
   } else if (interactions_XC == "none") {
     interactions_XC <- paste(confounders, collapse = "+")
   } else {
@@ -168,12 +224,13 @@ medRCT <- function(dat,
   # bootstrap
   boot.out <- boot::boot(
     data = dat,
-    statistic = medRCT.fun,
+    statistic = medRCT.fun.safe,
     first = first,
     K = K,
     mediators = mediators,
     mcsim = mcsim,
     fam_type = fam_type,
+    effect_measure = effect_measure,
     interactions_XC = interactions_XC,
     intervention_type = intervention_type,
     stype = boot_args$stype,
@@ -183,8 +240,9 @@ medRCT <- function(dat,
 
   # grab results from bootstrap
   if (bootstrap == TRUE) {
+    num_failed <- sum(is.na(boot.out$t[, 1]))
     est = boot.out$t0
-    se = apply(boot.out$t, 2, stats::sd)
+    se = apply(boot.out$t, 2, stats::sd, na.rm = TRUE)
     pval <- 2 * (1 - stats::pnorm(q = abs(est / se)))
     cilow = ciupp = numeric()
     for (i in 1:length(boot.out$t0)) {
@@ -208,18 +266,15 @@ medRCT <- function(dat,
       ciupp = ciupp,
       sample.size = nrow(dat),
       mcsim = mcsim,
-      bootstrap = bootstrap
+      bootstrap = bootstrap,
+      effect_measure = effect_measure,
+      num_failed = num_failed,
+      R = boot_args$R
     )
   } else {
-    out = list(est = boot.out$t0,
-               bootstrap = bootstrap)
+    out = list(est = boot.out$t0, bootstrap = bootstrap)
   }
 
   class(out) <- "medRCT"
   out
 }
-
-
-
-
-
