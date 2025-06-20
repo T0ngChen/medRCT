@@ -9,3 +9,7 @@ intermediate confounders, and outcomes.
 * Handles scenarios with a single mediator and/or without intermediate confounders.
 
 * Provides a shiny app for model assessment. 
+
+# medRCT 0.1.1
+
+* Updated the reference for the JOSS paper.
