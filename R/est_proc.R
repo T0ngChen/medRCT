@@ -503,18 +503,18 @@ compute_assign = function(
     if (length(lnzero) > 1) {
       results[[paste0("p_trt_", a)]] <- avg_pred
       if (effect_measure %in% c("RD", "Diff")) {
-        results[[paste0("TCE_", a, " (p_trt_", a, " - p_ctr)")]] <- avg_pred -
-          p_ctr
+        results[[paste0("TCE_", a, " (p_trt_", a, " - p_ctr)")]] <-
+          avg_pred - p_ctr
       } else if (effect_measure == "RR") {
-        results[[paste0("TCE_", a, " (p_trt_", a, " - p_ctr)")]] <- avg_pred /
-          p_ctr
+        results[[paste0("TCE_", a, " log(p_trt_", a, " / p_ctr)")]] <-
+          log(avg_pred / p_ctr)
       }
     } else {
       results$p_trt <- avg_pred
       if (effect_measure %in% c("RD", "Diff")) {
         results[["TCE (p_trt - p_ctr)"]] <- avg_pred - p_ctr
       } else if (effect_measure == "RR") {
-        results[["TCE (p_trt - p_ctr)"]] <- avg_pred / p_ctr
+        results[["TCE log(p_trt / p_ctr)"]] <- log(avg_pred / p_ctr)
       }
     }
   } else if (type == "all") {
@@ -540,13 +540,13 @@ compute_assign = function(
           type,
           "_",
           a,
-          " (p_trt_",
+          " log(p_trt_",
           a,
-          " - p_all_",
+          " / p_all_",
           a,
           ")"
         )]] =
-          results[[paste0("p_trt_", a)]] / avg_pred
+          log(results[[paste0("p_trt_", a)]] / avg_pred)
       }
 
       # IDE
@@ -554,8 +554,8 @@ compute_assign = function(
         results[[paste0("IDE_", type, "_", a, " (p_all_", a, " - p_ctr)")]] =
           avg_pred - p_ctr
       } else if (effect_measure == "RR") {
-        results[[paste0("IDE_", type, "_", a, " (p_all_", a, " - p_ctr)")]] =
-          avg_pred / p_ctr
+        results[[paste0("IDE_", type, "_", a, " log(p_all_", a, " / p_ctr)")]] =
+          log(avg_pred / p_ctr)
       }
     } else {
       results[[paste0("p_", type)]] <- avg_pred
@@ -572,18 +572,18 @@ compute_assign = function(
         results[[paste0(
           "IIE_",
           type,
-          " (p_trt - p_",
+          " log(p_trt / p_",
           type,
           ")"
-        )]] <- results$p_trt / avg_pred
+        )]] <- log(results$p_trt / avg_pred)
       }
       # IDE
       if (effect_measure %in% c("RD", "Diff")) {
-        results[[paste0("IDE_", type, " (p_", type, " - p_ctr)")]] <- avg_pred -
-          p_ctr
+        results[[paste0("IDE_", type, " (p_", type, " - p_ctr)")]] <-
+          avg_pred - p_ctr
       } else if (effect_measure == "RR") {
-        results[[paste0("IDE_", type, " (p_", type, " - p_ctr)")]] <- avg_pred /
-          p_ctr
+        results[[paste0("IDE_", type, " log(p_", type, " / p_ctr)")]] <-
+          log(avg_pred / p_ctr)
       }
     }
   }
@@ -679,16 +679,16 @@ compute_assign_loop = function(
           "_",
           a,
           suffix,
-          " (p_trt_",
+          " log(p_trt_",
           a,
-          " - p_",
+          " / p_",
           MM - (first - 1),
           "_",
           a,
           suffix,
           ")"
         )]] =
-          results[[paste0("p_trt_", a)]] / avg_pred
+          log(results[[paste0("p_trt_", a)]] / avg_pred)
       }
       # IDE
       if (effect_measure %in% c("RD", "Diff")) {
@@ -713,14 +713,14 @@ compute_assign_loop = function(
           "_",
           a,
           suffix,
-          " (p_",
+          " log(p_",
           MM - (first - 1),
           "_",
           a,
           suffix,
-          " - p_ctr)"
+          " / p_ctr)"
         )]] =
-          avg_pred / p_ctr
+          log(avg_pred / p_ctr)
       }
     } else {
       results[[paste0("p_", MM - (first - 1), suffix)]] <- avg_pred
@@ -741,12 +741,12 @@ compute_assign_loop = function(
           "IIE_",
           MM - (first - 1),
           suffix,
-          " (p_trt - p_",
+          " log(p_trt / p_",
           MM - (first - 1),
           suffix,
           ")"
         )]] <-
-          results$p_trt / avg_pred
+          log(results$p_trt / avg_pred)
       }
       # IDE
       if (effect_measure %in% c("RD", "Diff")) {
@@ -765,12 +765,12 @@ compute_assign_loop = function(
           "IDE_",
           MM - (first - 1),
           suffix,
-          " (p_",
+          " log(p_",
           MM - (first - 1),
           suffix,
-          " - p_ctr)"
+          " / p_ctr)"
         )]] <-
-          avg_pred / p_ctr
+          log(avg_pred / p_ctr)
       }
     }
   }
