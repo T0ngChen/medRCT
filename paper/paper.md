@@ -1,5 +1,5 @@
 ---
-title: ' `medRCT`: Causal mediation analysis estimating interventional effects mapped
+title: 'medRCT: Causal mediation analysis estimating interventional effects mapped
   to a target trial in R'
 tags:
 - R
