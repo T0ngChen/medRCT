@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# medRCT
+# medRCT <a href="https://t0ngchen.github.io/medRCT"><img src="man/figures/logo.png" align="right" height="138" alt="medRCT website" /></a>
 
 <!-- badges: start -->
 
@@ -10,6 +10,7 @@ license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://openso
 [![R-CMD-check](https://github.com/T0ngChen/medRCT/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/T0ngChen/medRCT/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/T0ngChen/medRCT/graph/badge.svg)](https://app.codecov.io/gh/T0ngChen/medRCT)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.08063/status.svg)](https://doi.org/10.21105/joss.08063)
 <!-- badges: end -->
 
 > Causal mediation analysis estimating interventional effects mapped to
@@ -198,7 +199,10 @@ summary(med_res)
 #> 
 #> Sample Size: 2608 
 #> 
-#> Simulations: 50
+#> Simulations: 50 
+#> 
+#> Effect Measure: Risk Difference 
+#> Results are based on all 100 bootstrap samples.
 ```
 
 Based on the estimated interventional effect (IIE_1), a hypothetical
@@ -217,13 +221,18 @@ scenarios, please refer to the
 
 For work involving the `medRCT` R package, please cite the following:
 
-    @software{Chen2024medRCT,
-       author = {Tong Chen and Margarita Moreno-Betancur and S. Ghazaleh Dashti},
-       title = {medRCT: Causal mediation analysis estimating interventional effects mapped to a target trial},
-       year  = {2025},
-       url = {https://t0ngchen.github.io/medRCT/},
-       note = {R package version 0.1.0}
-       }
+    @article{Chen2025medRCT,
+      author = {Tong Chen and S. Ghazaleh Dashti and Margarita Moreno-Betancur},
+      title = {{medRCT}: Causal mediation analysis estimating interventional effects mapped to a target trial in {R}},
+      year = {2025},
+      doi = {10.21105/joss.08063},
+      url = {https://doi.org/10.21105/joss.08063},
+      journal = {Journal of Open Source Software},
+      volume = {10},
+      number = {110},
+      pages = {8063},
+      publisher = {The Open Journal}
+    }
     @article{Moreno2021Mediation,
        author={Margarita Moreno-Betancur and Paul Moran and Denise Becker and George C Patton and John B Carlin},
        title={Mediation effects that emulate a target randomised trial: Simulation-based evaluation of ill-defined interventions on multiple mediators},
@@ -235,7 +244,7 @@ For work involving the `medRCT` R package, please cite the following:
        URL={https://doi.org/10.1177/0962280221998409},
        doi={10.1177/0962280221998409},
        publisher={SAGE Publications Ltd}
-       }    
+    }
 
 ## References
 
@@ -248,7 +257,7 @@ Avin, Chen, Ilya Shpitser, and Judea Pearl. 2005. “Identifiability of
 Path-Specific Effects.” In *Proceedings of the 19th International Joint
 Conference on Artificial Intelligence*, 357–63. IJCAI’05. San Francisco,
 CA, USA: Morgan Kaufmann Publishers Inc.
-<https://doi.org/10.5555/1642293.1642350>.
+<https://dl.acm.org/doi/10.5555/1642293.1642350>.
 
 </div>
 
@@ -258,7 +267,7 @@ Didelez, Vanessa, Philip Dawid, and Sara Geneletti. 2006. “Direct and
 Indirect Effects of Sequential Treatments.” In *Proceedings of the
 Twenty-Second Conference on Uncertainty in Artificial Intelligence*,
 138–46. UAI’06. Arlington, Virginia, USA: AUAI Press.
-<https://doi.org/10.5555/3020419.3020437>.
+<https://dl.acm.org/doi/10.5555/3020419.3020437>.
 
 </div>
 
@@ -315,7 +324,7 @@ Journal of Epidemiology* 43 (5): 1656–61.
 Pearl, Judea. 2001. “Direct and Indirect Effects.” In *Proceedings of
 the 17th Conference on Uncertainty in Artificial Intelligence*, 411–20.
 UAI’01. San Francisco, CA, USA: Morgan Kaufmann Publishers Inc.
-<https://doi.org/10.5555/2074022.2074073>.
+<https://dl.acm.org/doi/10.5555/2074022.2074073>.
 
 </div>
 
