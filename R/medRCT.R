@@ -272,7 +272,11 @@ medRCT <- function(
       R = boot_args$R
     )
   } else {
-    out = list(est = boot.out$t0, bootstrap = bootstrap)
+    out = list(
+      est = boot.out$t0,
+      bootstrap = bootstrap,
+      effect_measure = effect_measure
+    )
   }
 
   class(out) <- "medRCT"
