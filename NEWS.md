@@ -13,3 +13,15 @@ intermediate confounders, and outcomes.
 # medRCT 0.1.1
 
 * Updated the reference for the JOSS paper.
+
+# medRCT 0.2.0
+
+* JOSS paper published (added badge in README)
+
+* Fix bug when mediator and intermediate confounder are factors
+
+* Bootstraps that return warnings or errors are now disregarded, and the number of failed bootstraps is reported in the summary output
+
+* Add argument to specify the effect measure
+
+* Add package logo

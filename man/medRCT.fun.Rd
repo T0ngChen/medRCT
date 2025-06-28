@@ -13,6 +13,7 @@ medRCT.fun(
   mediators = mediators,
   interactions_XC = interactions_XC,
   intervention_type = intervention_type,
+  effect_measure,
   mcsim
 )
 }
@@ -52,6 +53,12 @@ mediator (\code{k}) in the exposed to match the corresponding distribution in th
 specific mediator (\code{k}) in the exposed to match the corresponding distribution in the unexposed while accounting for the flow-on
 effects on causally descendant mediators.
 }}
+
+\item{effect_measure}{A \code{character} string specifying the effect measure to calculate.
+For a continuous outcome, only \code{"Diff"} (difference in means) is allowed.
+For a binary outcome, must be either \code{"RD"} (risk difference) or \code{"RR"} (risk ratio).
+If not specified, defaults to \code{"Diff"} for continuous outcomes and \code{"RD"} for binary outcomes.
+Only one effect measure can be specified at a time.}
 
 \item{mcsim}{An \code{integer} specifying the number of Monte Carlo simulations to perform.}
 }
