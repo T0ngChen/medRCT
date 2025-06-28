@@ -3,7 +3,7 @@
 of interest. It can handle any number of potentially correlated mediators, including mediators that are not of primary
 interest but that are intermediate (exposure-induced) mediator-outcome confounders."><meta property="og:description" content="medRCT is used to estimate interventional effects that map to a target trial evaluating hypothetical mediator interventions
 of interest. It can handle any number of potentially correlated mediators, including mediators that are not of primary
-interest but that are intermediate (exposure-induced) mediator-outcome confounders."></head><body>
+interest but that are intermediate (exposure-induced) mediator-outcome confounders."><meta property="og:image" content="https://t0ngchen.github.io/medRCT/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -11,7 +11,7 @@ interest but that are intermediate (exposure-induced) mediator-outcome confounde
 
     <a class="navbar-brand me-2" href="../index.html">medRCT</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,8 +34,7 @@ interest but that are intermediate (exposure-induced) mediator-outcome confounde
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Causal Mediation Analysis Estimating Interventional Effects Mapped to A Target Trial</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Causal Mediation Analysis Estimating Interventional Effects Mapped to A Target Trial</h1>
 
       <div class="d-none name"><code>medRCT.Rd</code></div>
     </div>
@@ -57,6 +56,7 @@ interest but that are intermediate (exposure-induced) mediator-outcome confounde
 <span>  <span class="va">confounders</span>,</span>
 <span>  interactions_XC <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  intervention_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"shift_all"</span>, <span class="st">"shift_k"</span>, <span class="st">"shift_k_order"</span><span class="op">)</span>,</span>
+<span>  effect_measure <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  mcsim <span class="op">=</span> <span class="fl">200</span>,</span>
 <span>  bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  boot_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>R <span class="op">=</span> <span class="fl">100</span>, stype <span class="op">=</span> <span class="st">"i"</span>, ci.type <span class="op">=</span> <span class="st">"norm"</span><span class="op">)</span>,</span>
@@ -120,6 +120,14 @@ effects on causally descendant mediators.</p></li>
 </ul></dd>
 
 
+<dt id="arg-effect-measure">effect_measure<a class="anchor" aria-label="anchor" href="#arg-effect-measure"></a></dt>
+<dd><p>A <code>character</code> string specifying the effect measure to calculate.
+For a continuous outcome, only <code>"Diff"</code> (difference in means) is allowed.
+For a binary outcome, must be either <code>"RD"</code> (risk difference) or <code>"RR"</code> (risk ratio).
+If not specified, defaults to <code>"Diff"</code> for continuous outcomes and <code>"RD"</code> for binary outcomes.
+Only one effect measure can be specified at a time.</p></dd>
+
+
 <dt id="arg-mcsim">mcsim<a class="anchor" aria-label="anchor" href="#arg-mcsim"></a></dt>
 <dd><p>An <code>integer</code> specifying the number of Monte Carlo simulations to perform. The default is 200.
 It is recommended to run analysis with no fewer than 200 Monte Carlo simulations.</p></dd>
@@ -149,6 +157,8 @@ The Shiny app provides a user-friendly interface to review model summaries and i
 ensuring that the models are appropriately specified before proceeding with the analysis.</p>
 <p>If issues with model fitting are detected, users are encouraged to adjust the exposure-confounder interaction term as needed.
 However, <strong>mediators or confounders must not be selected based on model fitting results.</strong></p>
+<p>The function accepts binary mediators and intermediate confounders coded as 0/1, TRUE/FALSE, or any two unique values (numeric, character, or factor).
+Internally, the lower value will always be treated as 0 and the higher value as 1, regardless of the original coding.</p>
     </div>
 
     <div class="section level2">
@@ -171,6 +181,7 @@ However, <strong>mediators or confounders must not be selected based on model fi
 <span class="r-in"><span>  confounders <span class="op">=</span> <span class="va">confounders</span>,</span></span>
 <span class="r-in"><span>  interactions_XC <span class="op">=</span> <span class="st">"all"</span>,</span></span>
 <span class="r-in"><span>  intervention_type <span class="op">=</span> <span class="st">"all"</span>,</span></span>
+<span class="r-in"><span>  effect_measure <span class="op">=</span> <span class="st">"RD"</span>,</span></span>
 <span class="r-in"><span>  bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  boot_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>R <span class="op">=</span> <span class="fl">100</span>, stype <span class="op">=</span> <span class="st">"i"</span>, ci.type <span class="op">=</span> <span class="st">"norm"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  mcsim <span class="op">=</span> <span class="fl">100</span></span></span>
