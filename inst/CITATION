@@ -1,27 +1,36 @@
 citHeader("Please cite the following article when using the 'medRCT' package:")
 
-note = sprintf("R package version %s", utils::packageDescription("medRCT", fields = "Version"))
-
 bibentry(
-  bibtype = "Manual",
-  title = gsub("\n", " ", paste0("medRCT: ", utils::packageDescription("medRCT", fields = "Title"))),
-  author = c(person("Tong", "Chen"),
-             person("Margarita", "Moreno-Betancur"),
-             person("S. Ghazaleh", "Dashti")),
-  year = format(Sys.Date(), "%Y"),
-  url = "https://github.com/T0ngChen/medRCT",
-  note = note
+  bibtype = "Article",
+  title = "{medRCT}: Causal mediation analysis estimating interventional effects mapped to a target trial in {R}",
+  author = c(
+    person("Tong", "Chen"),
+    person("S. Ghazaleh", "Dashti"),
+    person("Margarita", "Moreno-Betancur")
+  ),
+  year = "2025",
+  url = "https://doi.org/10.21105/joss.08063",
+  doi = "10.21105/joss.08063",
+  volume = "10",
+  number = "110",
+  pages = "8063",
+  journal = "Journal of Open Source Software",
+  publisher = "The Open Journal"
 )
 
 
-bibentry(bibtype = "Article",
-         title = "Mediation effects that emulate a target randomised trial: Simulation-based evaluation of ill-defined interventions on multiple mediators",
-         author = c(person("Margarita", "Moreno-Betancur"),
-                    person("Paul", "Moran"),
-                    person("Denise", "Becker"),
-                    person("George", "Patton"),
-                    person("John", "Carlin")),
-         journal = "Statistical Methods in Medical Research",
-         year = "2021",
-         doi = "10.1177/0962280221998409",
-         url = "https://doi.org/10.1177/0962280221998409")
+bibentry(
+  bibtype = "Article",
+  title = "Mediation effects that emulate a target randomised trial: Simulation-based evaluation of ill-defined interventions on multiple mediators",
+  author = c(
+    person("Margarita", "Moreno-Betancur"),
+    person("Paul", "Moran"),
+    person("Denise", "Becker"),
+    person("George", "Patton"),
+    person("John", "Carlin")
+  ),
+  journal = "Statistical Methods in Medical Research",
+  year = "2021",
+  doi = "10.1177/0962280221998409",
+  url = "https://doi.org/10.1177/0962280221998409"
+)
