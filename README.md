@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# medRCT <a href="https://t0ngchen.github.io/medRCT"><img src="man/figures/logo.png" align="right" height="100" alt="medRCT website" style="max-width: 100%; height: 138;" /></a>
+# medRCT <a href="https://t0ngchen.github.io/medRCT"><img src="man/figures/logo.png" align="right" height="138" width="138" alt="medRCT website" /></a>
 
 <!-- badges: start -->
 
