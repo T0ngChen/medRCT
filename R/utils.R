@@ -336,22 +336,21 @@ fit_model <- function(formula, data, family, separation_method, ...) {
   if (family$family == "gaussian") {
     fit <- glm(formula, data = data, family = family, ...)
   } else if (family$family == "binomial") {
+    fit <- glm(
+      formula,
+      data = data,
+      family = binomial(),
+      method = detectseparation::detect_separation,
+      ...
+    )
     if (separation_method == "brglm") {
-      fit <- glm(
-        formula,
-        data = data,
-        family = family,
-        method = brglm2::brglm_fit,
-        ...
+      fit <- suppressWarnings(
+        update(
+          fit,
+          method = brglm2::brglm_fit
+        )
       )
     } else if (separation_method == "discard") {
-      fit <- glm(
-        formula,
-        data = data,
-        family = family,
-        method = detectseparation::detect_separation,
-        ...
-      )
       if (any(fit$coefficients %in% c(Inf, -Inf))) {
         warning("Separation detected! Returning NA.")
       } else {
