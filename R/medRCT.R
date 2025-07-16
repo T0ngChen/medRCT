@@ -44,6 +44,10 @@ utils::globalVariables(".SD")
 #'   Only one effect measure can be specified at a time.
 #' @param mcsim An \code{integer} specifying the number of Monte Carlo simulations to perform. The default is 200.
 #' It is recommended to run analysis with no fewer than 200 Monte Carlo simulations.
+#' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
+#'   Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
+#'   or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
+#'   and the bootstrap sample is discarded).
 #' @param bootstrap A \code{logical} value indicating whether bootstrapping should be performed. If \code{TRUE}
 #'  (default), bootstrapping is conducted using the \code{boot} function from the \code{boot} package.
 #' @param boot_args A \code{list} of arguments for bootstrapping. The default settings are:
@@ -107,6 +111,7 @@ medRCT <- function(
   intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"),
   effect_measure = NULL,
   mcsim = 200,
+  separation_method = "discard",
   bootstrap = TRUE,
   boot_args = list(R = 100, stype = "i", ci.type = "norm"),
   ...
@@ -234,6 +239,7 @@ medRCT <- function(
     interactions_XC = interactions_XC,
     intervention_type = intervention_type,
     stype = boot_args$stype,
+    separation_method = separation_method,
     R = boot_args$R,
     ...
   )

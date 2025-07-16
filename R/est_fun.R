@@ -36,6 +36,10 @@
 #'   For a binary outcome, must be either \code{"RD"} (risk difference) or \code{"RR"} (risk ratio).
 #'   If not specified, defaults to \code{"Diff"} for continuous outcomes and \code{"RD"} for binary outcomes.
 #'   Only one effect measure can be specified at a time.
+#' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
+#'   Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
+#'   or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
+#'   and the bootstrap sample is discarded).
 #' @param mcsim An \code{integer} specifying the number of Monte Carlo simulations to perform.
 #'
 #' @importFrom stats as.formula binomial glm predict rbinom rnorm df.residual
@@ -45,13 +49,14 @@
 medRCT.fun <- function(
   dat,
   ind = 1:nrow(dat),
-  first = first,
-  K = K,
-  fam_type = fam_type,
-  mediators = mediators,
-  interactions_XC = interactions_XC,
-  intervention_type = intervention_type,
+  first,
+  K,
+  fam_type,
+  mediators,
+  interactions_XC,
+  intervention_type,
   effect_measure,
+  separation_method,
   mcsim
 ) {
   # Take bootstrap sample
@@ -83,6 +88,7 @@ medRCT.fun <- function(
       fam_type = fam_type,
       interactions_XC = interactions_XC,
       exposure_level = exposure_level,
+      separation_method = separation_method,
       n = n
     )
   }
@@ -99,6 +105,7 @@ medRCT.fun <- function(
       mediators = mediators,
       fam_type = fam_type,
       interactions_XC = interactions_XC,
+      separation_method = separation_method,
       n = n
     )
   }
@@ -119,6 +126,7 @@ medRCT.fun <- function(
           dat2 = dat2,
           fam_type = fam_type,
           interactions_XC = interactions_XC,
+          separation_method = separation_method,
           lnzero = lnzero,
           n = n,
           index = index
@@ -141,6 +149,7 @@ medRCT.fun <- function(
           mediators = mediators,
           fam_type = fam_type,
           interactions_XC = interactions_XC,
+          separation_method = separation_method,
           lnzero = lnzero,
           n = n
         )
@@ -161,6 +170,7 @@ medRCT.fun <- function(
         mediators = mediators,
         fam_type = fam_type,
         interactions_XC = interactions_XC,
+        separation_method = separation_method,
         n = n
       )
     }
@@ -168,7 +178,7 @@ medRCT.fun <- function(
 
   # outcome
   outcome_type = family_type(data, "Y")
-  fit <- glm(
+  fit <- fit_model(
     as.formula(paste0(
       "Y~(X+",
       paste0(paste0("M", 1:K), collapse = "+"),
@@ -176,7 +186,8 @@ medRCT.fun <- function(
       interactions_XC
     )),
     data = data,
-    family = outcome_type[[1]]
+    family = outcome_type[[1]],
+    separation_method = separation_method
   )
 
   if (!fit$converged) {
@@ -295,12 +306,13 @@ medRCT.fun <- function(
 medRCT.fun.safe <- function(
   dat,
   ind = 1:nrow(dat),
-  first = first,
-  K = K,
-  fam_type = fam_type,
-  mediators = mediators,
-  interactions_XC = interactions_XC,
-  intervention_type = intervention_type,
+  first,
+  K,
+  fam_type,
+  mediators,
+  interactions_XC,
+  intervention_type,
+  separation_method,
   effect_measure,
   mcsim
 ) {
@@ -317,6 +329,7 @@ medRCT.fun.safe <- function(
           interactions_XC = interactions_XC,
           intervention_type = intervention_type,
           effect_measure = effect_measure,
+          separation_method = separation_method,
           mcsim = mcsim
         )
       },

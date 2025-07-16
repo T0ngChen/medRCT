@@ -16,6 +16,10 @@
 #'  to include in the regression models in the estimation procedure.
 #' @param exposure_level A numeric vector specifying the levels of the exposure
 #'  (e.g., \code{c(0, 1)}) for which counterfactual predictions are performed.
+#' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
+#'   Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
+#'   or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
+#'   and the bootstrap sample is discarded).
 #' @param n An integer specifying the number of observations for `dat2`.
 #'
 #' @importFrom stats coef as.formula
@@ -30,17 +34,19 @@ joint_dist <- function(
   mediators,
   interactions_XC,
   exposure_level,
+  separation_method,
   n
 ) {
   # Fit the model
-  fit <- glm(
+  fit <- fit_model(
     stats::as.formula(gen_formula(
       k = k,
       interactions_XC = interactions_XC,
       include_all = TRUE
     )),
     data = data,
-    family = fam_type[[k]]
+    family = fam_type[[k]],
+    separation_method = separation_method
   )
 
   # Check convergence and coefficients
@@ -102,6 +108,10 @@ joint_dist <- function(
 #'  (including intermediate confounders).
 #' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
 #'  to include in the regression models in the estimation procedure.
+#' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
+#'   Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
+#'   or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
+#'   and the bootstrap sample is discarded).
 #' @param n An integer specifying the number of observations for `dat2`.
 #'
 #' @importFrom stats coef as.formula
@@ -116,17 +126,19 @@ marg_dist <- function(
   fam_type,
   mediators,
   interactions_XC,
+  separation_method,
   n
 ) {
   # Fit the model
-  fit <- glm(
+  fit <- fit_model(
     stats::as.formula(gen_formula(
       k = k,
       interactions_XC = interactions_XC,
       marginal = TRUE
     )),
     data = data,
-    family = fam_type[[k]]
+    family = fam_type[[k]],
+    separation_method = separation_method
   )
 
   if (!fit$converged) {
@@ -183,6 +195,10 @@ marg_dist <- function(
 #' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
 #'  to include in the regression models in the estimation procedure.
 #' @param lnzero A numeric vector specifying the non-zero levels of the exposure.
+#' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
+#'   Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
+#'   or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
+#'   and the bootstrap sample is discarded).
 #' @param n An integer specifying the number of observations for `dat2`.
 #' @param index An integer vector specifying the indices of all mediators, excluding the mediator
 #'  specified by `MM`.
@@ -201,11 +217,12 @@ joint_X_nonzero <- function(
   mediators,
   interactions_XC,
   lnzero,
+  separation_method,
   n,
   index
 ) {
   # Check for intermediate confounders
-  fit <- glm(
+  fit <- fit_model(
     stats::as.formula(gen_formula(
       k = k,
       MM = MM,
@@ -214,7 +231,8 @@ joint_X_nonzero <- function(
       interactions_XC = interactions_XC
     )),
     data = data,
-    family = fam_type[[k]]
+    family = fam_type[[k]],
+    separation_method = separation_method
   )
 
   # Check model convergence and coefficients
@@ -295,6 +313,10 @@ joint_X_nonzero <- function(
 #' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
 #'  to include in the regression models in the estimation procedure.
 #' @param lnzero A numeric vector specifying the non-zero levels of the exposure.
+#' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
+#'   Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
+#'   or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
+#'   and the bootstrap sample is discarded).
 #' @param n An integer specifying the number of observations for `dat2`.
 #'
 #' @importFrom stats coef as.formula
@@ -310,17 +332,19 @@ con_exposed <- function(
   mediators,
   interactions_XC,
   lnzero,
+  separation_method,
   n
 ) {
   # Fit the model for the mediator k
-  fit <- glm(
+  fit <- fit_model(
     stats::as.formula(gen_formula(
       k = k,
       interactions_XC = interactions_XC,
       include_all = TRUE
     )),
     data = data,
-    family = fam_type[[k]]
+    family = fam_type[[k]],
+    separation_method = separation_method
   )
 
   # Check for convergence or NA coefficients
@@ -394,6 +418,10 @@ con_exposed <- function(
 #'  (including intermediate confounders).
 #' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
 #'  to include in the regression models in the estimation procedure.
+#' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
+#'   Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
+#'   or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
+#'   and the bootstrap sample is discarded).
 #' @param n An integer specifying the number of observations for `dat2`.
 #'
 #' @importFrom stats coef as.formula
@@ -408,10 +436,11 @@ joint_unexposed <- function(
   fam_type,
   mediators,
   interactions_XC,
+  separation_method,
   n
 ) {
   # Fit the model for the mediator k
-  fit <- glm(
+  fit <- fit_model(
     stats::as.formula(gen_formula(
       k = k,
       interactions_XC = interactions_XC,
@@ -419,7 +448,8 @@ joint_unexposed <- function(
       first = first
     )),
     data = data,
-    family = fam_type[[k]]
+    family = fam_type[[k]],
+    separation_method = separation_method
   )
 
   # Check for convergence or NA coefficients
