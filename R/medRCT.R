@@ -121,6 +121,13 @@ medRCT <- function(
   idx <- match(intervention_type, choices)
   intervention_type <- choices[idx]
 
+  if (
+    !identical(separation_method, "discard") &&
+      !identical(separation_method, "brglm")
+  ) {
+    stop('separation_method must be either "discard" or "brglm"')
+  }
+
   # set intervention type to shift_k when K==1
   if (
     length(mediators) == 1 &
