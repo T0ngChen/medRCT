@@ -14,6 +14,7 @@ con_exposed(
   mediators,
   interactions_XC,
   lnzero,
+  separation_method,
   n
 )
 }
@@ -42,6 +43,11 @@ for binary variables.}
 to include in the regression models in the estimation procedure.}
 
 \item{lnzero}{A numeric vector specifying the non-zero levels of the exposure.}
+
+\item{separation_method}{Method to handle separation, only relevant for binomial (binary outcome) models.
+Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
+or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
+and the bootstrap sample is discarded).}
 
 \item{n}{An integer specifying the number of observations for \code{dat2}.}
 }

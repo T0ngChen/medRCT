@@ -14,6 +14,7 @@ joint_dist(
   mediators,
   interactions_XC,
   exposure_level,
+  separation_method,
   n
 )
 }
@@ -40,6 +41,11 @@ to include in the regression models in the estimation procedure.}
 
 \item{exposure_level}{A numeric vector specifying the levels of the exposure
 (e.g., \code{c(0, 1)}) for which counterfactual predictions are performed.}
+
+\item{separation_method}{Method to handle separation, only relevant for binomial (binary outcome) models.
+Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
+or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
+and the bootstrap sample is discarded).}
 
 \item{n}{An integer specifying the number of observations for \code{dat2}.}
 }

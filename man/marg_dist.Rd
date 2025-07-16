@@ -4,7 +4,18 @@
 \alias{marg_dist}
 \title{Estimation of Marginal Distributions of Mediators under Unexposed}
 \usage{
-marg_dist(k, first, K, data, dat2, fam_type, mediators, interactions_XC, n)
+marg_dist(
+  k,
+  first,
+  K,
+  data,
+  dat2,
+  fam_type,
+  mediators,
+  interactions_XC,
+  separation_method,
+  n
+)
 }
 \arguments{
 \item{k}{An integer specifying the index of the current mediator being processed.}
@@ -28,6 +39,11 @@ for binary variables.}
 
 \item{interactions_XC}{A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
 to include in the regression models in the estimation procedure.}
+
+\item{separation_method}{Method to handle separation, only relevant for binomial (binary outcome) models.
+Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
+or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
+and the bootstrap sample is discarded).}
 
 \item{n}{An integer specifying the number of observations for \code{dat2}.}
 }
