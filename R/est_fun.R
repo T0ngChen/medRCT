@@ -37,9 +37,9 @@
 #'   If not specified, defaults to \code{"Diff"} for continuous outcomes and \code{"RD"} for binary outcomes.
 #'   Only one effect measure can be specified at a time.
 #' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
-#'   Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
-#'   or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
-#'   and the bootstrap sample is discarded).
+#'   Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
+#'   or \code{"discard"} (if separation is detected, the function returns \code{NA}. If this occurs during the main estimation,
+#'   the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).
 #' @param mcsim An \code{integer} specifying the number of Monte Carlo simulations to perform.
 #'
 #' @importFrom stats as.formula binomial glm predict rbinom rnorm df.residual

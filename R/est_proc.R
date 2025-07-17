@@ -17,9 +17,9 @@
 #' @param exposure_level A numeric vector specifying the levels of the exposure
 #'  (e.g., \code{c(0, 1)}) for which counterfactual predictions are performed.
 #' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
-#'   Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
-#'   or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
-#'   and the bootstrap sample is discarded).
+#'   Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
+#'   or \code{"discard"} (if separation is detected, the function returns \code{NA}. If this occurs during the main estimation,
+#'   the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).
 #' @param n An integer specifying the number of observations for `dat2`.
 #'
 #' @importFrom stats coef as.formula
@@ -109,9 +109,9 @@ joint_dist <- function(
 #' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
 #'  to include in the regression models in the estimation procedure.
 #' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
-#'   Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
-#'   or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
-#'   and the bootstrap sample is discarded).
+#'   Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
+#'   or \code{"discard"} (if separation is detected, the function returns \code{NA}. If this occurs during the main estimation,
+#'   the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).
 #' @param n An integer specifying the number of observations for `dat2`.
 #'
 #' @importFrom stats coef as.formula
@@ -196,9 +196,9 @@ marg_dist <- function(
 #'  to include in the regression models in the estimation procedure.
 #' @param lnzero A numeric vector specifying the non-zero levels of the exposure.
 #' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
-#'   Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
-#'   or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
-#'   and the bootstrap sample is discarded).
+#'   Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
+#'   or \code{"discard"} (if separation is detected, the function returns \code{NA}. If this occurs during the main estimation,
+#'   the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).
 #' @param n An integer specifying the number of observations for `dat2`.
 #' @param index An integer vector specifying the indices of all mediators, excluding the mediator
 #'  specified by `MM`.
@@ -314,9 +314,9 @@ joint_X_nonzero <- function(
 #'  to include in the regression models in the estimation procedure.
 #' @param lnzero A numeric vector specifying the non-zero levels of the exposure.
 #' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
-#'   Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
-#'   or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
-#'   and the bootstrap sample is discarded).
+#'   Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
+#'   or \code{"discard"} (if separation is detected, the function returns \code{NA}. If this occurs during the main estimation,
+#'   the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).
 #' @param n An integer specifying the number of observations for `dat2`.
 #'
 #' @importFrom stats coef as.formula
@@ -419,9 +419,9 @@ con_exposed <- function(
 #' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
 #'  to include in the regression models in the estimation procedure.
 #' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
-#'   Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
-#'   or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
-#'   and the bootstrap sample is discarded).
+#'   Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
+#'   or \code{"discard"} (if separation is detected, the function returns \code{NA}. If this occurs during the main estimation,
+#'   the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).
 #' @param n An integer specifying the number of observations for `dat2`.
 #'
 #' @importFrom stats coef as.formula

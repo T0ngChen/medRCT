@@ -320,9 +320,9 @@ med_joint_other <- function(k, a, MM, K, ordering = TRUE) {
 #' @param data A data frame containing the variables in the model.
 #' @param family Link function to be used in the model.
 #' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
-#'   Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
-#'   or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
-#'   and the bootstrap sample is discarded).
+#'   Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
+#'   or \code{"discard"} (if separation is detected, the function returns \code{NA}. If this occurs during the main estimation,
+#'   the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).
 #' @param ... Additional arguments passed to \code{glm}.
 #'
 #' @returns An object of class \code{glm} or \code{brglmFit}, depending on the method used.

@@ -45,9 +45,9 @@ utils::globalVariables(".SD")
 #' @param mcsim An \code{integer} specifying the number of Monte Carlo simulations to perform. The default is 200.
 #' It is recommended to run analysis with no fewer than 200 Monte Carlo simulations.
 #' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
-#'   Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
-#'   or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
-#'   and the bootstrap sample is discarded).
+#'   Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
+#'   or \code{"discard"} (if separation is detected, the function returns \code{NA}. If this occurs during the main estimation,
+#'   the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).
 #' @param bootstrap A \code{logical} value indicating whether bootstrapping should be performed. If \code{TRUE}
 #'  (default), bootstrapping is conducted using the \code{boot} function from the \code{boot} package.
 #' @param boot_args A \code{list} of arguments for bootstrapping. The default settings are:
@@ -168,6 +168,12 @@ medRCT <- function(
   if (mcsim < 200) {
     message(
       "Note: It is recommended to run analysis with no fewer than 200 Monte Carlo simulations."
+    )
+  }
+
+  if (separation_method == "brglm") {
+    message(
+      "Note: Logistic regression models are fitted using bias reduction methods for generalised linear models."
     )
   }
 

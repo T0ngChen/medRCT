@@ -14,9 +14,9 @@ fit_model(formula, data, family, separation_method, ...)
 \item{family}{Link function to be used in the model.}
 
 \item{separation_method}{Method to handle separation, only relevant for binomial (binary outcome) models.
-Options are \code{"brglm"} (fits a bias-reduced GLM using the \code{brglm2} package)
-or \code{"discard"} (if separation is detected using the \code{detectseparation} package, the function returns \code{NA}
-and the bootstrap sample is discarded).}
+Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
+or \code{"discard"} (if separation is detected, the function returns \code{NA}. If this occurs during the main estimation,
+the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).}
 
 \item{...}{Additional arguments passed to \code{glm}.}
 }
