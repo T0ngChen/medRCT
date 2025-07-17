@@ -329,7 +329,7 @@ med_joint_other <- function(k, a, MM, K, ordering = TRUE) {
 #'
 #' @importFrom brglm2 brglm_fit
 #' @importFrom detectseparation detect_separation
-#' @importFrom stats glm gaussian binomial
+#' @importFrom stats glm gaussian binomial update
 #'
 #' @keywords internal
 fit_model <- function(formula, data, family, separation_method, ...) {
