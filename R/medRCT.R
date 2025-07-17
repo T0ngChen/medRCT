@@ -233,6 +233,25 @@ medRCT <- function(
     boot_args$R = 1
   }
 
+  # test for main estimation
+  main_est_test = medRCT.fun.safe(
+    dat = dat,
+    ind = 1:nrow(dat),
+    first = first,
+    K = K,
+    fam_type = fam_type,
+    mediators = mediators,
+    interactions_XC = interactions_XC,
+    intervention_type = intervention_type,
+    separation_method = separation_method,
+    effect_measure = effect_measure,
+    mcsim = mcsim
+  )
+
+  if (any(is.na(main_est_test))) {
+    stop("Main estimation failed or warned, aborting bootstrap.")
+  }
+
   # bootstrap
   boot.out <- boot::boot(
     data = dat,
