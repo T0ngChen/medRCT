@@ -231,7 +231,10 @@ medRCT <- function(
   } else if (interactions_XC == "none") {
     interactions_XC <- paste(confounders, collapse = "+")
   } else {
-    interactions_XC <- gsub(exposure, "X", interactions_XC)
+    interactions_XC <- paste(
+      paste(confounders, collapse = "+"),
+      gsub(exposure, "X", interactions_XC)
+    )
   }
 
   # set R to 1 if bootstrap is not required
