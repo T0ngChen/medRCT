@@ -25,3 +25,11 @@ intermediate confounders, and outcomes.
 * Add argument to specify the effect measure
 
 * Add package logo
+
+# medRCT 0.2.1
+
+* Added the `separation_method` argument to handle separation in binomial (binary outcome) models.
+  
+  - Options are `"brglm"` (logistic regression models are fitted using bias reduction methods via the `brglm2` package), or `"discard"` (if separation is detected, the function returns `NA`. If this occurs during the main estimation, the program stops; if during bootstrapping, the affected bootstrap samples are discarded).
+
+* Fixed a bug when using custom interaction terms.

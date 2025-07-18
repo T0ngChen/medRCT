@@ -7,13 +7,14 @@
 medRCT.fun(
   dat,
   ind = 1:nrow(dat),
-  first = first,
-  K = K,
-  fam_type = fam_type,
-  mediators = mediators,
-  interactions_XC = interactions_XC,
-  intervention_type = intervention_type,
+  first,
+  K,
+  fam_type,
+  mediators,
+  interactions_XC,
+  intervention_type,
   effect_measure,
+  separation_method,
   mcsim
 )
 }
@@ -59,6 +60,11 @@ For a continuous outcome, only \code{"Diff"} (difference in means) is allowed.
 For a binary outcome, must be either \code{"RD"} (risk difference) or \code{"RR"} (risk ratio).
 If not specified, defaults to \code{"Diff"} for continuous outcomes and \code{"RD"} for binary outcomes.
 Only one effect measure can be specified at a time.}
+
+\item{separation_method}{Method to handle separation, only relevant for binomial (binary outcome) models.
+Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
+or \code{"discard"} (if separation is detected, the function returns \code{NA}. If this occurs during the main estimation,
+the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).}
 
 \item{mcsim}{An \code{integer} specifying the number of Monte Carlo simulations to perform.}
 }

@@ -15,6 +15,7 @@ joint_X_nonzero(
   mediators,
   interactions_XC,
   lnzero,
+  separation_method,
   n,
   index
 )
@@ -46,6 +47,11 @@ for binary variables.}
 to include in the regression models in the estimation procedure.}
 
 \item{lnzero}{A numeric vector specifying the non-zero levels of the exposure.}
+
+\item{separation_method}{Method to handle separation, only relevant for binomial (binary outcome) models.
+Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
+or \code{"discard"} (if separation is detected, the function returns \code{NA}. If this occurs during the main estimation,
+the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).}
 
 \item{n}{An integer specifying the number of observations for \code{dat2}.}
 

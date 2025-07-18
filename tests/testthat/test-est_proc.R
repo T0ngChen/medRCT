@@ -27,6 +27,7 @@ test_that("test joint_dist", {
     fam_type = fam_type,
     interactions_XC = interactions_XC,
     exposure_level = exposure_level,
+    separation_method = "discard",
     n = n
   )
 
@@ -55,6 +56,7 @@ test_that("test marg_dist", {
     dat2 = dat2,
     fam_type = fam_type,
     interactions_XC = interactions_XC,
+    separation_method = "discard",
     n = n
   )
 
@@ -78,7 +80,8 @@ test_that("test joint_X_nonzero", {
     interactions_XC = interactions_XC,
     lnzero = lnzero,
     n = n,
-    index = index
+    index = index,
+    separation_method = "discard"
   )
 
   for (a in lnzero) {
@@ -136,7 +139,8 @@ test_that("test con_exposed", {
     fam_type = fam_type,
     interactions_XC = interactions_XC,
     lnzero = lnzero,
-    n = n
+    n = n,
+    separation_method = "brglm"
   )
 
   a = lnzero
@@ -172,6 +176,7 @@ test_that("test joint_unexposed", {
       dat2 = dat2,
       fam_type = fam_type,
       interactions_XC = interactions_XC,
+      separation_method = "discard",
       n = n
     )
   }

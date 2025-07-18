@@ -308,3 +308,55 @@ med_joint_other <- function(k, a, MM, K, ordering = TRUE) {
     strrep("m", K - re - 1 - pmax(k - 1 - MM, 0))
   )
 }
+
+
+#' Fit a generalized linear model with separation handling
+#'
+#' This function fits a generalized linear model and handles data separation in binomial models
+#' using either the \code{brglm2} package for bias-reduced estimation or the \code{detectseparation}
+#' method to discard separated data.
+#'
+#' @param formula A formula specifying the model.
+#' @param data A data frame containing the variables in the model.
+#' @param family Link function to be used in the model.
+#' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
+#'   Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
+#'   or \code{"discard"} (if separation is detected, the function returns \code{NA}. If this occurs during the main estimation,
+#'   the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).
+#' @param ... Additional arguments passed to \code{glm}.
+#'
+#' @returns An object of class \code{glm} or \code{brglmFit}, depending on the method used.
+#'
+#' @importFrom brglm2 brglm_fit
+#' @importFrom detectseparation detect_separation
+#' @importFrom stats glm gaussian binomial update
+#'
+#' @keywords internal
+fit_model <- function(formula, data, family, separation_method, ...) {
+  if (family$family == "gaussian") {
+    fit <- glm(formula, data = data, family = family, ...)
+  } else if (family$family == "binomial") {
+    fit <- glm(
+      formula,
+      data = data,
+      family = binomial(),
+      method = detectseparation::detect_separation,
+      ...
+    )
+    if (separation_method == "brglm") {
+      fit <- suppressWarnings(
+        update(
+          fit,
+          method = brglm2::brglm_fit
+        )
+      )
+    } else if (separation_method == "discard") {
+      if (any(fit$coefficients %in% c(Inf, -Inf))) {
+        warning("Separation detected! Returning NA.")
+      } else {
+        fit <- glm(formula, data = data, family = family, ...)
+      }
+    }
+  }
+  return(fit)
+}
