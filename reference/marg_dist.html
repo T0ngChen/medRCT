@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">medRCT</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +41,18 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">marg_dist</span><span class="op">(</span><span class="va">k</span>, <span class="va">first</span>, <span class="va">K</span>, <span class="va">data</span>, <span class="va">dat2</span>, <span class="va">fam_type</span>, <span class="va">mediators</span>, <span class="va">interactions_XC</span>, <span class="va">n</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">marg_dist</span><span class="op">(</span></span>
+<span>  <span class="va">k</span>,</span>
+<span>  <span class="va">first</span>,</span>
+<span>  <span class="va">K</span>,</span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">dat2</span>,</span>
+<span>  <span class="va">fam_type</span>,</span>
+<span>  <span class="va">mediators</span>,</span>
+<span>  <span class="va">interactions_XC</span>,</span>
+<span>  <span class="va">separation_method</span>,</span>
+<span>  <span class="va">n</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -84,6 +95,13 @@ for binary variables.</p></dd>
 <dt id="arg-interactions-xc">interactions_XC<a class="anchor" aria-label="anchor" href="#arg-interactions-xc"></a></dt>
 <dd><p>A <code>character</code> string specifying the two-way interactions amongst exposure and baseline confounders
 to include in the regression models in the estimation procedure.</p></dd>
+
+
+<dt id="arg-separation-method">separation_method<a class="anchor" aria-label="anchor" href="#arg-separation-method"></a></dt>
+<dd><p>Method to handle separation, only relevant for binomial (binary outcome) models.
+Options are <code>"brglm"</code> (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the <code>brglm2</code> package)
+or <code>"discard"</code> (if separation is detected, the function returns <code>NA</code>. If this occurs during the main estimation,
+the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).</p></dd>
 
 
 <dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>

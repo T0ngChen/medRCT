@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">medRCT</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,6 +51,7 @@
 <span>  <span class="va">mediators</span>,</span>
 <span>  <span class="va">interactions_XC</span>,</span>
 <span>  <span class="va">lnzero</span>,</span>
+<span>  <span class="va">separation_method</span>,</span>
 <span>  <span class="va">n</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -100,6 +101,13 @@ to include in the regression models in the estimation procedure.</p></dd>
 
 <dt id="arg-lnzero">lnzero<a class="anchor" aria-label="anchor" href="#arg-lnzero"></a></dt>
 <dd><p>A numeric vector specifying the non-zero levels of the exposure.</p></dd>
+
+
+<dt id="arg-separation-method">separation_method<a class="anchor" aria-label="anchor" href="#arg-separation-method"></a></dt>
+<dd><p>Method to handle separation, only relevant for binomial (binary outcome) models.
+Options are <code>"brglm"</code> (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the <code>brglm2</code> package)
+or <code>"discard"</code> (if separation is detected, the function returns <code>NA</code>. If this occurs during the main estimation,
+the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).</p></dd>
 
 
 <dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">medRCT</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,6 +52,14 @@
 <li><p>Bootstraps that return warnings or errors are now disregarded, and the number of failed bootstraps is reported in the summary output</p></li>
 <li><p>Add argument to specify the effect measure</p></li>
 <li><p>Add package logo</p></li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.1" id="medrct-021">medRCT 0.2.1<a class="anchor" aria-label="anchor" href="#medrct-021"></a></h2>
+<ul><li>
+<p>Added the <code>separation_method</code> argument to handle separation in binomial (binary outcome) models.</p>
+<ul><li>Options are <code>"brglm"</code> (logistic regression models are fitted using bias reduction methods via the <code>brglm2</code> package), or <code>"discard"</code> (if separation is detected, the function returns <code>NA</code>. If this occurs during the main estimation, the program stops; if during bootstrapping, the affected bootstrap samples are discarded).</li>
+</ul></li>
+<li><p>Fixed a bug when using custom interaction terms.</p></li>
 </ul></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

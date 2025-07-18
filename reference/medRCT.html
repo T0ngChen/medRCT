@@ -11,7 +11,7 @@ interest but that are intermediate (exposure-induced) mediator-outcome confounde
 
     <a class="navbar-brand me-2" href="../index.html">medRCT</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,6 +58,7 @@ interest but that are intermediate (exposure-induced) mediator-outcome confounde
 <span>  intervention_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"shift_all"</span>, <span class="st">"shift_k"</span>, <span class="st">"shift_k_order"</span><span class="op">)</span>,</span>
 <span>  effect_measure <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  mcsim <span class="op">=</span> <span class="fl">200</span>,</span>
+<span>  separation_method <span class="op">=</span> <span class="st">"discard"</span>,</span>
 <span>  bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  boot_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>R <span class="op">=</span> <span class="fl">100</span>, stype <span class="op">=</span> <span class="st">"i"</span>, ci.type <span class="op">=</span> <span class="st">"norm"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -131,6 +132,13 @@ Only one effect measure can be specified at a time.</p></dd>
 <dt id="arg-mcsim">mcsim<a class="anchor" aria-label="anchor" href="#arg-mcsim"></a></dt>
 <dd><p>An <code>integer</code> specifying the number of Monte Carlo simulations to perform. The default is 200.
 It is recommended to run analysis with no fewer than 200 Monte Carlo simulations.</p></dd>
+
+
+<dt id="arg-separation-method">separation_method<a class="anchor" aria-label="anchor" href="#arg-separation-method"></a></dt>
+<dd><p>Method to handle separation, only relevant for binomial (binary outcome) models.
+Options are <code>"brglm"</code> (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the <code>brglm2</code> package)
+or <code>"discard"</code> (if separation is detected, the function returns <code>NA</code>. If this occurs during the main estimation,
+the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).</p></dd>
 
 
 <dt id="arg-bootstrap">bootstrap<a class="anchor" aria-label="anchor" href="#arg-bootstrap"></a></dt>

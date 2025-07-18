@@ -9,7 +9,7 @@ hypothetical target trial."><meta property="og:image" content="https://t0ngchen.
 
     <a class="navbar-brand me-2" href="../index.html">medRCT</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,13 +47,14 @@ hypothetical target trial.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">medRCT.fun</span><span class="op">(</span></span>
 <span>  <span class="va">dat</span>,</span>
 <span>  ind <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span>,</span>
-<span>  first <span class="op">=</span> <span class="va">first</span>,</span>
-<span>  K <span class="op">=</span> <span class="va">K</span>,</span>
-<span>  fam_type <span class="op">=</span> <span class="va">fam_type</span>,</span>
-<span>  mediators <span class="op">=</span> <span class="va">mediators</span>,</span>
-<span>  interactions_XC <span class="op">=</span> <span class="va">interactions_XC</span>,</span>
-<span>  intervention_type <span class="op">=</span> <span class="va">intervention_type</span>,</span>
+<span>  <span class="va">first</span>,</span>
+<span>  <span class="va">K</span>,</span>
+<span>  <span class="va">fam_type</span>,</span>
+<span>  <span class="va">mediators</span>,</span>
+<span>  <span class="va">interactions_XC</span>,</span>
+<span>  <span class="va">intervention_type</span>,</span>
 <span>  <span class="va">effect_measure</span>,</span>
+<span>  <span class="va">separation_method</span>,</span>
 <span>  <span class="va">mcsim</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -118,6 +119,13 @@ For a continuous outcome, only <code>"Diff"</code> (difference in means) is allo
 For a binary outcome, must be either <code>"RD"</code> (risk difference) or <code>"RR"</code> (risk ratio).
 If not specified, defaults to <code>"Diff"</code> for continuous outcomes and <code>"RD"</code> for binary outcomes.
 Only one effect measure can be specified at a time.</p></dd>
+
+
+<dt id="arg-separation-method">separation_method<a class="anchor" aria-label="anchor" href="#arg-separation-method"></a></dt>
+<dd><p>Method to handle separation, only relevant for binomial (binary outcome) models.
+Options are <code>"brglm"</code> (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the <code>brglm2</code> package)
+or <code>"discard"</code> (if separation is detected, the function returns <code>NA</code>. If this occurs during the main estimation,
+the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).</p></dd>
 
 
 <dt id="arg-mcsim">mcsim<a class="anchor" aria-label="anchor" href="#arg-mcsim"></a></dt>
