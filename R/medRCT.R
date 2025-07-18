@@ -231,8 +231,9 @@ medRCT <- function(
   } else if (interactions_XC == "none") {
     interactions_XC <- paste(confounders, collapse = "+")
   } else {
-    interactions_XC <- paste(
+    interactions_XC <- paste0(
       paste(confounders, collapse = "+"),
+      "+",
       gsub(exposure, "X", interactions_XC)
     )
   }
