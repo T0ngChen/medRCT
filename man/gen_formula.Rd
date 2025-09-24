@@ -10,6 +10,7 @@ gen_formula(
   MM = NULL,
   K = NULL,
   interactions_XC,
+  use_interactions_XM,
   include_all = FALSE,
   marginal = FALSE
 )
@@ -35,6 +36,8 @@ generate formulas without explicitly considering this parameter.}
 to include in the regression models in the estimation procedure. The default value, \code{"all"},
 includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
 Specify \code{"none"} to exclude all two-way interactions amongst exposure and baseline confounders.}
+
+\item{use_interactions_XM}{Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).}
 
 \item{include_all}{Logical.}
 

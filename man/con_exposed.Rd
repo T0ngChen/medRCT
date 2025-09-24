@@ -13,6 +13,7 @@ con_exposed(
   fam_type,
   mediators,
   interactions_XC,
+  use_interactions_XM,
   lnzero,
   separation_method,
   n
@@ -41,6 +42,8 @@ for binary variables.}
 
 \item{interactions_XC}{A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
 to include in the regression models in the estimation procedure.}
+
+\item{use_interactions_XM}{Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).}
 
 \item{lnzero}{A numeric vector specifying the non-zero levels of the exposure.}
 

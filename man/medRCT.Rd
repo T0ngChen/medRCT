@@ -12,6 +12,7 @@ medRCT(
   intermediate_confs,
   confounders,
   interactions_XC = "all",
+  use_interactions_XM = TRUE,
   intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"),
   effect_measure = NULL,
   mcsim = 200,
@@ -45,6 +46,8 @@ no intermediate confounders are specified.}
 to include in the regression models in the estimation procedure. The default value, \code{"all"},
 includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
 Specify \code{"none"} to exclude all two-way interactions between exposure and baseline confounders. See Vignette for further details.}
+
+\item{use_interactions_XM}{Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).}
 
 \item{intervention_type}{A \code{character} string indicating the type of interventional effect to be estimated.
 Options include:

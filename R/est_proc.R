@@ -14,6 +14,7 @@
 #' (including intermediate confounders).
 #' @param interactions_XC  A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
 #'  to include in the regression models in the estimation procedure.
+#' @param use_interactions_XM Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).
 #' @param exposure_level A numeric vector specifying the levels of the exposure
 #'  (e.g., \code{c(0, 1)}) for which counterfactual predictions are performed.
 #' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
@@ -33,6 +34,7 @@ joint_dist <- function(
   fam_type,
   mediators,
   interactions_XC,
+  use_interactions_XM,
   exposure_level,
   separation_method,
   n
@@ -42,6 +44,7 @@ joint_dist <- function(
     stats::as.formula(gen_formula(
       k = k,
       interactions_XC = interactions_XC,
+      use_interactions_XM = use_interactions_XM,
       include_all = TRUE
     )),
     data = data,
@@ -108,6 +111,7 @@ joint_dist <- function(
 #'  (including intermediate confounders).
 #' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
 #'  to include in the regression models in the estimation procedure.
+#' @param use_interactions_XM Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).
 #' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
 #'   Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
 #'   or \code{"discard"} (if separation is detected, the function returns \code{NA}. If this occurs during the main estimation,
@@ -126,6 +130,7 @@ marg_dist <- function(
   fam_type,
   mediators,
   interactions_XC,
+  use_interactions_XM,
   separation_method,
   n
 ) {
@@ -134,6 +139,7 @@ marg_dist <- function(
     stats::as.formula(gen_formula(
       k = k,
       interactions_XC = interactions_XC,
+      use_interactions_XM = use_interactions_XM,
       marginal = TRUE
     )),
     data = data,
@@ -194,6 +200,7 @@ marg_dist <- function(
 #'  (including intermediate confounders).
 #' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
 #'  to include in the regression models in the estimation procedure.
+#' @param use_interactions_XM Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).
 #' @param lnzero A numeric vector specifying the non-zero levels of the exposure.
 #' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
 #'   Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
@@ -216,6 +223,7 @@ joint_X_nonzero <- function(
   fam_type,
   mediators,
   interactions_XC,
+  use_interactions_XM,
   lnzero,
   separation_method,
   n,
@@ -228,7 +236,8 @@ joint_X_nonzero <- function(
       MM = MM,
       first = first,
       K = K,
-      interactions_XC = interactions_XC
+      interactions_XC = interactions_XC,
+      use_interactions_XM = use_interactions_XM
     )),
     data = data,
     family = fam_type[[k]],
@@ -312,6 +321,7 @@ joint_X_nonzero <- function(
 #'  (including intermediate confounders).
 #' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
 #'  to include in the regression models in the estimation procedure.
+#' @param use_interactions_XM Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).
 #' @param lnzero A numeric vector specifying the non-zero levels of the exposure.
 #' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
 #'   Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
@@ -331,6 +341,7 @@ con_exposed <- function(
   fam_type,
   mediators,
   interactions_XC,
+  use_interactions_XM,
   lnzero,
   separation_method,
   n
@@ -340,6 +351,7 @@ con_exposed <- function(
     stats::as.formula(gen_formula(
       k = k,
       interactions_XC = interactions_XC,
+      use_interactions_XM = use_interactions_XM,
       include_all = TRUE
     )),
     data = data,
@@ -418,6 +430,7 @@ con_exposed <- function(
 #'  (including intermediate confounders).
 #' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
 #'  to include in the regression models in the estimation procedure.
+#' @param use_interactions_XM Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).
 #' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
 #'   Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
 #'   or \code{"discard"} (if separation is detected, the function returns \code{NA}. If this occurs during the main estimation,
@@ -436,6 +449,7 @@ joint_unexposed <- function(
   fam_type,
   mediators,
   interactions_XC,
+  use_interactions_XM,
   separation_method,
   n
 ) {
@@ -444,6 +458,7 @@ joint_unexposed <- function(
     stats::as.formula(gen_formula(
       k = k,
       interactions_XC = interactions_XC,
+      use_interactions_XM = use_interactions_XM,
       include_all = TRUE,
       first = first
     )),

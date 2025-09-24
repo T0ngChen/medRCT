@@ -25,6 +25,7 @@ utils::globalVariables(".SD")
 #'  to include in the regression models in the estimation procedure. The default value, \code{"all"},
 #'  includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
 #'  Specify \code{"none"} to exclude all two-way interactions between exposure and baseline confounders. See Vignette for further details.
+#' @param use_interactions_XM Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).
 #' @param intervention_type A \code{character} string indicating the type of interventional effect to be estimated.
 #'  Options include:
 #' \itemize{
@@ -107,6 +108,7 @@ medRCT <- function(
   intermediate_confs,
   confounders,
   interactions_XC = "all",
+  use_interactions_XM = TRUE,
   intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"),
   effect_measure = NULL,
   mcsim = 200,
@@ -143,6 +145,11 @@ medRCT <- function(
       paste(mediators, collapse = ", "),
       "\n"
     ))
+  }
+  if (!is.logical(use_interactions_XM) || length(use_interactions_XM) != 1) {
+    stop(
+      "'use_interactions_XM' must be a single logical value (TRUE or FALSE)."
+    )
   }
 
   mediators = c(intermediate_confs, mediators)
@@ -250,6 +257,7 @@ medRCT <- function(
     fam_type = fam_type,
     mediators = mediators,
     interactions_XC = interactions_XC,
+    use_interactions_XM = use_interactions_XM,
     intervention_type = intervention_type,
     separation_method = separation_method,
     effect_measure = effect_measure,
@@ -271,6 +279,7 @@ medRCT <- function(
     fam_type = fam_type,
     effect_measure = effect_measure,
     interactions_XC = interactions_XC,
+    use_interactions_XM = use_interactions_XM,
     intervention_type = intervention_type,
     stype = boot_args$stype,
     separation_method = separation_method,

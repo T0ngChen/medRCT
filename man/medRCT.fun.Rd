@@ -12,6 +12,7 @@ medRCT.fun(
   fam_type,
   mediators,
   interactions_XC,
+  use_interactions_XM,
   intervention_type,
   effect_measure,
   separation_method,
@@ -41,6 +42,8 @@ confounders).}
 to include in the regression models in the estimation procedure. The default value, \code{"all"},
 includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
 Specify \code{"none"} to exclude all two-way interactions amongst exposure and baseline confounders.}
+
+\item{use_interactions_XM}{Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).}
 
 \item{intervention_type}{A \code{character} string indicating the type of interventional effect to be estimated.
 Options include:
