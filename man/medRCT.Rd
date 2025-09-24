@@ -15,7 +15,6 @@ medRCT(
   intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"),
   effect_measure = NULL,
   mcsim = 200,
-  separation_method = "discard",
   bootstrap = TRUE,
   boot_args = list(R = 100, stype = "i", ci.type = "norm"),
   ...
@@ -69,11 +68,6 @@ Only one effect measure can be specified at a time.}
 \item{mcsim}{An \code{integer} specifying the number of Monte Carlo simulations to perform. The default is 200.
 It is recommended to run analysis with no fewer than 200 Monte Carlo simulations.}
 
-\item{separation_method}{Method to handle separation, only relevant for binomial (binary outcome) models.
-Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
-or \code{"discard"} (if separation is detected, the function returns \code{NA}. If this occurs during the main estimation,
-the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).}
-
 \item{bootstrap}{A \code{logical} value indicating whether bootstrapping should be performed. If \code{TRUE}
 (default), bootstrapping is conducted using the \code{boot} function from the \code{boot} package.}
 
@@ -98,7 +92,9 @@ The Shiny app provides a user-friendly interface to review model summaries and i
 ensuring that the models are appropriately specified before proceeding with the analysis.
 
 If issues with model fitting are detected, users are encouraged to adjust the exposure-confounder interaction term as needed.
-However, \strong{mediators or confounders must not be selected based on model fitting results.}
+However, \strong{mediators or confounders must not be selected based on model fitting results.} If separation is detected,
+the function returns \code{NA}. If this occurs during the main estimation, the program stops;
+if it occurs during bootstrapping, the affected bootstrap samples are discarded.
 
 The function accepts binary mediators and intermediate confounders coded as 0/1, TRUE/FALSE, or any two unique values (numeric, character, or factor).
 Internally, the lower value will always be treated as 0 and the higher value as 1, regardless of the original coding.
