@@ -9,7 +9,7 @@ the input parameters."><meta property="og:image" content="https://t0ngchen.githu
 
     <a class="navbar-brand me-2" href="../index.html">medRCT</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,6 +50,7 @@ the input parameters.</p>
 <span>  MM <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  K <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">interactions_XC</span>,</span>
+<span>  <span class="va">use_interactions_XM</span>,</span>
 <span>  include_all <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  marginal <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -88,6 +89,10 @@ generate formulas without explicitly considering this parameter.</p></dd>
 to include in the regression models in the estimation procedure. The default value, <code>"all"</code>,
 includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
 Specify <code>"none"</code> to exclude all two-way interactions amongst exposure and baseline confounders.</p></dd>
+
+
+<dt id="arg-use-interactions-xm">use_interactions_XM<a class="anchor" aria-label="anchor" href="#arg-use-interactions-xm"></a></dt>
+<dd><p>Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).</p></dd>
 
 
 <dt id="arg-include-all">include_all<a class="anchor" aria-label="anchor" href="#arg-include-all"></a></dt>

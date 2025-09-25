@@ -11,7 +11,7 @@ interest but that are intermediate (exposure-induced) mediator-outcome confounde
 
     <a class="navbar-brand me-2" href="../index.html">medRCT</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,10 +55,10 @@ interest but that are intermediate (exposure-induced) mediator-outcome confounde
 <span>  <span class="va">intermediate_confs</span>,</span>
 <span>  <span class="va">confounders</span>,</span>
 <span>  interactions_XC <span class="op">=</span> <span class="st">"all"</span>,</span>
+<span>  use_interactions_XM <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  intervention_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"shift_all"</span>, <span class="st">"shift_k"</span>, <span class="st">"shift_k_order"</span><span class="op">)</span>,</span>
 <span>  effect_measure <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  mcsim <span class="op">=</span> <span class="fl">200</span>,</span>
-<span>  separation_method <span class="op">=</span> <span class="st">"discard"</span>,</span>
 <span>  bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  boot_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>R <span class="op">=</span> <span class="fl">100</span>, stype <span class="op">=</span> <span class="st">"i"</span>, ci.type <span class="op">=</span> <span class="st">"norm"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -108,6 +108,10 @@ includes all two-way exposure-confounder interactions but excludes confounder-co
 Specify <code>"none"</code> to exclude all two-way interactions between exposure and baseline confounders. See Vignette for further details.</p></dd>
 
 
+<dt id="arg-use-interactions-xm">use_interactions_XM<a class="anchor" aria-label="anchor" href="#arg-use-interactions-xm"></a></dt>
+<dd><p>Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).</p></dd>
+
+
 <dt id="arg-intervention-type">intervention_type<a class="anchor" aria-label="anchor" href="#arg-intervention-type"></a></dt>
 <dd><p>A <code>character</code> string indicating the type of interventional effect to be estimated.
 Options include:</p><ul><li><p><code>"all"</code> (default): Estimates all three types of interventional indirect effects.</p></li>
@@ -134,13 +138,6 @@ Only one effect measure can be specified at a time.</p></dd>
 It is recommended to run analysis with no fewer than 200 Monte Carlo simulations.</p></dd>
 
 
-<dt id="arg-separation-method">separation_method<a class="anchor" aria-label="anchor" href="#arg-separation-method"></a></dt>
-<dd><p>Method to handle separation, only relevant for binomial (binary outcome) models.
-Options are <code>"brglm"</code> (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the <code>brglm2</code> package)
-or <code>"discard"</code> (if separation is detected, the function returns <code>NA</code>. If this occurs during the main estimation,
-the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).</p></dd>
-
-
 <dt id="arg-bootstrap">bootstrap<a class="anchor" aria-label="anchor" href="#arg-bootstrap"></a></dt>
 <dd><p>A <code>logical</code> value indicating whether bootstrapping should be performed. If <code>TRUE</code>
 (default), bootstrapping is conducted using the <code>boot</code> function from the <code>boot</code> package.</p></dd>
@@ -164,7 +161,9 @@ using the interactive Shiny application, which can be launched by running the fu
 The Shiny app provides a user-friendly interface to review model summaries and identify potential warnings and errors,
 ensuring that the models are appropriately specified before proceeding with the analysis.</p>
 <p>If issues with model fitting are detected, users are encouraged to adjust the exposure-confounder interaction term as needed.
-However, <strong>mediators or confounders must not be selected based on model fitting results.</strong></p>
+However, <strong>mediators or confounders must not be selected based on model fitting results.</strong> If separation is detected,
+the function returns <code>NA</code>. If this occurs during the main estimation, the program stops;
+if it occurs during bootstrapping, the affected bootstrap samples are discarded.</p>
 <p>The function accepts binary mediators and intermediate confounders coded as 0/1, TRUE/FALSE, or any two unique values (numeric, character, or factor).
 Internally, the lower value will always be treated as 0 and the higher value as 1, regardless of the original coding.</p>
     </div>
