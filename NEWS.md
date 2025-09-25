@@ -36,6 +36,7 @@ intermediate confounders, and outcomes.
 
 # medRCT 0.2.2
 
-* Introduced the `use_interactions_XM` to allow remove the exposure-mediator interactions
+* Introduced the `use_interactions_XM` to allow removal of the exposure-mediator interactions
+
 
 * fix the `separation_method` to `discard`
