@@ -33,3 +33,9 @@ intermediate confounders, and outcomes.
   - Options are `"brglm"` (logistic regression models are fitted using bias reduction methods via the `brglm2` package), or `"discard"` (if separation is detected, the function returns `NA`. If this occurs during the main estimation, the program stops; if during bootstrapping, the affected bootstrap samples are discarded).
 
 * Fixed a bug when using custom interaction terms.
+
+# medRCT 0.2.2
+
+* Introduced the `use_interactions_XM` to allow remove the exposure-mediator interactions
+
+* fix the `separation_method` to `discard`
