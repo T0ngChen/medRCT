@@ -221,6 +221,7 @@ cf_predict = function(fit, data, var_name, n, family) {
 #'  to include in the regression models in the estimation procedure. The default value, \code{"all"},
 #'  includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
 #'  Specify \code{"none"} to exclude all two-way interactions amongst exposure and baseline confounders.
+#' @param use_interactions_XM Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).
 #' @param include_all Logical.
 #' @param marginal Logical. If `TRUE`, estimating marginals under `X=0`.
 #'
@@ -231,9 +232,19 @@ gen_formula <- function(
   MM = NULL,
   K = NULL,
   interactions_XC,
+  use_interactions_XM,
   include_all = FALSE,
   marginal = FALSE
 ) {
+  # Helper: construct main terms
+  build_terms <- function(vars) {
+    if (use_interactions_XM) {
+      paste0("(", paste(vars, collapse = "+"), ")^2")
+    } else {
+      paste(vars, collapse = "+")
+    }
+  }
+
   if ((k == 1 || marginal) && is.null(MM)) {
     # Formula does not include other mediators
     return(paste0("M", k, "~X+", interactions_XC))
@@ -243,18 +254,18 @@ gen_formula <- function(
       return(paste0(
         "M",
         k,
-        "~(X+",
-        paste0("M", 1:(k - 1), collapse = "+"),
-        ")^2+",
+        "~",
+        build_terms(c("X", paste0("M", 1:(k - 1)))),
+        "+",
         interactions_XC
       ))
     } else {
       return(paste0(
         "M",
         k,
-        "~(X+",
-        paste0("M", first:(k - 1), collapse = "+"),
-        ")^2+",
+        "~",
+        build_terms(c("X", paste0("M", first:(k - 1)))),
+        "+",
         interactions_XC
       ))
     }
@@ -266,9 +277,9 @@ gen_formula <- function(
       return(paste0(
         "M",
         k,
-        "~(X+",
-        paste0("M", setdiff(1:(k - 1), MM), collapse = "+"),
-        ")^2+",
+        "~",
+        build_terms(c("X", paste0("M", setdiff(1:(k - 1), MM)))),
+        "+",
         interactions_XC
       ))
     }
@@ -354,7 +365,7 @@ fit_model <- function(formula, data, family, separation_method, ...) {
       if (any(fit$coefficients %in% c(Inf, -Inf))) {
         warning("Separation detected! Returning NA.")
       } else {
-        fit <- glm(formula, data = data, family = family, ...)
+        fit <- glm(formula, data = data, family = binomial(), ...)
       }
     }
   }

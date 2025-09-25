@@ -34,6 +34,7 @@ test_that("test for medRCT", {
       "mat_age"
     ),
     interactions_XC = "none",
+    use_interactions_XM = TRUE,
     intervention_type = "all",
     mcsim = 50,
     bootstrap = F

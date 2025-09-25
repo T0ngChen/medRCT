@@ -19,6 +19,7 @@
 #'  to include in the regression models in the estimation procedure. The default value, \code{"all"},
 #'  includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
 #'  Specify \code{"none"} to exclude all two-way interactions amongst exposure and baseline confounders.
+#' @param use_interactions_XM Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).
 #' @param intervention_type A \code{character} string indicating the type of interventional effect to be estimated.
 #'  Options include:
 #' \itemize{
@@ -54,6 +55,7 @@ medRCT.fun <- function(
   fam_type,
   mediators,
   interactions_XC,
+  use_interactions_XM,
   intervention_type,
   effect_measure,
   separation_method,
@@ -87,6 +89,7 @@ medRCT.fun <- function(
       mediators = mediators,
       fam_type = fam_type,
       interactions_XC = interactions_XC,
+      use_interactions_XM = use_interactions_XM,
       exposure_level = exposure_level,
       separation_method = separation_method,
       n = n
@@ -105,6 +108,7 @@ medRCT.fun <- function(
       mediators = mediators,
       fam_type = fam_type,
       interactions_XC = interactions_XC,
+      use_interactions_XM = use_interactions_XM,
       separation_method = separation_method,
       n = n
     )
@@ -126,6 +130,7 @@ medRCT.fun <- function(
           dat2 = dat2,
           fam_type = fam_type,
           interactions_XC = interactions_XC,
+          use_interactions_XM = use_interactions_XM,
           separation_method = separation_method,
           lnzero = lnzero,
           n = n,
@@ -149,6 +154,7 @@ medRCT.fun <- function(
           mediators = mediators,
           fam_type = fam_type,
           interactions_XC = interactions_XC,
+          use_interactions_XM = use_interactions_XM,
           separation_method = separation_method,
           lnzero = lnzero,
           n = n
@@ -170,6 +176,7 @@ medRCT.fun <- function(
         mediators = mediators,
         fam_type = fam_type,
         interactions_XC = interactions_XC,
+        use_interactions_XM = use_interactions_XM,
         separation_method = separation_method,
         n = n
       )
@@ -178,13 +185,24 @@ medRCT.fun <- function(
 
   # outcome
   outcome_type = family_type(data, "Y")
-  fit <- fit_model(
-    as.formula(paste0(
+  # check if interactions_XM is needed
+  if (use_interactions_XM == TRUE) {
+    formula_outmod = as.formula(paste0(
       "Y~(X+",
       paste0(paste0("M", 1:K), collapse = "+"),
       ")^2+",
       interactions_XC
-    )),
+    ))
+  } else {
+    formula_outmod = as.formula(paste0(
+      "Y~X+",
+      paste0(paste0("M", 1:K), collapse = "+"),
+      "+",
+      interactions_XC
+    ))
+  }
+  fit <- fit_model(
+    formula_outmod,
     data = data,
     family = outcome_type[[1]],
     separation_method = separation_method
@@ -311,6 +329,7 @@ medRCT.fun.safe <- function(
   fam_type,
   mediators,
   interactions_XC,
+  use_interactions_XM,
   intervention_type,
   separation_method,
   effect_measure,
@@ -327,6 +346,7 @@ medRCT.fun.safe <- function(
           fam_type = fam_type,
           mediators = mediators,
           interactions_XC = interactions_XC,
+          use_interactions_XM = use_interactions_XM,
           intervention_type = intervention_type,
           effect_measure = effect_measure,
           separation_method = separation_method,

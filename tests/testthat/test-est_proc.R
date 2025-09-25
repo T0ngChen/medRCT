@@ -14,6 +14,7 @@ k <- 1
 first = 2
 lnzero = 1
 interactions_XC <- "X:C"
+use_interactions_XM = TRUE
 exposure_level <- c(0, 1)
 fam_type = family_type(data, c("M1", "M2", "M3", "M4"))
 
@@ -26,6 +27,7 @@ test_that("test joint_dist", {
     dat2 = dat2,
     fam_type = fam_type,
     interactions_XC = interactions_XC,
+    use_interactions_XM = TRUE,
     exposure_level = exposure_level,
     separation_method = "discard",
     n = n
@@ -56,6 +58,7 @@ test_that("test marg_dist", {
     dat2 = dat2,
     fam_type = fam_type,
     interactions_XC = interactions_XC,
+    use_interactions_XM = TRUE,
     separation_method = "discard",
     n = n
   )
@@ -78,6 +81,7 @@ test_that("test joint_X_nonzero", {
     dat2 = dat2,
     fam_type = fam_type,
     interactions_XC = interactions_XC,
+    use_interactions_XM = TRUE,
     lnzero = lnzero,
     n = n,
     index = index,
@@ -117,6 +121,7 @@ test_that("test joint_X_nonzero", {
     dat2 = dat2,
     fam_type = fam_type,
     interactions_XC = interactions_XC,
+    use_interactions_XM = TRUE,
     lnzero = lnzero,
     n = n,
     index = index
@@ -138,6 +143,7 @@ test_that("test con_exposed", {
     dat2 = dat2,
     fam_type = fam_type,
     interactions_XC = interactions_XC,
+    use_interactions_XM = TRUE,
     lnzero = lnzero,
     n = n,
     separation_method = "brglm"
@@ -176,6 +182,7 @@ test_that("test joint_unexposed", {
       dat2 = dat2,
       fam_type = fam_type,
       interactions_XC = interactions_XC,
+      use_interactions_XM = TRUE,
       separation_method = "discard",
       n = n
     )
@@ -189,6 +196,7 @@ test_that("test joint_unexposed", {
     dat2 = dat2,
     fam_type = fam_type,
     interactions_XC = interactions_XC,
+    use_interactions_XM = TRUE,
     n = n
   )
 

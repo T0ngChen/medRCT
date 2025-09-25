@@ -13,6 +13,7 @@ joint_unexposed(
   fam_type,
   mediators,
   interactions_XC,
+  use_interactions_XM,
   separation_method,
   n
 )
@@ -39,6 +40,8 @@ for binary variables.}
 
 \item{interactions_XC}{A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
 to include in the regression models in the estimation procedure.}
+
+\item{use_interactions_XM}{Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).}
 
 \item{separation_method}{Method to handle separation, only relevant for binomial (binary outcome) models.
 Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)

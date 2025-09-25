@@ -25,6 +25,7 @@ utils::globalVariables(".SD")
 #'  to include in the regression models in the estimation procedure. The default value, \code{"all"},
 #'  includes all two-way exposure-confounder interactions but excludes confounder-confounder interactions.
 #'  Specify \code{"none"} to exclude all two-way interactions between exposure and baseline confounders. See Vignette for further details.
+#' @param use_interactions_XM Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).
 #' @param intervention_type A \code{character} string indicating the type of interventional effect to be estimated.
 #'  Options include:
 #' \itemize{
@@ -44,10 +45,6 @@ utils::globalVariables(".SD")
 #'   Only one effect measure can be specified at a time.
 #' @param mcsim An \code{integer} specifying the number of Monte Carlo simulations to perform. The default is 200.
 #' It is recommended to run analysis with no fewer than 200 Monte Carlo simulations.
-#' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
-#'   Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
-#'   or \code{"discard"} (if separation is detected, the function returns \code{NA}. If this occurs during the main estimation,
-#'   the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).
 #' @param bootstrap A \code{logical} value indicating whether bootstrapping should be performed. If \code{TRUE}
 #'  (default), bootstrapping is conducted using the \code{boot} function from the \code{boot} package.
 #' @param boot_args A \code{list} of arguments for bootstrapping. The default settings are:
@@ -66,10 +63,13 @@ utils::globalVariables(".SD")
 #' ensuring that the models are appropriately specified before proceeding with the analysis.
 #'
 #' If issues with model fitting are detected, users are encouraged to adjust the exposure-confounder interaction term as needed.
-#' However, \strong{mediators or confounders must not be selected based on model fitting results.}
+#' However, \strong{mediators or confounders must not be selected based on model fitting results.} If separation is detected,
+#' the function returns \code{NA}. If this occurs during the main estimation, the program stops;
+#' if it occurs during bootstrapping, the affected bootstrap samples are discarded.
 #'
 #' The function accepts binary mediators and intermediate confounders coded as 0/1, TRUE/FALSE, or any two unique values (numeric, character, or factor).
 #' Internally, the lower value will always be treated as 0 and the higher value as 1, regardless of the original coding.
+#'
 #'
 #' @export
 #'
@@ -108,10 +108,10 @@ medRCT <- function(
   intermediate_confs,
   confounders,
   interactions_XC = "all",
+  use_interactions_XM = TRUE,
   intervention_type = c("all", "shift_all", "shift_k", "shift_k_order"),
   effect_measure = NULL,
   mcsim = 200,
-  separation_method = "discard",
   bootstrap = TRUE,
   boot_args = list(R = 100, stype = "i", ci.type = "norm"),
   ...
@@ -120,7 +120,7 @@ medRCT <- function(
   choices <- c("all", "shift_all", "shift_k", "shift_k_order")
   idx <- match(intervention_type, choices)
   intervention_type <- choices[idx]
-
+  separation_method = "discard"
   if (
     !identical(separation_method, "discard") &&
       !identical(separation_method, "brglm")
@@ -145,6 +145,11 @@ medRCT <- function(
       paste(mediators, collapse = ", "),
       "\n"
     ))
+  }
+  if (!is.logical(use_interactions_XM) || length(use_interactions_XM) != 1) {
+    stop(
+      "'use_interactions_XM' must be a single logical value (TRUE or FALSE)."
+    )
   }
 
   mediators = c(intermediate_confs, mediators)
@@ -252,6 +257,7 @@ medRCT <- function(
     fam_type = fam_type,
     mediators = mediators,
     interactions_XC = interactions_XC,
+    use_interactions_XM = use_interactions_XM,
     intervention_type = intervention_type,
     separation_method = separation_method,
     effect_measure = effect_measure,
@@ -273,6 +279,7 @@ medRCT <- function(
     fam_type = fam_type,
     effect_measure = effect_measure,
     interactions_XC = interactions_XC,
+    use_interactions_XM = use_interactions_XM,
     intervention_type = intervention_type,
     stype = boot_args$stype,
     separation_method = separation_method,

@@ -13,6 +13,7 @@ joint_dist(
   fam_type,
   mediators,
   interactions_XC,
+  use_interactions_XM,
   exposure_level,
   separation_method,
   n
@@ -38,6 +39,8 @@ for binary variables.}
 
 \item{interactions_XC}{A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
 to include in the regression models in the estimation procedure.}
+
+\item{use_interactions_XM}{Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).}
 
 \item{exposure_level}{A numeric vector specifying the levels of the exposure
 (e.g., \code{c(0, 1)}) for which counterfactual predictions are performed.}
