@@ -40,3 +40,7 @@ intermediate confounders, and outcomes.
 
 
 * fix the `separation_method` to `discard`
+
+# medRCT 0.2.3
+
+* Print the model formula when separation is detected (for Rushani Wijesuriya).

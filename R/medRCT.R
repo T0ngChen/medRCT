@@ -49,7 +49,7 @@ utils::globalVariables(".SD")
 #'  (default), bootstrapping is conducted using the \code{boot} function from the \code{boot} package.
 #' @param boot_args A \code{list} of arguments for bootstrapping. The default settings are:
 #' \itemize{
-#'   \item \code{R}: Number of bootstrap replicates (default: 100).
+#'   \item \code{R}: Number of bootstrap replicates (default: 200).
 #'   \item \code{stype}: Specifies the statistic type passed to the \code{boot} function (default: \code{"i"}).
 #'   \item \code{ci.type}: Specifies the type of confidence interval to compute (default: \code{"norm"}).
 #' }
@@ -94,8 +94,8 @@ utils::globalVariables(".SD")
 #'   intervention_type = "all",
 #'   effect_measure = "RD",
 #'   bootstrap = TRUE,
-#'   boot_args = list(R = 100, stype = "i", ci.type = "norm"),
-#'   mcsim = 100
+#'   boot_args = list(R = 200, stype = "i", ci.type = "norm"),
+#'   mcsim = 200
 #')
 #' # Summarise the results
 #' summary(med_res)
@@ -113,7 +113,7 @@ medRCT <- function(
   effect_measure = NULL,
   mcsim = 200,
   bootstrap = TRUE,
-  boot_args = list(R = 100, stype = "i", ci.type = "norm"),
+  boot_args = list(R = 200, stype = "i", ci.type = "norm"),
   ...
 ) {
   # match intervention type
@@ -265,7 +265,7 @@ medRCT <- function(
   )
 
   if (any(is.na(main_est_test))) {
-    stop("Main estimation failed or warned, aborting bootstrap.")
+    stop("Main estimation failed or warned, aborting bootstrap.", call. = FALSE)
   }
 
   # bootstrap

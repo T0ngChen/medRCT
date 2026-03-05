@@ -363,11 +363,25 @@ fit_model <- function(formula, data, family, separation_method, ...) {
       )
     } else if (separation_method == "discard") {
       if (any(fit$coefficients %in% c(Inf, -Inf))) {
-        warning("Separation detected! Returning NA.")
+        warning(
+          sprintf(
+            "Warning: Separation detected. Returning NA. Model formula: %s",
+            fmt_formula(formula)
+          ),
+          call. = FALSE
+        )
+        return(NA)
       } else {
         fit <- glm(formula, data = data, family = binomial(), ...)
       }
     }
   }
   return(fit)
+}
+
+
+fmt_formula <- function(f) {
+  s <- paste(deparse(f, width.cutoff = 500L), collapse = " ")
+  s <- gsub("\\s+", " ", s) # collapse repeated whitespace/newlines
+  trimws(s)
 }

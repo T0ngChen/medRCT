@@ -17,7 +17,7 @@ medRCT(
   effect_measure = NULL,
   mcsim = 200,
   bootstrap = TRUE,
-  boot_args = list(R = 100, stype = "i", ci.type = "norm"),
+  boot_args = list(R = 200, stype = "i", ci.type = "norm"),
   ...
 )
 }
@@ -76,7 +76,7 @@ It is recommended to run analysis with no fewer than 200 Monte Carlo simulations
 
 \item{boot_args}{A \code{list} of arguments for bootstrapping. The default settings are:
 \itemize{
-\item \code{R}: Number of bootstrap replicates (default: 100).
+\item \code{R}: Number of bootstrap replicates (default: 200).
 \item \code{stype}: Specifies the statistic type passed to the \code{boot} function (default: \code{"i"}).
 \item \code{ci.type}: Specifies the type of confidence interval to compute (default: \code{"norm"}).
 }}
@@ -123,8 +123,8 @@ med_res <- medRCT(
   intervention_type = "all",
   effect_measure = "RD",
   bootstrap = TRUE,
-  boot_args = list(R = 100, stype = "i", ci.type = "norm"),
-  mcsim = 100
+  boot_args = list(R = 200, stype = "i", ci.type = "norm"),
+  mcsim = 200
 )
 # Summarise the results
 summary(med_res)
