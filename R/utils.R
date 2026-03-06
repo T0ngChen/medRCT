@@ -343,7 +343,15 @@ med_joint_other <- function(k, a, MM, K, ordering = TRUE) {
 #' @importFrom stats glm gaussian binomial update
 #'
 #' @keywords internal
-fit_model <- function(formula, data, family, separation_method, ...) {
+fit_model <- function(
+  formula,
+  data,
+  family,
+  separation_method,
+  exposure_name = NULL,
+  mediator_names = NULL,
+  ...
+) {
   if (family$family == "gaussian") {
     fit <- glm(formula, data = data, family = family, ...)
   } else if (family$family == "binomial") {
@@ -366,7 +374,11 @@ fit_model <- function(formula, data, family, separation_method, ...) {
         warning(
           sprintf(
             "Warning: Separation detected. Returning NA. Model formula: %s",
-            fmt_formula(formula)
+            fmt_formula(
+              formula,
+              exposure_name = exposure_name,
+              mediator_names = mediator_names
+            )
           ),
           call. = FALSE
         )
@@ -380,8 +392,31 @@ fit_model <- function(formula, data, family, separation_method, ...) {
 }
 
 
-fmt_formula <- function(f) {
+fmt_formula <- function(f, exposure_name = NULL, mediator_names = NULL) {
   s <- paste(deparse(f, width.cutoff = 500L), collapse = " ")
-  s <- gsub("\\s+", " ", s) # collapse repeated whitespace/newlines
-  trimws(s)
+  s <- gsub("\\s+", " ", s)
+  s <- trimws(s)
+
+  # replace X
+  if (!is.null(exposure_name)) {
+    s <- gsub("\\bX\\b", exposure_name, s)
+  }
+
+  # replace M1, M2, M3, ...
+  if (!is.null(mediator_names)) {
+    n_meds <- length(mediator_names)
+
+    # replace longer names first: M10 before M1
+    idx <- rev(seq_len(n_meds))
+
+    for (i in idx) {
+      s <- gsub(
+        pattern = paste0("\\bM", i, "\\b"),
+        replacement = mediator_names[i],
+        x = s
+      )
+    }
+  }
+
+  return(s)
 }

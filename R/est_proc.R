@@ -10,6 +10,9 @@
 #' @param fam_type A \code{character} string specifying the family type for modeling.
 #'  Options typically include \code{"gaussian"} for continuous variables or \code{"binomial"}
 #'  for binary variables.
+#' @param exposure  A \code{character} string specifying the name of the exposure variable in the dataset.
+#'  The exposure variable must be categorical, with \code{0} explicitly denoting the unexposed (or control) group, which is taken as the reference group.
+#'  Other values represent different, non-reference exposure categories.
 #' @param mediators A \code{character} vector including the variable names for mediators
 #' (including intermediate confounders).
 #' @param interactions_XC  A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
@@ -35,6 +38,7 @@ joint_dist <- function(
   mediators,
   interactions_XC,
   use_interactions_XM,
+  exposure,
   exposure_level,
   separation_method,
   n
@@ -48,6 +52,8 @@ joint_dist <- function(
       include_all = TRUE
     )),
     data = data,
+    exposure_name = exposure,
+    mediator_names = mediators,
     family = fam_type[[k]],
     separation_method = separation_method
   )
@@ -109,6 +115,7 @@ joint_dist <- function(
 #'  for binary variables.
 #' @param mediators A \code{character} vector including the variable names for mediators
 #'  (including intermediate confounders).
+#' @param exposure A \code{character} string specifying the name of the exposure variable in the dataset.
 #' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
 #'  to include in the regression models in the estimation procedure.
 #' @param use_interactions_XM Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).
@@ -128,6 +135,7 @@ marg_dist <- function(
   data,
   dat2,
   fam_type,
+  exposure,
   mediators,
   interactions_XC,
   use_interactions_XM,
@@ -144,7 +152,9 @@ marg_dist <- function(
     )),
     data = data,
     family = fam_type[[k]],
-    separation_method = separation_method
+    separation_method = separation_method,
+    exposure_name = exposure,
+    mediator_names = mediators
   )
 
   if (!fit$converged) {
@@ -201,6 +211,7 @@ marg_dist <- function(
 #' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
 #'  to include in the regression models in the estimation procedure.
 #' @param use_interactions_XM Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).
+#' @param exposure A \code{character} string specifying the name of the exposure variable in the dataset.
 #' @param lnzero A numeric vector specifying the non-zero levels of the exposure.
 #' @param separation_method Method to handle separation, only relevant for binomial (binary outcome) models.
 #'   Options are \code{"brglm"} (Logistic regression models are fitted using bias reduction methods for generalised linear models implemented in the \code{brglm2} package)
@@ -227,7 +238,8 @@ joint_X_nonzero <- function(
   lnzero,
   separation_method,
   n,
-  index
+  index,
+  exposure
 ) {
   # Check for intermediate confounders
   fit <- fit_model(
@@ -241,7 +253,9 @@ joint_X_nonzero <- function(
     )),
     data = data,
     family = fam_type[[k]],
-    separation_method = separation_method
+    separation_method = separation_method,
+    exposure_name = exposure,
+    mediator_names = mediators
   )
 
   # Check model convergence and coefficients
@@ -328,6 +342,7 @@ joint_X_nonzero <- function(
 #'   or \code{"discard"} (if separation is detected, the function returns \code{NA}. If this occurs during the main estimation,
 #'   the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).
 #' @param n An integer specifying the number of observations for `dat2`.
+#' @param exposure A \code{character} string specifying the name of the exposure variable in the dataset.
 #'
 #' @importFrom stats coef as.formula
 #'
@@ -344,7 +359,8 @@ con_exposed <- function(
   use_interactions_XM,
   lnzero,
   separation_method,
-  n
+  n,
+  exposure
 ) {
   # Fit the model for the mediator k
   fit <- fit_model(
@@ -356,7 +372,9 @@ con_exposed <- function(
     )),
     data = data,
     family = fam_type[[k]],
-    separation_method = separation_method
+    separation_method = separation_method,
+    exposure_name = exposure,
+    mediator_names = mediators
   )
 
   # Check for convergence or NA coefficients
@@ -426,6 +444,7 @@ con_exposed <- function(
 #' @param fam_type A \code{character} string specifying the family type for modeling.
 #'  Options typically include \code{"gaussian"} for continuous variables or \code{"binomial"}
 #'  for binary variables.
+#' @param exposure A \code{character} string specifying the name of the exposure variable in the dataset.
 #' @param mediators A \code{character} vector including the variable names for mediators
 #'  (including intermediate confounders).
 #' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
@@ -447,6 +466,7 @@ joint_unexposed <- function(
   data,
   dat2,
   fam_type,
+  exposure,
   mediators,
   interactions_XC,
   use_interactions_XM,
@@ -464,7 +484,9 @@ joint_unexposed <- function(
     )),
     data = data,
     family = fam_type[[k]],
-    separation_method = separation_method
+    separation_method = separation_method,
+    exposure_name = exposure,
+    mediator_names = mediators
   )
 
   # Check for convergence or NA coefficients

@@ -261,7 +261,8 @@ medRCT <- function(
     intervention_type = intervention_type,
     separation_method = separation_method,
     effect_measure = effect_measure,
-    mcsim = mcsim
+    mcsim = mcsim,
+    exposure = exposure
   )
 
   if (any(is.na(main_est_test))) {
@@ -274,6 +275,7 @@ medRCT <- function(
     statistic = medRCT.fun.safe,
     first = first,
     K = K,
+    exposure = exposure,
     mediators = mediators,
     mcsim = mcsim,
     fam_type = fam_type,

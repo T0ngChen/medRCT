@@ -13,6 +13,9 @@
 #'  Mediators are considered sequentially based on their order.
 #' @param fam_type A \code{character} string specifying the family type for modeling. Options typically include
 #'  \code{"gaussian"} for continuous variables or \code{"binomial"} for binary variables.
+#' @param exposure  A \code{character} string specifying the name of the exposure variable in the dataset.
+#'  The exposure variable must be categorical, with \code{0} explicitly denoting the unexposed (or control) group, which is taken as the reference group.
+#'  Other values represent different, non-reference exposure categories.
 #' @param mediators A \code{character} vector including the variable names for mediators (including intermediate
 #' confounders).
 #' @param interactions_XC A \code{character} string specifying the two-way interactions amongst exposure and baseline confounders
@@ -53,6 +56,7 @@ medRCT.fun <- function(
   first,
   K,
   fam_type,
+  exposure,
   mediators,
   interactions_XC,
   use_interactions_XM,
@@ -86,6 +90,7 @@ medRCT.fun <- function(
       K = K,
       data = data,
       dat2 = dat2,
+      exposure = exposure,
       mediators = mediators,
       fam_type = fam_type,
       interactions_XC = interactions_XC,
@@ -105,6 +110,7 @@ medRCT.fun <- function(
       K = K,
       data = data,
       dat2 = dat2,
+      exposure = exposure,
       mediators = mediators,
       fam_type = fam_type,
       interactions_XC = interactions_XC,
@@ -126,6 +132,7 @@ medRCT.fun <- function(
           first = first,
           K = K,
           data = data,
+          exposure = exposure,
           mediators = mediators,
           dat2 = dat2,
           fam_type = fam_type,
@@ -151,6 +158,7 @@ medRCT.fun <- function(
           K = K,
           data = data,
           dat2 = dat2,
+          exposure = exposure,
           mediators = mediators,
           fam_type = fam_type,
           interactions_XC = interactions_XC,
@@ -173,6 +181,7 @@ medRCT.fun <- function(
         K = K,
         data = data,
         dat2 = dat2,
+        exposure = exposure,
         mediators = mediators,
         fam_type = fam_type,
         interactions_XC = interactions_XC,
@@ -205,7 +214,8 @@ medRCT.fun <- function(
     formula_outmod,
     data = data,
     family = outcome_type[[1]],
-    separation_method = separation_method
+    separation_method = separation_method,
+    exposure_name = exposure
   )
 
   if (!fit$converged) {
@@ -327,6 +337,7 @@ medRCT.fun.safe <- function(
   first,
   K,
   fam_type,
+  exposure,
   mediators,
   interactions_XC,
   use_interactions_XM,
@@ -344,6 +355,7 @@ medRCT.fun.safe <- function(
           first = first,
           K = K,
           fam_type = fam_type,
+          exposure = exposure,
           mediators = mediators,
           interactions_XC = interactions_XC,
           use_interactions_XM = use_interactions_XM,
