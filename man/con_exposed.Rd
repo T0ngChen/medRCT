@@ -16,7 +16,8 @@ con_exposed(
   use_interactions_XM,
   lnzero,
   separation_method,
-  n
+  n,
+  exposure
 )
 }
 \arguments{
@@ -53,6 +54,8 @@ or \code{"discard"} (if separation is detected, the function returns \code{NA}. 
 the program stops; if it occurs during bootstrapping, the affected bootstrap samples are discarded).}
 
 \item{n}{An integer specifying the number of observations for \code{dat2}.}
+
+\item{exposure}{A \code{character} string specifying the name of the exposure variable in the dataset.}
 }
 \description{
 Estimation of Conditionals of Mediators under Exposed

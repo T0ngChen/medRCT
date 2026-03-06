@@ -14,6 +14,7 @@ joint_dist(
   mediators,
   interactions_XC,
   use_interactions_XM,
+  exposure,
   exposure_level,
   separation_method,
   n
@@ -41,6 +42,10 @@ for binary variables.}
 to include in the regression models in the estimation procedure.}
 
 \item{use_interactions_XM}{Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).}
+
+\item{exposure}{A \code{character} string specifying the name of the exposure variable in the dataset.
+The exposure variable must be categorical, with \code{0} explicitly denoting the unexposed (or control) group, which is taken as the reference group.
+Other values represent different, non-reference exposure categories.}
 
 \item{exposure_level}{A numeric vector specifying the levels of the exposure
 (e.g., \code{c(0, 1)}) for which counterfactual predictions are performed.}

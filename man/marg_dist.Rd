@@ -11,6 +11,7 @@ marg_dist(
   data,
   dat2,
   fam_type,
+  exposure,
   mediators,
   interactions_XC,
   use_interactions_XM,
@@ -34,6 +35,8 @@ random draws.}
 \item{fam_type}{A \code{character} string specifying the family type for modeling.
 Options typically include \code{"gaussian"} for continuous variables or \code{"binomial"}
 for binary variables.}
+
+\item{exposure}{A \code{character} string specifying the name of the exposure variable in the dataset.}
 
 \item{mediators}{A \code{character} vector including the variable names for mediators
 (including intermediate confounders).}

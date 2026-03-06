@@ -4,7 +4,15 @@
 \alias{fit_model}
 \title{Fit a generalized linear model with separation handling}
 \usage{
-fit_model(formula, data, family, separation_method, ...)
+fit_model(
+  formula,
+  data,
+  family,
+  separation_method,
+  exposure_name = NULL,
+  mediator_names = NULL,
+  ...
+)
 }
 \arguments{
 \item{formula}{A formula specifying the model.}

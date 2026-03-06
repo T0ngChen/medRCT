@@ -18,7 +18,8 @@ joint_X_nonzero(
   lnzero,
   separation_method,
   n,
-  index
+  index,
+  exposure
 )
 }
 \arguments{
@@ -60,6 +61,8 @@ the program stops; if it occurs during bootstrapping, the affected bootstrap sam
 
 \item{index}{An integer vector specifying the indices of all mediators, excluding the mediator
 specified by \code{MM}.}
+
+\item{exposure}{A \code{character} string specifying the name of the exposure variable in the dataset.}
 }
 \description{
 Estimation of Joint Distribution of All Other Mediators under Exposed
