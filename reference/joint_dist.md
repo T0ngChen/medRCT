@@ -15,6 +15,7 @@ joint_dist(
   mediators,
   interactions_XC,
   use_interactions_XM,
+  exposure,
   exposure_level,
   separation_method,
   n
@@ -64,6 +65,14 @@ joint_dist(
 
   Logical. Include exposure–mediator and exposure–intermediate
   confounder interactions (default is TRUE).
+
+- exposure:
+
+  A `character` string specifying the name of the exposure variable in
+  the dataset. The exposure variable must be categorical, with `0`
+  explicitly denoting the unexposed (or control) group, which is taken
+  as the reference group. Other values represent different,
+  non-reference exposure categories.
 
 - exposure_level:
 

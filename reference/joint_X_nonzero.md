@@ -19,7 +19,8 @@ joint_X_nonzero(
   lnzero,
   separation_method,
   n,
-  index
+  index,
+  exposure
 )
 ```
 
@@ -98,3 +99,8 @@ joint_X_nonzero(
 
   An integer vector specifying the indices of all mediators, excluding
   the mediator specified by `MM`.
+
+- exposure:
+
+  A `character` string specifying the name of the exposure variable in
+  the dataset.

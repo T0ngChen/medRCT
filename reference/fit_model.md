@@ -8,7 +8,15 @@ separated data.
 ## Usage
 
 ``` r
-fit_model(formula, data, family, separation_method, ...)
+fit_model(
+  formula,
+  data,
+  family,
+  separation_method,
+  exposure_name = NULL,
+  mediator_names = NULL,
+  ...
+)
 ```
 
 ## Arguments

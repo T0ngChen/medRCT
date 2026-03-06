@@ -53,6 +53,7 @@ Exposed and Unexposed</p>
 <span>  <span class="va">mediators</span>,</span>
 <span>  <span class="va">interactions_XC</span>,</span>
 <span>  <span class="va">use_interactions_XM</span>,</span>
+<span>  <span class="va">exposure</span>,</span>
 <span>  <span class="va">exposure_level</span>,</span>
 <span>  <span class="va">separation_method</span>,</span>
 <span>  <span class="va">n</span></span>
@@ -99,6 +100,12 @@ to include in the regression models in the estimation procedure.</p></dd>
 
 <dt id="arg-use-interactions-xm">use_interactions_XM<a class="anchor" aria-label="anchor" href="#arg-use-interactions-xm"></a></dt>
 <dd><p>Logical. Include exposure–mediator and exposure–intermediate confounder interactions (default is TRUE).</p></dd>
+
+
+<dt id="arg-exposure">exposure<a class="anchor" aria-label="anchor" href="#arg-exposure"></a></dt>
+<dd><p>A <code>character</code> string specifying the name of the exposure variable in the dataset.
+The exposure variable must be categorical, with <code>0</code> explicitly denoting the unexposed (or control) group, which is taken as the reference group.
+Other values represent different, non-reference exposure categories.</p></dd>
 
 
 <dt id="arg-exposure-level">exposure_level<a class="anchor" aria-label="anchor" href="#arg-exposure-level"></a></dt>

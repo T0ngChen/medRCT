@@ -17,7 +17,8 @@ con_exposed(
   use_interactions_XM,
   lnzero,
   separation_method,
-  n
+  n,
+  exposure
 )
 ```
 
@@ -87,3 +88,8 @@ con_exposed(
 - n:
 
   An integer specifying the number of observations for `dat2`.
+
+- exposure:
+
+  A `character` string specifying the name of the exposure variable in
+  the dataset.

@@ -12,6 +12,7 @@ marg_dist(
   data,
   dat2,
   fam_type,
+  exposure,
   mediators,
   interactions_XC,
   use_interactions_XM,
@@ -51,6 +52,11 @@ marg_dist(
   A `character` string specifying the family type for modeling. Options
   typically include `"gaussian"` for continuous variables or
   `"binomial"` for binary variables.
+
+- exposure:
+
+  A `character` string specifying the name of the exposure variable in
+  the dataset.
 
 - mediators:
 
